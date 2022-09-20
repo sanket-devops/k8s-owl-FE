@@ -1,0 +1,67 @@
+<div class="first-div">
+  <button type="button" class="btn btn-primary ml3" (click)="back()">Dashboard</button>
+</div>
+
+
+<div class="container-fluid">
+  <form [formGroup]="form">
+    <div class="row">
+      <div class="col-md-4">
+        <mat-form-field appearance="legacy">
+          <mat-label>GroupName</mat-label>
+          <input matInput placeholder="GroupName" formControlName="groupName">
+        </mat-form-field>
+      </div>
+
+    </div>
+  </form>
+
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Cluster Details</h3>
+      <table class="table table-hover table-striped table-responsive table-sm">
+        <thead>
+          <tr>
+            <th>Cluster Name</th>
+            <th>Env Name</th>
+            <th>Kubeconfig</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr *ngFor="let data of data.clusters; let index = index;">
+            <td>
+              <mat-form-field appearance="legacy">
+                <mat-label>Cluster Name</mat-label>
+                <input matInput type="text" placeholder="Cluster Name" [(ngModel)]="data.clusterName"
+                  name="name_{{index}}">
+              </mat-form-field>
+            </td>
+            <td>
+              <mat-form-field appearance="legacy">
+                <mat-label>Env Name</mat-label>
+                <input matInput placeholder="Env Name" type="text" [(ngModel)]="data.envName" name="port_{{index}}">
+              </mat-form-field>
+            </td>
+            <td>
+              <mat-form-field appearance="legacy">
+                <mat-label>Kubeconfig</mat-label>
+                <textarea matInput placeholder="Kubeconfig" type="text" [(ngModel)]="data.kubeConfig" name="port_{{index}}"></textarea>
+            </mat-form-field>
+          </td>
+          <td>
+            <button class="btn btn-success ml3 mt3" (click)="AddPortTableRow()">+</button>
+            <button class="btn btn-danger ml3 mt3" (click)="removePortTableRow(index)">--</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <button class="btn btn-primary" (click)="saveData()">Save</button>
+    </div>
+  </div>
+</div>
