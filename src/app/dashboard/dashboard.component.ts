@@ -17,10 +17,23 @@ export class DashboardComponent implements OnInit {
     public constantService: ConstantService,
     public dashboardService: DashboardService,
     public router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    
     ) { }
   async ngOnInit() {
+    this.getAll();
 
+  }
+  async getAll() {
+    let res = [];
+    try {
+      res = <any>this.dashboardService.getClusters().subscribe((data: any)=> {
+        this.responseData = data.data;
+        // console.log(this.responseData);
+    });
+    } catch (e) {
+      console.log(e);
+    }
   }
   async getLogs() {
     let res = [];
