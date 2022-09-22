@@ -12,6 +12,7 @@ import { ConstantService } from '../service/constant.service';
 })
 export class DashboardComponent implements OnInit {
   responseData: any = undefined;
+  clusterData: any = undefined;
 
   constructor(
     public constantService: ConstantService,
@@ -29,18 +30,19 @@ export class DashboardComponent implements OnInit {
     try {
       res = <any>this.dashboardService.getClusters().subscribe((data: any)=> {
         this.responseData = data.data;
-        // console.log(this.responseData);
+        console.log(this.responseData);
     });
     } catch (e) {
       console.log(e);
     }
   }
-  async getLogs() {
+  async getCluster(groupId: string, clusterId: string) {
+    this.clusterData = undefined;
     let res = [];
     try {
-      res = <any>this.dashboardService.get('/6328b87f377f479c93b59ae5').subscribe((data: any)=> {
+      res = <any>this.dashboardService.getPods( '/' + groupId, '/' + clusterId).subscribe((data: any)=> {
         console.log(data);
-        this.responseData = data;
+        this.clusterData = data;
     });
     } catch (e) {
       console.log(e);

@@ -32,7 +32,7 @@ export class DashboardService {
     return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT),
     )
   }
-  get(_id: string, populate?: string) {
-    return this.http.get<Partial<Idashboard>>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + _id + `${populate ? '?populate=' + populate : ''}`));
+  getPods(groupId: string, clusterId: string, populate?: string) {
+    return this.http.get<Partial<Idashboard>>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/pods' + `${populate ? '?populate=' + populate : ''}`));
   }
 }

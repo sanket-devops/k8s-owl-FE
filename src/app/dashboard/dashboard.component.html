@@ -1,4 +1,4 @@
-<!-- <button type="button" (click)= "getAll()" class="btn btn-primary">Primary</button> -->
+<!-- <button type="button" (click)= "getCluster('/6328b87f377f479c93b59ae6')" class="btn btn-primary">Primary</button> -->
 <button type="button" class="btn btn-primary" (click)="AddCluster()">Add Cluster</button>
 <!-- <p>{{responseData}}</p> -->
 <!-- <p *ngFor="let data of responseData">{{data}}</p> -->
@@ -22,10 +22,66 @@
            <tr *ngFor="let clustersData of data.clusters ; let l = count">
             <td>{{clustersData.clusterName}}</td>
             <td>{{clustersData.envName}}</td>
+            <!-- <td>{{clustersData._id}}</td> -->
+
 
             <td>
-                <button type="button" class="btn btn-primary"></button>
+                <button type="button" (click)="getCluster(data._id, clustersData._id)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clusterModal"></button>
             </td>
            </tr>
     </tbody>
   </table>
+
+  <!-- Button trigger modal -->
+<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clusterModal">
+    Launch demo modal
+  </button> -->
+  
+  <!-- Modal -->
+  <div class="modal fade" id="clusterModal" tabindex="-1" aria-labelledby="clusterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="clusterModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">APP</th>
+                    <th scope="col">PNAME</th>
+                    <th scope="col">STATUS</th>
+                    <th scope="col">RESTARTS</th>
+                    <th scope="col">NODE</th>
+                    <th scope="col">AGE</th>
+                    <th scope="col">REDAY</th>
+                  </tr>
+                </thead>
+                <tbody  *ngFor="let data of clusterData ;let i =index ;let l = count">
+                    <tr>
+                        <th [attr.rowspan]="l">{{i + 1}}</th>
+                        <th [attr.rowspan]="l">{{data.APP}}</th>
+                       </tr>
+                       <tr>
+                        <td>{{data.PNAME}}</td>
+                        <td>{{data.STATUS}}</td>
+                        <td>{{data.RESTARTS}}</td>
+                        <td>{{data.NODE}}</td>
+                        <td>{{data.AGE}}</td>
+                        <td>{{data.READY}}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clusterModal"></button>
+                        </td>
+                       </tr>
+                </tbody>
+              </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
