@@ -22,27 +22,19 @@
            <tr *ngFor="let clustersData of data.clusters ; let l = count">
             <td>{{clustersData.clusterName}}</td>
             <td>{{clustersData.envName}}</td>
-            <!-- <td>{{clustersData._id}}</td> -->
-
-
             <td>
-                <button type="button" (click)="getCluster(data._id, clustersData._id)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clusterModal"></button>
+                <button type="button" (click)="getCluster(data._id, clustersData._id , clustersData.clusterName)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clusterModal">Open Cluster</button>
             </td>
            </tr>
     </tbody>
   </table>
-
-  <!-- Button trigger modal -->
-<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clusterModal">
-    Launch demo modal
-  </button> -->
   
   <!-- Modal -->
   <div class="modal fade" id="clusterModal" tabindex="-1" aria-labelledby="clusterModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="clusterModalLabel">Modal title</h5>
+          <h1 class="modal-title" id="clusterModalLabel">{{clusterName}}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -57,6 +49,7 @@
                     <th scope="col">NODE</th>
                     <th scope="col">AGE</th>
                     <th scope="col">REDAY</th>
+                    <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody  *ngFor="let data of clusterData ;let i =index ;let l = count">
@@ -72,7 +65,8 @@
                         <td>{{data.AGE}}</td>
                         <td>{{data.READY}}</td>
                         <td>
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clusterModal"></button>
+                            <button type="button" class="btn btn-primary" (click)="getPodLogs(data.PNAME)">View Logs</button>
+                            <button type="button" class="btn btn-primary" (click)="downloadLogs(data.PNAME)">Get Logs</button>
                         </td>
                        </tr>
                 </tbody>
