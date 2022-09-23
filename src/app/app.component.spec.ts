@@ -20,16 +20,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'k8s-api-FE'`, () => {
+  it(`should have as title 'k8s-owl'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('k8s-api-FE');
+    expect(app.title).toEqual('k8s-owl');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('k8s-api-FE app is running!');
+    expect(compiled.querySelector('.content span')?.textContent).toContain('k8s-owl app is running!');
   });
 });

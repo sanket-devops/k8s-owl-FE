@@ -25,7 +25,7 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/k8s-api-FE'),
+      dir: require('path').join(__dirname, './coverage/k8s-owl'),
       subdir: '.',
       reporters: [
         { type: 'html' },

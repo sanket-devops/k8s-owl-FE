@@ -1,4 +1,4 @@
-# k8s-api-FE
+# k8s-owl
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.2.
 
