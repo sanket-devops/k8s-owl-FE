@@ -1,25 +1,26 @@
-<!-- <button type="button" (click)= "getCluster('/6328b87f377f479c93b59ae6')" class="btn btn-primary">Primary</button> -->
 <button type="button" class="btn btn-primary" (click)="AddCluster()">Add Cluster</button>
-<!-- <p>{{responseData}}</p> -->
-<!-- <p *ngFor="let data of responseData">{{data}}</p> -->
-
 
 <table class="table">
     <thead>
       <tr>
         <th scope="col">#</th>
         <th scope="col">Group Name</th>
+        <th scope="col">Group Action</th>
         <th scope="col">Cluster Name</th>
         <th scope="col">Env Name</th>
         <th scope="col">Action</th>
       </tr>
     </thead>
-    <tbody  *ngFor="let data of responseData ;let i =index ;let l = count">
+    <tbody *ngFor="let data of responseData ;let i =index">
         <tr>
-            <th [attr.rowspan]="l">{{i + 1}}</th>
-            <th [attr.rowspan]="l">{{data.groupName}}</th>
+            <th [attr.rowspan]="clusterCount">{{i + 1}}</th>
+            <th [attr.rowspan]="clusterCount">{{data.groupName}}</th>
+            <th [attr.rowspan]="clusterCount">
+              <button type="button" (click)="editData(data)" class="btn btn-primary">Edit Group</button>
+              <button type="button" (click)="deleteData(data)" class="btn btn-danger">Delete Group</button>
+            </th>
            </tr>
-           <tr *ngFor="let clustersData of data.clusters ; let l = count">
+           <tr *ngFor="let clustersData of data.clusters">
             <td>{{clustersData.clusterName}}</td>
             <td>{{clustersData.envName}}</td>
             <td>
@@ -45,10 +46,10 @@
                     <th scope="col">APP</th>
                     <th scope="col">PNAME</th>
                     <th scope="col">STATUS</th>
-                    <th scope="col">RESTARTS</th>
+                    <!-- <th scope="col">RESTARTS</th> -->
                     <th scope="col">NODE</th>
                     <th scope="col">AGE</th>
-                    <th scope="col">REDAY</th>
+                    <!-- <th scope="col">REDAY</th> -->
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
@@ -60,13 +61,16 @@
                        <tr>
                         <td>{{data.PNAME}}</td>
                         <td>{{data.STATUS}}</td>
-                        <td>{{data.RESTARTS}}</td>
+                        <!-- <td>{{data.RESTARTS}}</td> -->
                         <td>{{data.NODE}}</td>
                         <td>{{data.AGE}}</td>
-                        <td>{{data.READY}}</td>
+                        <!-- <td>{{data.READY}}</td> -->
                         <td>
-                            <button type="button" class="btn btn-primary" (click)="getPodLogs(data.PNAME)">View Logs</button>
-                            <button type="button" class="btn btn-primary" (click)="downloadLogs(data.PNAME)">Get Logs</button>
+                            <button type="button" class="btn btn-primary" (click)="getPodLogs72H(data.PNAME)">V-72H</button>
+                            <button type="button" class="btn btn-primary" (click)="downloadLogs72H(data.PNAME)">
+                                <span class="spinner-border spinner-border-sm" role="status" id="spinner" aria-hidden="true"></span>
+                              <span class="visually-hidden">Loading...</span>
+                              D-72H</button>
                         </td>
                        </tr>
                 </tbody>
@@ -74,7 +78,6 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
         </div>
       </div>
     </div>
