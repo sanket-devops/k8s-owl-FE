@@ -16,6 +16,7 @@ export class ConstantService {
   vu = [
     {u: 'admin', p: '123@Moon', t: 'admin'},
     {u: 'owl', p: 'Owl@1234', t: 'user'},
+    {u: 'operr', p: 'Operr@123', t: 'user'},
   ];
 
 
@@ -39,25 +40,25 @@ export class ConstantService {
     // return return_url;
   }
 
-  // isValidUser(data: any) {
-  //   for (let item of this.vu) {
-  //     if (item.u === data.u && item.p === data.p) return true;
-  //   }
-  //   return false;
-  // }
+  isValidUser(data: any) {
+    for (let item of this.vu) {
+      if (item.u === data.u && item.p === data.p) return true;
+    }
+    return false;
+  }
 
-  // getEncryptedData(data: any) {
-  //   let encryptMe;
-  //   if (typeof data === 'object') encryptMe = JSON.stringify(data);
-  //   else if (typeof data === 'string') encryptMe = data;
-  //   else throw new Error('Invalid data sent');
-  //   return CryptoJS.AES.encrypt(encryptMe, this.k).toString();
-  // }
+  getEncryptedData(data: any) {
+    let encryptMe;
+    if (typeof data === 'object') encryptMe = JSON.stringify(data);
+    else if (typeof data === 'string') encryptMe = data;
+    else throw new Error('Invalid data sent');
+    return CryptoJS.AES.encrypt(encryptMe, this.k).toString();
+  }
 
-  // getDecryptedData(data: any) {
-  //   let bytes = CryptoJS.AES.decrypt(data, this.k);
-  //   return bytes.toString(CryptoJS.enc.Utf8);
-  // }
+  getDecryptedData(data: any) {
+    let bytes = CryptoJS.AES.decrypt(data, this.k);
+    return bytes.toString(CryptoJS.enc.Utf8);
+  }
 
   public static get_promise(observable: Observable<any>): Promise<any> {
     return new Promise<any>((resolve, reject) => {

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: so-fe
+  labels:
+    app: so-fe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: so-fe
+  template:
+    metadata:
+      labels:
+        app: so-fe
+    spec:
+      containers:
+        - name: so-fe
+          image: service-owl:5000/service-owl-fe:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http-port
+              containerPort: 80

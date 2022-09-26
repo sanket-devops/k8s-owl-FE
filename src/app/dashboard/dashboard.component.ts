@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { DashboardService } from '../service/dashboard.service';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -14,6 +14,8 @@ import { saveAs } from 'file-saver';
 })
 
 export class DashboardComponent implements OnInit {
+  @ViewChild('viewDisable') viewDisable!: ElementRef;
+  intervalId = <any>undefined;
   responseData: any = undefined;
   clusterData: any = undefined;
   clusterName: any = undefined;
@@ -23,6 +25,7 @@ export class DashboardComponent implements OnInit {
   podName: any = undefined;
   showPortal: boolean = false;
   clusterCount: number = 1;
+  login = { u: '', p: '', t: '' };
 
   constructor(
     public constantService: ConstantService,
@@ -32,8 +35,33 @@ export class DashboardComponent implements OnInit {
 
   ) { }
   async ngOnInit() {
+    try {
+      this.login = JSON.parse(
+        this.constantService.getDecryptedData(localStorage.getItem('token'))
+      );
+      let isValidUser = this.constantService.isValidUser(this.login);
+      if (!isValidUser) return this.logout();
+    } catch (error) {
+      return this.logout();
+    }
     this.getAll();
+  }
+  get isAdmin() {
+    return this.login && this.login.t === 'admin';
+  }
 
+  get isUser() {
+    return this.login && this.login.t === 'user';
+  }
+
+  // get isOperrv3() {
+  //   return this.login && this.login.t === 'user';
+  // }
+  async loadingOn() {
+    this.viewDisable.nativeElement.disabled = true;
+  }
+  async loadingOff() {
+    this.viewDisable.nativeElement.disabled = false;
   }
   async getAll() {
     let res = [];
@@ -67,27 +95,41 @@ export class DashboardComponent implements OnInit {
       console.log(e);
     }
   }
-  async getPodLogs72H(podName: string) {
+  async getPodLogs(podName: string, h?: string) {
     this.podLogs = undefined;
     this.podName = podName;
     let res = [];
+    this.loadingOn();
     try {
-        this.podLogs = this.dashboardService.getPodsLogs72H('/' + this.groupId, '/' + this.clusterId, '/' + this.podName);
+      if (h) {
+        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + h);
         window.open(this.podLogs, "", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
+      } else {
+        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName);
+        window.open(this.podLogs, "", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
+      }
     } catch (e) {
       console.log(e);
     }
+    this.loadingOff();
   }
-  async downloadLogs72H(podName: string) {
+  async downloadLogs(podName: string, h?: string) {
     this.podLogs = undefined;
     this.podName = podName;
     let res = [];
+    this.loadingOn();
     try {
-        this.podLogs = this.dashboardService.getPodsLogs72H('/' + this.groupId, '/' + this.clusterId, '/' + this.podName);
+      if (h) {
+        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + h);
         saveAs.saveAs(this.podLogs, `${this.podName}.log`);
+      } else {
+        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName);
+        saveAs.saveAs(this.podLogs, `${this.podName}.log`);
+      }
     } catch (e) {
       console.log(e);
     }
+    this.loadingOff();
   }
 
   AddCluster() {
@@ -110,6 +152,13 @@ export class DashboardComponent implements OnInit {
       // toastr.success('Item deleted successfully : ' + item.hostName);
       await this.getAll();
     }
+  }
+  logout() {
+    localStorage.clear();
+    this.router.navigate(['login']);
+  }
+  ngOnDestroy(): void {
+    clearInterval(this.intervalId);
   }
 }
 

@@ -1,0 +1,25 @@
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <!-- Tabs Titles -->
+
+    <!-- Icon -->
+    <div class="fadeIn first pl-5 pt-3 pr-5 pb-2">
+      <div class="p-3 mb-3">
+        <img src="assets/img/owl.svg" id="icon" alt="Logo"/>
+        <!-- <img src="assets/img/owl_gif.gif" id="icon" alt="Logo"/> -->
+      </div>
+      <h1 class="m-0 text-center">K8S OWL</h1>
+    </div>
+
+    <!-- Login Form -->
+    <form>
+      <input type="text" id="login" [(ngModel)]="data.u" (keyup.enter)="login()" class="fadeIn second mb-2" name="login" placeholder="login"/>
+      <input type="password" id="password" [(ngModel)]="data.p" (keyup.enter)="login()" class="fadeIn third" name="pass" placeholder="password"/>
+      <button (click)="login()" type="button" class="fadeIn fourth cursor-pointer mt-3">
+        <i class="fas fa-key fa-fw"></i>
+        Log In
+      </button>
+    </form>
+
+  </div>
+</div>

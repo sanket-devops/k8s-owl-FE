@@ -1,11 +1,14 @@
-<button type="button" class="btn btn-primary" (click)="AddCluster()">Add Cluster</button>
-
-<table class="table">
+<div class="first-div">
+  <button type="button" *ngIf="isAdmin" class="btn btn-success me-2" (click)="AddCluster()">Add Cluster</button>
+  <button type="button" class="btn btn-danger float-right me-2" (click)="logout()">Logout</button>
+</div>
+<div class="secound-div">
+  <table class="table">
     <thead>
       <tr>
         <th scope="col">#</th>
         <th scope="col">Group Name</th>
-        <th scope="col">Group Action</th>
+        <th scope="col" *ngIf="isAdmin">Group Action</th>
         <th scope="col">Cluster Name</th>
         <th scope="col">Env Name</th>
         <th scope="col">Action</th>
@@ -13,72 +16,96 @@
     </thead>
     <tbody *ngFor="let data of responseData ;let i =index">
         <tr>
-            <th [attr.rowspan]="clusterCount">{{i + 1}}</th>
-            <th [attr.rowspan]="clusterCount">{{data.groupName}}</th>
-            <th [attr.rowspan]="clusterCount">
-              <button type="button" (click)="editData(data)" class="btn btn-primary">Edit Group</button>
-              <button type="button" (click)="deleteData(data)" class="btn btn-danger">Delete Group</button>
-            </th>
-           </tr>
-           <tr *ngFor="let clustersData of data.clusters">
-            <td>{{clustersData.clusterName}}</td>
-            <td>{{clustersData.envName}}</td>
-            <td>
-                <button type="button" (click)="getCluster(data._id, clustersData._id , clustersData.clusterName)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clusterModal">Open Cluster</button>
-            </td>
-           </tr>
+          <th [attr.rowspan]="clusterCount">{{i + 1}}</th>
+          <th [attr.rowspan]="clusterCount">{{data.groupName}}</th>
+          <th [attr.rowspan]="clusterCount" *ngIf="isAdmin">
+            <button type="button" (click)="editData(data)" class="btn btn-success me-2">Edit Group</button>
+            <button type="button" (click)="deleteData(data)" class="btn btn-danger me-2">Delete Group</button>
+          </th>
+        </tr>
+        <tr *ngFor="let clustersData of data.clusters">
+          <td>{{clustersData.clusterName}}</td>
+          <td>{{clustersData.envName}}</td>
+          <td>
+            <button type="button" (click)="getCluster(data._id, clustersData._id , clustersData.clusterName)" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#clusterModal">Open Cluster</button>
+          </td>
+        </tr>
     </tbody>
   </table>
+</div>
   
-  <!-- Modal -->
-  <div class="modal fade" id="clusterModal" tabindex="-1" aria-labelledby="clusterModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title" id="clusterModalLabel">{{clusterName}}</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">APP</th>
-                    <th scope="col">PNAME</th>
-                    <th scope="col">STATUS</th>
-                    <!-- <th scope="col">RESTARTS</th> -->
-                    <th scope="col">NODE</th>
-                    <th scope="col">AGE</th>
-                    <!-- <th scope="col">REDAY</th> -->
-                    <th scope="col">Action</th>
-                  </tr>
-                </thead>
-                <tbody  *ngFor="let data of clusterData ;let i =index ;let l = count">
-                    <tr>
-                        <th [attr.rowspan]="l">{{i + 1}}</th>
-                        <th [attr.rowspan]="l">{{data.APP}}</th>
-                       </tr>
-                       <tr>
-                        <td>{{data.PNAME}}</td>
-                        <td>{{data.STATUS}}</td>
-                        <!-- <td>{{data.RESTARTS}}</td> -->
-                        <td>{{data.NODE}}</td>
-                        <td>{{data.AGE}}</td>
-                        <!-- <td>{{data.READY}}</td> -->
-                        <td>
-                            <button type="button" class="btn btn-primary" (click)="getPodLogs72H(data.PNAME)">V-72H</button>
-                            <button type="button" class="btn btn-primary" (click)="downloadLogs72H(data.PNAME)">
-                                <span class="spinner-border spinner-border-sm" role="status" id="spinner" aria-hidden="true"></span>
-                              <span class="visually-hidden">Loading...</span>
-                              D-72H</button>
-                        </td>
-                       </tr>
-                </tbody>
-              </table>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
+<!-- Modal -->
+<div class="modal fade" id="clusterModal" tabindex="-1" aria-labelledby="clusterModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title" id="clusterModalLabel">{{clusterName}}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">APP</th>
+              <th scope="col">PNAME</th>
+              <th scope="col">STATUS</th>
+              <!-- <th scope="col">RESTARTS</th> -->
+              <th scope="col">NODE</th>
+              <th scope="col">AGE</th>
+              <!-- <th scope="col">REDAY</th> -->
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+            <tbody *ngFor="let data of clusterData ;let i =index ;let l = count">
+              <tr>
+                <th [attr.rowspan]="l">{{i + 1}}</th>
+                <th [attr.rowspan]="l">{{data.APP}}</th>
+              </tr>
+                <tr>
+                  <td>{{data.PNAME}}</td>
+                  <td>{{data.STATUS}}</td>
+                  <!-- <td>{{data.RESTARTS}}</td> -->
+                  <td>{{data.NODE}}</td>
+                  <td>{{data.AGE}}</td>
+                  <!-- <td>{{data.READY}}</td> -->
+                  <td>
+                    <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle me-2" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <!-- <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="isVisible"></span> -->
+                        View Logs
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" (click)="getPodLogs(data.PNAME, '1h')">View 1H</a></li>
+                        <li><a class="dropdown-item" (click)="getPodLogs(data.PNAME, '2h')">View 2H</a></li>
+                        <li><a class="dropdown-item" (click)="getPodLogs(data.PNAME, '12h')">View 12H</a></li>
+                        <li><a class="dropdown-item" (click)="getPodLogs(data.PNAME, '24h')">View 24H</a></li>
+                        <li><a class="dropdown-item" (click)="getPodLogs(data.PNAME, '48h')">View 48H</a></li>
+                        <li><a class="dropdown-item" (click)="getPodLogs(data.PNAME, '72h')">View 72H</a></li>
+                        <li><a class="dropdown-item" (click)="getPodLogs(data.PNAME)">View Full Logs</a></li>
+                      </ul>
+                      <button class="btn btn-secondary dropdown-toggle me-2" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                        <!-- <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="isVisible"></span> -->
+                        Get Logs
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                        <li><a class="dropdown-item" (click)="downloadLogs(data.PNAME, '1h')">Download 1H</a></li>
+                        <li><a class="dropdown-item" (click)="downloadLogs(data.PNAME, '2h')">Download 2H</a></li>
+                        <li><a class="dropdown-item" (click)="downloadLogs(data.PNAME, '12h')">Download 12H</a></li>
+                        <li><a class="dropdown-item" (click)="downloadLogs(data.PNAME, '24h')">Download 24H</a></li>
+                        <li><a class="dropdown-item" (click)="downloadLogs(data.PNAME, '48h')">Download 48H</a></li>
+                        <li><a class="dropdown-item" (click)="downloadLogs(data.PNAME, '72h')">Download 72H</a></li>
+                        <li><a class="dropdown-item" (click)="downloadLogs(data.PNAME)">Download Full Logs</a></li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+            </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
+</div>
