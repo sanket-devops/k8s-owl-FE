@@ -14,7 +14,7 @@ RUN cd /app && npm set progress=false && npm cache clear --force && npm install
 # Copy project files into the docker image
 COPY .  /app
 
-RUN node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build --prod
+RUN node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build
 
 ### STAGE 2: Setup ###
 
