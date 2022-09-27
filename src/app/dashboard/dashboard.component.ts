@@ -14,7 +14,6 @@ import { saveAs } from 'file-saver';
 })
 
 export class DashboardComponent implements OnInit {
-  @ViewChild('viewDisable') viewDisable!: ElementRef;
   intervalId = <any>undefined;
   responseData: any = undefined;
   clusterData: any = undefined;
@@ -54,15 +53,6 @@ export class DashboardComponent implements OnInit {
     return this.login && this.login.t === 'user';
   }
 
-  // get isOperrv3() {
-  //   return this.login && this.login.t === 'user';
-  // }
-  async loadingOn() {
-    this.viewDisable.nativeElement.disabled = true;
-  }
-  async loadingOff() {
-    this.viewDisable.nativeElement.disabled = false;
-  }
   async getAll() {
     let res = [];
     try {
@@ -99,7 +89,6 @@ export class DashboardComponent implements OnInit {
     this.podLogs = undefined;
     this.podName = podName;
     let res = [];
-    this.loadingOn();
     try {
       if (h) {
         this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + h);
@@ -111,17 +100,15 @@ export class DashboardComponent implements OnInit {
     } catch (e) {
       console.log(e);
     }
-    this.loadingOff();
   }
   async downloadLogs(podName: string, h?: string) {
     this.podLogs = undefined;
     this.podName = podName;
     let res = [];
-    this.loadingOn();
     try {
       if (h) {
         this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + h);
-        saveAs.saveAs(this.podLogs, `${this.podName}.log`);
+        saveAs.saveAs(this.podLogs, `${this.podName}-(${h}).log`);
       } else {
         this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName);
         saveAs.saveAs(this.podLogs, `${this.podName}.log`);
@@ -129,7 +116,6 @@ export class DashboardComponent implements OnInit {
     } catch (e) {
       console.log(e);
     }
-    this.loadingOff();
   }
 
   AddCluster() {

@@ -1,6 +1,6 @@
 <div class="first-div">
-  <button type="button" *ngIf="isAdmin" class="btn btn-success me-2" (click)="AddCluster()">Add Cluster</button>
-  <button type="button" class="btn btn-danger float-right me-2" (click)="logout()">Logout</button>
+  <button type="button" *ngIf="isAdmin" class="btn btn-success float-start me-2" (click)="AddCluster()"><i class="fas fa-plus fa-fw"></i> Add</button>
+  <button type="button" class="btn btn-danger float-end me-2" (click)="logout()"><i class="fas fa-sign-out-alt fa-fw"></i> Logout</button>
 </div>
 <div class="secound-div">
   <table class="table table-striped table-hover">
@@ -19,15 +19,16 @@
           <th [attr.rowspan]="clusterCount">{{i + 1}}</th>
           <th [attr.rowspan]="clusterCount">{{data.groupName}}</th>
           <th [attr.rowspan]="clusterCount" *ngIf="isAdmin">
-            <button type="button" (click)="editData(data)" class="btn btn-success me-2">Edit Group</button>
-            <button type="button" (click)="deleteData(data)" class="btn btn-danger me-2">Delete Group</button>
+            <button type="button" (click)="editData(data)" class="btn btn-secondary me-2"><i class="fas fa-edit fa-fw"></i> Edit</button>
+            <button type="button" (click)="deleteData(data)" class="btn btn-danger me-2"><i class="fas fa-trash fa-fw"></i> Delete</button>
           </th>
         </tr>
         <tr *ngFor="let clustersData of data.clusters">
           <td>{{clustersData.clusterName}}</td>
           <td>{{clustersData.envName}}</td>
           <td>
-            <button type="button" (click)="getCluster(data._id, clustersData._id , clustersData.clusterName)" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#clusterModal">Open Cluster</button>
+            <button type="button" (click)="getCluster(data._id, clustersData._id , clustersData.clusterName)" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#clusterModal"><i class="fas fa-folder-open"></i> Cluster</button>
+            <img src="assets/img/k8s.svg" id="icon" alt="Logo"/>
           </td>
         </tr>
     </tbody>
@@ -47,34 +48,37 @@
         <table class="table table-hover">
           <thead>
             <tr>
+              <th scope="col"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>
               <th scope="col">#</th>
               <th scope="col">APP</th>
               <th scope="col">PNAME</th>
-              <th scope="col">STATUS</th>
-              <!-- <th scope="col">RESTARTS</th> -->
+              <!-- <th scope="col">STATUS</th> -->
+              <th scope="col">RESTARTS</th>
               <th scope="col">NODE</th>
               <th scope="col">AGE</th>
-              <!-- <th scope="col">REDAY</th> -->
+              <th scope="col">REDAY</th>
               <th scope="col">Action</th>
             </tr>
           </thead>
             <tbody *ngFor="let data of clusterData ;let i =index ;let l = count">
               <tr>
-                <th [attr.rowspan]="l">
-                  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                  =>{{i + 1}}</th>
+                <th [attr.rowspan]="l"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>
+                <th [attr.rowspan]="l">{{i + 1}}</th>
                 <th [attr.rowspan]="l">{{data.APP}}</th>
                   <td>{{data.PNAME}}</td>
-                  <td>{{data.STATUS}}</td>
-                  <!-- <td>{{data.RESTARTS}}</td> -->
+                  <!-- <td>{{data.STATUS}}</td> -->
+                  <td>{{data.RESTARTS}}</td>
                   <td>{{data.NODE}}</td>
                   <td>{{data.AGE}}</td>
-                  <!-- <td>{{data.READY}}</td> -->
+                  <td *ngIf="data.READY; else Error">Running</td>
+                  <ng-template #Error>
+                    <td>Error...</td>
+                  </ng-template>
                   <td>
                     <div class="dropdown">
-                      <button class="btn btn-secondary dropdown-toggle me-2" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                      <button class="btn btn-info dropdown-toggle me-2" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                         <!-- <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="isVisible"></span> -->
-                        View Logs
+                        <i class="fas fa-eye"></i> Logs
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                         <li><a class="dropdown-item" (click)="getPodLogs(data.PNAME, '1h')">View 1H</a></li>
@@ -85,9 +89,9 @@
                         <li><a class="dropdown-item" (click)="getPodLogs(data.PNAME, '72h')">View 72H</a></li>
                         <li><a class="dropdown-item" (click)="getPodLogs(data.PNAME)">View Full Logs</a></li>
                       </ul>
-                      <button class="btn btn-secondary dropdown-toggle me-2" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                      <button class="btn btn-success dropdown-toggle me-2" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
                         <!-- <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="isVisible"></span> -->
-                        Get Logs
+                        <i class="fas fa-download"></i> Logs
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
                         <li><a class="dropdown-item" (click)="downloadLogs(data.PNAME, '1h')">Download 1H</a></li>
