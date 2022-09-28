@@ -22,6 +22,8 @@ export class DashboardComponent implements OnInit {
   groupId: any = undefined;
   clusterId: any = undefined;
   podName: any = undefined;
+  appName: any = undefined;
+  appLogs: any = undefined;
   showPortal: boolean = false;
   clusterCount: number = 1;
   login = { u: '', p: '', t: '' };
@@ -85,7 +87,7 @@ export class DashboardComponent implements OnInit {
       console.log(e);
     }
   }
-  async getPodLogs(podName: string, h?: string) {
+  async viewPodLogs(podName: string, h?: string) {
     this.podLogs = undefined;
     this.podName = podName;
     let res = [];
@@ -101,7 +103,7 @@ export class DashboardComponent implements OnInit {
       console.log(e);
     }
   }
-  async downloadLogs(podName: string, h?: string) {
+  async downloadPodLogs(podName: string, h?: string) {
     this.podLogs = undefined;
     this.podName = podName;
     let res = [];
@@ -117,7 +119,38 @@ export class DashboardComponent implements OnInit {
       console.log(e);
     }
   }
-
+  async viewAppLogs(appName: string, lines?: string) {
+    this.appLogs = undefined;
+    this.appName = appName;
+    let res = [];
+    try {
+      if (lines) {
+        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.appName, '/' + lines);
+        window.open(this.appLogs, "", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
+      } else {
+        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.appName);
+        window.open(this.appLogs, "", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  async downloadAppLogs(appName: string, lines?: string) {
+    this.appLogs = undefined;
+    this.appName = appName;
+    let res = [];
+    try {
+      if (lines) {
+        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.appName, '/' + lines);
+        saveAs.saveAs(this.appLogs, `${this.appName}-(lines=${lines}).log`);
+      } else {
+        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.appName);
+        saveAs.saveAs(this.appLogs, `${this.appName}.log`);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
   AddCluster() {
     this.dashboardService.cloneObj = <any>undefined;
     this.dashboardService.editObj = <any>undefined;

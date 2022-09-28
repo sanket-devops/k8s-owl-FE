@@ -41,14 +41,21 @@ export class DashboardService {
   getPodsLogs(groupId: string, clusterId: string, podName: string, h?: string, populate?: string) {
     let urlLog;
     if (h) {
-      console.log("this is value of h" + h);
       urlLog = this.constantService.API_ENDPOINT + groupId + clusterId + podName + h;
     } else {
-      console.log("this is value of h from else" + h);
       urlLog = this.constantService.API_ENDPOINT + groupId + clusterId + podName;
     }
     // console.log(url);
     // return this.http.get(this.constantService.API_ENDPOINT + groupId + clusterId + podName + `${populate ? '?populate=' + populate : ''}`, {responseType: 'text'});
     return urlLog;
+  }
+  getAppLogs(groupId: string, clusterId: string, appName: string, lines?: string, populate?: string) {
+    let urlAppLog;
+    if (lines) {
+      urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + appName + lines + '/AppLogs';
+    } else {
+      urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + appName + '/AppLogs';
+    }
+    return urlAppLog;
   }
 }
