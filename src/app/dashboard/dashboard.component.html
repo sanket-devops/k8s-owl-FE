@@ -87,8 +87,8 @@
                         <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, '12h')">View 12H</a></li>
                         <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, '24h')">View 24H</a></li>
                         <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, '48h')">View 48H</a></li>
-                        <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, '72h')">View 72H</a></li>
-                        <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME)" *ngIf="isAdmin">View Full Logs</a></li>
+                        <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, '72h')">View 72H <i class="fas fa-exclamation-circle"></i></a></li>
+                        <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME)" *ngIf="isAdmin">View Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
                       </ul>
                       <button class="btn btn-success dropdown-toggle me-2" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
                         <!-- <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="isVisible"></span> -->
@@ -100,8 +100,8 @@
                         <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, '12h')">Download 12H</a></li>
                         <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, '24h')">Download 24H</a></li>
                         <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, '48h')">Download 48H</a></li>
-                        <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, '72h')">Download 72H</a></li>
-                        <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME)" *ngIf="isAdmin">Download Full Logs</a></li>
+                        <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, '72h')">Download 72H <i class="fas fa-exclamation-circle"></i></a></li>
+                        <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME)" *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
                       </ul>
                     </div>
                   </td>
@@ -116,8 +116,8 @@
                         <li><a class="dropdown-item" (click)="viewAppLogs(data.APP, '1000')">View 1000 Lines</a></li>
                         <li><a class="dropdown-item" (click)="viewAppLogs(data.APP, '10000')">View 10000 Lines</a></li>
                         <li><a class="dropdown-item" (click)="viewAppLogs(data.APP, '100000')">View 100000 Lines</a></li>
-                        <li><a class="dropdown-item" (click)="viewAppLogs(data.APP, '500000')">View 500000 Lines</a></li>
-                        <li><a class="dropdown-item" (click)="viewAppLogs(data.APP)" *ngIf="isAdmin">View Full App Logs</a></li>
+                        <li><a class="dropdown-item" (click)="viewAppLogs(data.APP, '1000000')">View 1000000 Lines <i class="fas fa-exclamation-circle"></i></a></li>
+                        <li><a class="dropdown-item" (click)="viewAppLogs(data.APP)" *ngIf="isAdmin">View Full App Logs <i class="fas fa-exclamation-circle"></i></a></li>
                       </ul>
                       <button class="btn btn-success dropdown-toggle me-2" type="button" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-expanded="false">
                         <!-- <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="isVisible"></span> -->
@@ -128,8 +128,8 @@
                         <li><a class="dropdown-item" (click)="downloadAppLogs(data.APP, '1000')">Download 1000 Lines</a></li>
                         <li><a class="dropdown-item" (click)="downloadAppLogs(data.APP, '10000')">Download 10000 Lines</a></li>
                         <li><a class="dropdown-item" (click)="downloadAppLogs(data.APP, '100000')">Download 100000 Lines</a></li>
-                        <li><a class="dropdown-item" (click)="downloadAppLogs(data.APP, '500000')">Download 500000 Lines</a></li>
-                        <li><a class="dropdown-item" (click)="downloadAppLogs(data.APP)" *ngIf="isAdmin">Download Full App Logs</a></li>
+                        <li><a class="dropdown-item" (click)="downloadAppLogs(data.APP, '1000000')">Download 1000000 Lines <i class="fas fa-exclamation-circle"></i></a></li>
+                        <li><a class="dropdown-item" (click)="downloadAppLogs(data.APP)" *ngIf="isAdmin">Download Full App Logs <i class="fas fa-exclamation-circle"></i></a></li>
                       </ul>
                     </div>
                   </td>
