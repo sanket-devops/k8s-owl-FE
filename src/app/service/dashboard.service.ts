@@ -15,6 +15,7 @@ export class DashboardService {
   groupId: any = undefined;
   clusterId: any = undefined;
   clusterData: any = undefined;
+  podName: any = undefined;
 
   constructor(private http: HttpClient, public constantService: ConstantService) {
   }
@@ -55,11 +56,11 @@ export class DashboardService {
         // console.log(data);
         // console.log(groupId , clusterId);
         this.clusterData = data;
-        // console.log(this.clusterData)
       });
     } catch (e) {
       console.log(e);
     }
+    return this.clusterData;
   }
 
   getPodsLogs(groupId: string, clusterId: string, podName: string, h?: string, populate?: string) {

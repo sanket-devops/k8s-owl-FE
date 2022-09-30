@@ -31,6 +31,7 @@ export class DashboardComponent implements OnInit {
   constructor(
     public constantService: ConstantService,
     public dashboardService: DashboardService,
+    
     public router: Router,
     private http: HttpClient,
 
@@ -77,8 +78,8 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.groupId = groupId;
     this.dashboardService.clusterId = clusterId;
     this.dashboardService.clusterName = clusterName;
-    this.dashboardService.poadName = groupId;
-    this.dashboardService.getCluster(groupId, clusterId, clusterName)
+    this.dashboardService.podName = groupId;
+    // this.dashboardService.getCluster(groupId, clusterId, clusterName)
     this.router.navigate(['clusterdashboard']);
   }
   AddCluster() {

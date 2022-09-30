@@ -17,20 +17,26 @@ export class ClusterDashboardComponent implements OnInit {
   appName: any = undefined;
   podLogs: any = undefined;
   podName: any = undefined;
-  clusterData: any = undefined;
+  groupId: any = undefined;
+  clusterId: any = undefined;
 
-  // isAdmin: any = this.dashboardComponent.isAdmin;
   login = { u: '', p: '', t: '' };
 
   constructor(
     public constantService: ConstantService,
     public dashboardService: DashboardService,
-    // public dashboardComponent: DashboardComponent,
     public router: Router,
     private http: HttpClient,
   ) { }
 
   ngOnInit(): void {
+    this.dashboardService.getCluster(this.dashboardService.groupId, this.dashboardService.clusterId, this.dashboardService.clusterName);
+    this.groupId = this.dashboardService.groupId;
+    this.clusterId = this.dashboardService.clusterId;
+    console.log(this.groupId, this.clusterId);
+  }
+  back() {
+    this.router.navigate(['dashboard']);
   }
   getClusterData() {
     
