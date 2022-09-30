@@ -11,6 +11,11 @@ export class DashboardService {
   // API_ENDPOINT: string = environment.API_BASE_URL + '/clusters/';
   cloneObj: Idashboard = <any>undefined;
   editObj: Idashboard = <any>undefined;
+  clusterName: any = undefined;
+  groupId: any = undefined;
+  clusterId: any = undefined;
+  clusterData: any = undefined;
+
   constructor(private http: HttpClient, public constantService: ConstantService) {
   }
 
@@ -36,6 +41,25 @@ export class DashboardService {
   }
   getPods(groupId: string, clusterId: string, populate?: string) {
     return this.http.get<Partial<Idashboard>>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/pods' + `${populate ? '?populate=' + populate : ''}`));
+  }
+
+  async getCluster(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
+    this.clusterData = undefined;
+    this.clusterName = clusterName;
+    this.groupId = groupId;
+    this.clusterId = clusterId;
+    let res = [];
+    // console.log(groupId , clusterId)
+    try {
+      res = <any>this.getPods('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
+        // console.log(data);
+        // console.log(groupId , clusterId);
+        this.clusterData = data;
+        // console.log(this.clusterData)
+      });
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   getPodsLogs(groupId: string, clusterId: string, podName: string, h?: string, populate?: string) {

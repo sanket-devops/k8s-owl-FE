@@ -16,7 +16,7 @@ import { saveAs } from 'file-saver';
 export class DashboardComponent implements OnInit {
   intervalId = <any>undefined;
   responseData: any = undefined;
-  clusterData: any = undefined;
+  // clusterData: any = undefined;
   clusterName: any = undefined;
   podLogs: any = undefined;
   groupId: any = undefined;
@@ -72,84 +72,14 @@ export class DashboardComponent implements OnInit {
       console.log(e);
     }
   }
-  async getCluster(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
-    this.clusterData = undefined;
-    this.clusterName = clusterName;
-    this.groupId = groupId;
-    this.clusterId = clusterId;
-    let res = [];
-    try {
-      res = <any>this.dashboardService.getPods('/' + groupId, '/' + clusterId).subscribe((data: any) => {
-        // console.log(data);
-        this.clusterData = data;
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  async viewPodLogs(podName: string, h?: string) {
-    this.podLogs = undefined;
-    this.podName = podName;
-    let res = [];
-    try {
-      if (h) {
-        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + h);
-        window.open(this.podLogs, "", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
-      } else {
-        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName);
-        window.open(this.podLogs, "", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  async downloadPodLogs(podName: string, h?: string) {
-    this.podLogs = undefined;
-    this.podName = podName;
-    let res = [];
-    try {
-      if (h) {
-        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + h);
-        saveAs.saveAs(this.podLogs, `${this.podName}-(${h}).log`);
-      } else {
-        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName);
-        saveAs.saveAs(this.podLogs, `${this.podName}.log`);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  async viewAppLogs(appName: string, lines?: string) {
-    this.appLogs = undefined;
-    this.appName = appName;
-    let res = [];
-    try {
-      if (lines) {
-        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.appName, '/' + lines);
-        window.open(this.appLogs, "", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
-      } else {
-        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.appName);
-        window.open(this.appLogs, "", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  async downloadAppLogs(appName: string, lines?: string) {
-    this.appLogs = undefined;
-    this.appName = appName;
-    let res = [];
-    try {
-      if (lines) {
-        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.appName, '/' + lines);
-        saveAs.saveAs(this.appLogs, `${this.appName}-(lines=${lines}).log`);
-      } else {
-        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.appName);
-        saveAs.saveAs(this.appLogs, `${this.appName}.log`);
-      }
-    } catch (e) {
-      console.log(e);
-    }
+  
+  ClusterDashboard(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
+    this.dashboardService.groupId = groupId;
+    this.dashboardService.clusterId = clusterId;
+    this.dashboardService.clusterName = clusterName;
+    this.dashboardService.poadName = groupId;
+    this.dashboardService.getCluster(groupId, clusterId, clusterName)
+    this.router.navigate(['clusterdashboard']);
   }
   AddCluster() {
     this.dashboardService.cloneObj = <any>undefined;
