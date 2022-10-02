@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { DashboardService } from '../service/dashboard.service';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -14,6 +14,8 @@ import { saveAs } from 'file-saver';
 })
 
 export class DashboardComponent implements OnInit {
+  @Input()
+  
   intervalId = <any>undefined;
   responseData: any = undefined;
   // clusterData: any = undefined;
@@ -78,7 +80,7 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.groupId = groupId;
     this.dashboardService.clusterId = clusterId;
     this.dashboardService.clusterName = clusterName;
-    this.dashboardService.podName = groupId;
+    this.dashboardService.podName = podName;
     // this.dashboardService.getCluster(groupId, clusterId, clusterName)
     this.router.navigate(['clusterdashboard']);
   }

@@ -47,6 +47,7 @@ export class DashboardService {
   async getCluster(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
     this.clusterData = undefined;
     this.clusterName = clusterName;
+    this.podName = podName;
     this.groupId = groupId;
     this.clusterId = clusterId;
     let res = [];
