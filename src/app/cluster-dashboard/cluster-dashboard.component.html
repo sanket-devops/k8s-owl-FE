@@ -19,7 +19,7 @@
                 <th scope="col">App Logs Action</th>
             </tr>
         </thead>
-        <tbody *ngFor="let data of this.dashboardService.clusterData;let i =index ;let l = count">
+        <tbody *ngFor="let data of this.clusterData;let i =index ;let l = count">
             <tr>
                 <th [attr.rowspan]="l"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
                 </th>

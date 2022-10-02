@@ -5,7 +5,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Idashboard, ICluster } from '../interface/Idashboard';
 import { ConstantService } from '../service/constant.service';
 import { saveAs } from 'file-saver';
-// import { DashboardComponent } from '../dashboard/dashboard.component';
 
 @Component({
   selector: 'app-cluster-dashboard',
@@ -20,6 +19,7 @@ export class ClusterDashboardComponent implements OnInit {
   groupId: any = undefined;
   clusterId: any = undefined;
   clusterName: any = undefined;
+  clusterData: any = undefined;
 
   login = { u: '', p: '', t: '' };
 
@@ -31,12 +31,7 @@ export class ClusterDashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.dashboardService.getCluster(this.dashboardService.groupId, this.dashboardService.clusterId, this.dashboardService.clusterName);
-    this.groupId = this.dashboardService.groupId;
-    this.clusterId = this.dashboardService.clusterId;
-    this.clusterName = this.dashboardService.clusterName;
-    this.podName = this.dashboardService.podName;
-    // console.log(this.groupId, this.clusterId, this.clusterName, this.podName);
+    this.getCluster(this.dashboardService.groupId, this.dashboardService.clusterId, this.dashboardService.clusterName);
   }
   back() {
     this.router.navigate(['dashboard']);
@@ -52,6 +47,22 @@ export class ClusterDashboardComponent implements OnInit {
     return this.login && this.login.t === 'user';
   }
 
+  async getCluster(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
+    this.clusterData = undefined;
+    this.clusterName = clusterName;
+    this.podName = podName;
+    this.groupId = groupId;
+    this.clusterId = clusterId;
+    let res = [];
+    try {
+      res = <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
+        this.clusterData = data;
+      });
+    } catch (e) {
+      console.log(e);
+    }
+    return this.clusterData;
+  }
   async viewPodLogs(podName: string, h?: string) {
     this.podLogs = undefined;
     this.podName = podName;

@@ -44,26 +44,6 @@ export class DashboardService {
     return this.http.get<Partial<Idashboard>>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/pods' + `${populate ? '?populate=' + populate : ''}`));
   }
 
-  async getCluster(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
-    this.clusterData = undefined;
-    this.clusterName = clusterName;
-    this.podName = podName;
-    this.groupId = groupId;
-    this.clusterId = clusterId;
-    let res = [];
-    // console.log(groupId , clusterId)
-    try {
-      res = <any>this.getPods('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
-        // console.log(data);
-        // console.log(groupId , clusterId);
-        this.clusterData = data;
-      });
-    } catch (e) {
-      console.log(e);
-    }
-    return this.clusterData;
-  }
-
   getPodsLogs(groupId: string, clusterId: string, podName: string, h?: string, populate?: string) {
     let urlLog;
     if (h) {
