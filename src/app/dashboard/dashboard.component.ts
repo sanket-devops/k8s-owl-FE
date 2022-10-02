@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { DashboardService } from '../service/dashboard.service';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -33,7 +34,7 @@ export class DashboardComponent implements OnInit {
   constructor(
     public constantService: ConstantService,
     public dashboardService: DashboardService,
-    
+    private title: Title,
     public router: Router,
     private http: HttpClient,
 
@@ -59,6 +60,7 @@ export class DashboardComponent implements OnInit {
   }
 
   async getAll() {
+    this.title.setTitle("k8s-owl");
     let res = [];
     try {
       res = <any>this.dashboardService.getClusters().subscribe((data: any) => {
@@ -81,6 +83,7 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.clusterId = clusterId;
     this.dashboardService.clusterName = clusterName;
     this.dashboardService.podName = podName;
+    // window.open('/clusterdashboard')
     // this.dashboardService.getCluster(groupId, clusterId, clusterName)
     this.router.navigate(['clusterdashboard']);
   }

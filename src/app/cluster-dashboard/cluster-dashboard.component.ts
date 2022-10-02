@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { DashboardService } from '../service/dashboard.service';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -28,7 +29,10 @@ export class ClusterDashboardComponent implements OnInit {
     public dashboardService: DashboardService,
     public router: Router,
     private http: HttpClient,
-  ) { }
+    private title: Title,
+  ) {
+    
+   }
 
   ngOnInit(): void {
     this.getCluster(this.dashboardService.groupId, this.dashboardService.clusterId, this.dashboardService.clusterName);
@@ -36,6 +40,9 @@ export class ClusterDashboardComponent implements OnInit {
   back() {
     this.router.navigate(['dashboard']);
   }
+  // close() {
+  //   window.close();
+  // }
   getClusterData() {
     
   }
@@ -53,6 +60,7 @@ export class ClusterDashboardComponent implements OnInit {
     this.podName = podName;
     this.groupId = groupId;
     this.clusterId = clusterId;
+    this.title.setTitle(`${clusterName}`);
     let res = [];
     try {
       res = <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {

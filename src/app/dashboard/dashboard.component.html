@@ -1,7 +1,11 @@
-<div class="first-div">
+<nav class="navbar navbar-light bg-light">
   <button type="button" *ngIf="isAdmin" class="btn btn-success float-start me-2" (click)="AddCluster()"><i class="fas fa-plus fa-fw"></i> Add</button>
+  <a class="navbar-brand" href="#">
+    <img src="assets/img/k8s.svg" width="80" height="50" alt="">
+  </a>
   <button type="button" class="btn btn-danger float-end me-2" (click)="logout()"><i class="fas fa-sign-out-alt fa-fw"></i> Logout</button>
-</div>
+</nav>
+
 <div class="secound-div">
   <table class="table table-striped table-hover">
     <thead>
