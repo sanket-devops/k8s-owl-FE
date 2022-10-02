@@ -19,7 +19,8 @@ export class ConstantService {
     {u: 'operr-v3', p: 'Rrepo$2022%3V', t: 'user'},
     {u: 'bynfor-v3', p: 'Rofnyb$2022%3V', t: 'user'},
     {u: 'parking-v2', p: 'Gnikrap$2022%2V', t: 'user'},
-
+    {u: 'operrwork-v2', p: 'Krowrrepo$2022%2V', t: 'user'},
+    {u: 'billing-v1', p: 'Gnillib$2022%1V', t: 'user'},
   ];
 
 
