@@ -14,9 +14,12 @@ export class ConstantService {
   k = '\x6A\x40\x6D\x65\x73\x62\x6F\x6E\x64';
 
   vu = [
-    {u: 'admin', p: '123@Moon', t: 'admin'},
-    {u: 'owl', p: 'Owl@1234', t: 'user'},
-    {u: 'operr', p: 'Operr@123', t: 'user'},
+    {u: 'admin', p: 'Nimda$2022%letaP', t: 'admin'},
+    {u: 'user', p: 'Resu$2022%nooS', t: 'user'},
+    {u: 'operr-v3', p: 'Rrepo$2022%3V', t: 'user'},
+    {u: 'bynfor-v3', p: 'Rofnyb$2022%3V', t: 'user'},
+    {u: 'parking-v2', p: 'Gnikrap$2022%2V', t: 'user'},
+
   ];
 
 

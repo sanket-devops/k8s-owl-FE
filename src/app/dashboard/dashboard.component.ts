@@ -29,6 +29,8 @@ export class DashboardComponent implements OnInit {
   appLogs: any = undefined;
   showPortal: boolean = false;
   clusterCount: number = 1;
+  user:string = "user";
+  clusterArr = <any>[];
   login = { u: '', p: '', t: '' };
 
   constructor(
@@ -45,6 +47,7 @@ export class DashboardComponent implements OnInit {
         this.constantService.getDecryptedData(localStorage.getItem('token'))
       );
       let isValidUser = this.constantService.isValidUser(this.login);
+      this.user = this.login.u;
       if (!isValidUser) return this.logout();
     } catch (error) {
       return this.logout();
@@ -65,11 +68,18 @@ export class DashboardComponent implements OnInit {
     try {
       res = <any>this.dashboardService.getClusters().subscribe((data: any) => {
         this.responseData = data.data;
-        // console.log(this.responseData);
+        // console.log(this.user)
         for (let item = 0; item < this.responseData.length; item++) {
+          if (this.user === "admin" || this.user === "user"){
+            this.clusterArr = this.responseData
+          }else{
+            if (this.user === this.responseData[item].groupName){
+              this.clusterArr.push(this.responseData[item])
+              // console.log(this.responseData[item])
+            }
+          }
           for (let count = 0; count < this.responseData[item].clusters.length; count++) {
             this.clusterCount = count+count;
-            
           }
         }
       });
