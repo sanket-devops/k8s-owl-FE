@@ -11,6 +11,12 @@ export class DashboardService {
   // API_ENDPOINT: string = environment.API_BASE_URL + '/clusters/';
   cloneObj: Idashboard = <any>undefined;
   editObj: Idashboard = <any>undefined;
+  clusterName: any = undefined;
+  groupId: any = undefined;
+  clusterId: any = undefined;
+  clusterData: any = undefined;
+  podName: any = undefined;
+
   constructor(private http: HttpClient, public constantService: ConstantService) {
   }
 

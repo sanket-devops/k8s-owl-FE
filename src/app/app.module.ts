@@ -14,6 +14,7 @@ import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { LoginComponent } from './login/login.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ClusterDashboardComponent } from './cluster-dashboard/cluster-dashboard.component';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     AppComponent,
     DashboardComponent,
     AddhostFormComponent,
-    LoginComponent
+    LoginComponent,
+    ClusterDashboardComponent
   ],
   imports: [
     BrowserModule,
