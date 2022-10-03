@@ -15,7 +15,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { LoginComponent } from './login/login.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ClusterDashboardComponent } from './cluster-dashboard/cluster-dashboard.component';
-
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -35,7 +35,7 @@ import { ClusterDashboardComponent } from './cluster-dashboard/cluster-dashboard
     MatInputModule,
     BrowserAnimationsModule,
     FontAwesomeModule,
-
+    MatSlideToggleModule,
   ],
   providers: [ConstantService, DashboardService],
   bootstrap: [AppComponent]

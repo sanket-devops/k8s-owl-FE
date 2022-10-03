@@ -8,6 +8,10 @@ import { ConstantService } from '../service/constant.service';
 import { saveAs } from 'file-saver';
 
 
+declare let toastr: any;
+declare let $: any;
+declare let _: any;
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -17,7 +21,6 @@ import { saveAs } from 'file-saver';
 export class DashboardComponent implements OnInit {
   @Input()
   
-  intervalId = <any>undefined;
   responseData: any = undefined;
   // clusterData: any = undefined;
   clusterName: any = undefined;
@@ -32,6 +35,12 @@ export class DashboardComponent implements OnInit {
   user:string = "user";
   clusterArr = <any>[];
   login = { u: '', p: '', t: '' };
+  isChecked = true;
+  intervalTime: number = 60;
+  intervalId = <any>undefined;
+  reloadInterval = <any>undefined;
+  timer: number = this.intervalTime;
+  loading: boolean = false;
 
   constructor(
     public constantService: ConstantService,
@@ -53,6 +62,22 @@ export class DashboardComponent implements OnInit {
       return this.logout();
     }
     this.getAll();
+
+    this.intervalId = setInterval(() => {
+      if (this.isChecked) {
+        this.timer--;
+        $('.timer').text(this.timer);
+        if (this.timer === 0) {
+          this.loading = true;
+          this.getAll();
+          this.loading = false;
+          toastr.success('Reload Data Successfully!');
+          this.timer = this.intervalTime;
+        }
+      } else {
+        toastr.warning('Auto Reload Data Off!');
+      }
+    }, 1000);
   }
   get isAdmin() {
     return this.login && this.login.t === 'admin';
@@ -88,6 +113,16 @@ export class DashboardComponent implements OnInit {
     }
   }
   
+  async autoReload(event?: any) {
+    this.isChecked != this.isChecked
+  }
+  async latestPull(event?: any) {
+    // let res = await ConstantService.get_promise(this.dashboardservice.latestPull());
+    this.loading = true;
+    await this.getAll();
+    this.loading = false;
+  }
+
   ClusterDashboard(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
     this.dashboardService.groupId = groupId;
     this.dashboardService.clusterId = clusterId;
@@ -114,7 +149,7 @@ export class DashboardComponent implements OnInit {
       )
     ) {
       let resp = await this.dashboardService.delete(<any>item._id).toPromise();
-      // toastr.success('Item deleted successfully : ' + item.hostName);
+      toastr.success('Item deleted successfully : ' + item.groupName);
       await this.getAll();
     }
   }

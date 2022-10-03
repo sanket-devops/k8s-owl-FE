@@ -7,6 +7,10 @@ import { Idashboard, ICluster } from '../interface/Idashboard';
 import { ConstantService } from '../service/constant.service';
 import { saveAs } from 'file-saver';
 
+declare let toastr: any;
+declare let $: any;
+declare let _: any;
+
 @Component({
   selector: 'app-cluster-dashboard',
   templateUrl: './cluster-dashboard.component.html',
@@ -21,8 +25,13 @@ export class ClusterDashboardComponent implements OnInit {
   clusterId: any = undefined;
   clusterName: any = undefined;
   clusterData: any = undefined;
-
   login = { u: '', p: '', t: '' };
+  isChecked = true;
+  intervalTime: number = 60;
+  intervalId = <any>undefined;
+  reloadInterval = <any>undefined;
+  timer: number = this.intervalTime;
+  loading: boolean = false;
 
   constructor(
     public constantService: ConstantService,
@@ -36,17 +45,28 @@ export class ClusterDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCluster(this.dashboardService.groupId, this.dashboardService.clusterId, this.dashboardService.clusterName);
+    
+    this.intervalId = setInterval(() => {
+      if (this.isChecked) {
+        this.timer--;
+        $('.timer').text(this.timer);
+        if (this.timer === 0) {
+          this.loading = true;
+          this.getCluster(this.dashboardService.groupId, this.dashboardService.clusterId, this.dashboardService.clusterName);
+          this.loading = false;
+          toastr.success('Reload Data Successfully!');
+          this.timer = this.intervalTime;
+        }
+      } else {
+        toastr.warning('Auto Reload Data Off!');
+      }
+    }, 1000);
+
   }
   back() {
     this.router.navigate(['dashboard']);
   }
-  // close() {
-  //   window.close();
-  // }
-  getClusterData() {
-    
-  }
-  get isAdmin() {
+ isAdmin() {
     return this.login && this.login.t === 'admin';
   }
 
@@ -134,6 +154,16 @@ export class ClusterDashboardComponent implements OnInit {
     } catch (e) {
       console.log(e);
     }
+  }
+  async autoReload(event?: any) {
+    this.isChecked != this.isChecked
+  }
+
+  async latestPull(event?: any) {
+    // let res = await ConstantService.get_promise(this.dashboardservice.latestPull());
+    this.loading = true;
+    await this.getCluster(this.dashboardService.groupId, this.dashboardService.clusterId, this.dashboardService.clusterName);
+    this.loading = false;
   }
 
 }
