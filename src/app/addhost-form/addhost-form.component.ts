@@ -15,6 +15,7 @@ declare let toastr: any;
 export class AddhostFormComponent implements OnInit {
   form: FormGroup;
   data: Idashboard = this.getEmptyTable();
+  GroupName: string = '';
 
   constructor(public router: Router,
               public formbuilder: FormBuilder,
@@ -28,7 +29,10 @@ export class AddhostFormComponent implements OnInit {
       let fillObj = this.dashboardservice.editObj || this.dashboardservice.cloneObj;
       this.form.patchValue(fillObj);
       this.data.clusters = fillObj.clusters;
-
+      this.GroupName = fillObj.groupName;
+      console.log(fillObj);
+      console.log(this.data)
+      console.log(this.data.clusters)
     }
   }
 
