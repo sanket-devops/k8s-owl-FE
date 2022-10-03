@@ -72,11 +72,11 @@ export class AddhostFormComponent implements OnInit {
     try {
       if (formValue._id) {
         let response = await ConstantService.get_promise(this.dashboardservice.update(formValue));
-        // toastr.success('Data updated.');
+        toastr.success('Data updated.');
       } else {
         delete formValue._id;
         let response: Idashboard = await ConstantService.get_promise(this.dashboardservice.save(formValue));
-        // toastr.success('Data saved.');
+        toastr.success('Data saved.');
         this.form.reset();
       }
       this.back();

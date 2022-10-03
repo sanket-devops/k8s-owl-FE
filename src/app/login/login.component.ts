@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {ConstantService} from '../service/constant.service';
 
-// declare let toastr: any;
+declare let toastr: any;
 
 @Component({
   selector: 'app-login',
@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['dashboard']);
       }
     }
-    // if (!found) toastr.error(this.m);
+    if (!found) toastr.error(this.m);
   }
 
 }
