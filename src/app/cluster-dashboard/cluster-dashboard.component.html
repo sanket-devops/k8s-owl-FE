@@ -2,12 +2,12 @@
     <a class="navbar-brand" href="#">
         <img src="assets/img/k8s.svg" width="80" height="50" alt="">
     </a>
-    <button type="button" class="btn btn-secondary ml3" (click)="latestPull($event)"><i class="fas fa-sync-alt fa-fw"></i> Reload in <span class="timer">{{timer}}</span></button>
+    <button type="button" class="btn btn-secondary me-2" (click)="latestPull($event)"><i class="fas fa-sync-alt fa-fw"></i> Reload in <span class="timer">{{timer}}</span></button>
     <h1>{{clusterName}}</h1>
-    <button type="button" class="btn btn-secondary ml3">
+    <button type="button" class="btn btn-secondary me-2">
       <mat-slide-toggle [(ngModel)]="isChecked" name="check" (change)="autoReload($event)"><i class="fas fa-sync-alt fa-fw"></i> Auto Reload 60/s: {{isChecked}}</mat-slide-toggle>
     </button>
-    <button type="button" class="btn btn-primary ml3" (click)="back()"><i class="fas fa-project-diagram"></i> Dashboard</button>
+    <button type="button" class="btn btn-primary float-end me-2" (click)="back()"><i class="fas fa-project-diagram"></i> Dashboard</button>
 </nav>
   
 <div class="third-div">
