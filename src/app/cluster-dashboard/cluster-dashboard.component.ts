@@ -160,7 +160,6 @@ export class ClusterDashboardComponent implements OnInit {
   }
 
   async latestPull(event?: any) {
-    // let res = await ConstantService.get_promise(this.dashboardservice.latestPull());
     this.loading = true;
     await this.getCluster(this.dashboardService.groupId, this.dashboardService.clusterId, this.dashboardService.clusterName);
     this.loading = false;

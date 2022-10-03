@@ -93,14 +93,12 @@ export class DashboardComponent implements OnInit {
     try {
       res = <any>this.dashboardService.getClusters().subscribe((data: any) => {
         this.responseData = data.data;
-        // console.log(this.user)
         for (let item = 0; item < this.responseData.length; item++) {
           if (this.user === "admin" || this.user === "user"){
             this.clusterArr = this.responseData
           }else{
             if (this.user === this.responseData[item].groupName){
               this.clusterArr.push(this.responseData[item])
-              // console.log(this.responseData[item])
             }
           }
           for (let count = 0; count < this.responseData[item].clusters.length; count++) {
@@ -117,7 +115,6 @@ export class DashboardComponent implements OnInit {
     this.isChecked != this.isChecked
   }
   async latestPull(event?: any) {
-    // let res = await ConstantService.get_promise(this.dashboardservice.latestPull());
     this.loading = true;
     await this.getAll();
     this.loading = false;
@@ -128,8 +125,6 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.clusterId = clusterId;
     this.dashboardService.clusterName = clusterName;
     this.dashboardService.podName = podName;
-    // window.open('/clusterdashboard')
-    // this.dashboardService.getCluster(groupId, clusterId, clusterName)
     this.router.navigate(['clusterdashboard']);
   }
   AddCluster() {
