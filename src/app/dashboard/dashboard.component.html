@@ -4,7 +4,7 @@
   </a>
   <button type="button" *ngIf="isAdmin" class="btn btn-success float-start me-2" (click)="AddCluster()"><i class="fas fa-plus fa-fw"></i> Add</button>
   <button type="button" class="btn btn-secondary ml3" (click)="latestPull($event)"><i class="fas fa-sync-alt fa-fw"></i> Reload in <span class="timer">{{timer}}</span></button>
-  <button type="button" class="btn btn-primary ml3">
+  <button type="button" class="btn btn-secondary ml3">
     <mat-slide-toggle [(ngModel)]="isChecked" name="check" (change)="autoReload($event)"><i class="fas fa-sync-alt fa-fw"></i> Auto Reload 60/s: {{isChecked}}</mat-slide-toggle>
   </button>
   <button type="button" class="btn btn-danger float-end me-2" (click)="logout()"><i class="fas fa-sign-out-alt fa-fw"></i> Logout</button>
