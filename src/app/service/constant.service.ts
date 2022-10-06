@@ -21,6 +21,7 @@ export class ConstantService {
     {u: 'parking-v2', p: 'Gnikrap$2022%2V', t: 'user'},
     {u: 'operrwork-v2', p: 'Krowrrepo$2022%2V', t: 'user'},
     {u: 'billing-v1', p: 'Gnillib$2022%1V', t: 'user'},
+    {u: 'operrtel-v1', p: 'Letrrepo$2022%1V', t: 'user'},
   ];
 
 
