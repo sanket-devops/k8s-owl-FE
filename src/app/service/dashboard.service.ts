@@ -22,23 +22,25 @@ export class DashboardService {
 
   save(data: Partial<Idashboard>) {
     return this.http.post(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/cluster-save'), {
-      data: data
+      data: this.constantService.getEncryptedData(data)
     });
   }
   update(data: Partial<Idashboard>) {
     return this.http.put(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/update'),
       {
-        data: data,
-        id: data._id,
+        data: this.constantService.getEncryptedData(data),
+        id: this.constantService.getEncryptedData(data._id),
       }
     );
   }
   delete(_id: string) {
     return this.http.post(this.constantService.get_api_url(this.constantService.API_ENDPOINT + `/cluster-delete`), {data: _id});
   }
-  getClusters() {
-    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT),
-    )
+  async getClusters() {
+    let resp: any;
+    resp = await this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT)).toPromise();
+
+    return JSON.parse(this.constantService.getDecryptedData(resp.data));
   }
   getPods(groupId: string, clusterId: string, populate?: string) {
     return this.http.get<Partial<Idashboard>>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/pods' + `${populate ? '?populate=' + populate : ''}`));

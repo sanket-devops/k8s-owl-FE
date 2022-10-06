@@ -89,10 +89,10 @@ export class DashboardComponent implements OnInit {
 
   async getAll() {
     this.title.setTitle("k8s-owl");
-    let res = [];
+    let res;
     try {
-      res = <any>this.dashboardService.getClusters().subscribe((data: any) => {
-        this.responseData = data.data;
+      res = <any>await this.dashboardService.getClusters();
+        this.responseData = res;
         for (let item = 0; item < this.responseData.length; item++) {
           if (this.user === "admin" || this.user === "user"){
             this.clusterArr = this.responseData
@@ -102,10 +102,9 @@ export class DashboardComponent implements OnInit {
             }
           }
           for (let count = 0; count < this.responseData[item].clusters.length; count++) {
-            this.clusterCount = (count*count)+1;
+            this.clusterCount = (count*count)*100;
           }
         }
-      });
     } catch (e) {
       console.log(e);
     }
