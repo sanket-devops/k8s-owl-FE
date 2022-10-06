@@ -89,7 +89,9 @@ export class DashboardComponent implements OnInit {
 
   async getAll() {
     this.title.setTitle("k8s-owl");
-    let res;
+    let res = [];
+    this.responseData = undefined;
+    this.clusterArr = <any>[];
     try {
       res = <any>await this.dashboardService.getClusters();
         this.responseData = res;
