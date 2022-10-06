@@ -102,7 +102,7 @@ export class DashboardComponent implements OnInit {
             }
           }
           for (let count = 0; count < this.responseData[item].clusters.length; count++) {
-            this.clusterCount = count+count;
+            this.clusterCount = (count*count)+1;
           }
         }
       });
