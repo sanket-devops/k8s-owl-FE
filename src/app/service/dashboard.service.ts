@@ -39,7 +39,6 @@ export class DashboardService {
   async getClusters() {
     let resp: any;
     resp = await this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT)).toPromise();
-
     return JSON.parse(this.constantService.getDecryptedData(resp.data));
   }
   getPods(groupId: string, clusterId: string, populate?: string) {
