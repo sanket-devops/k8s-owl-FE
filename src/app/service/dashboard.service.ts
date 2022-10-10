@@ -37,12 +37,11 @@ export class DashboardService {
     return this.http.post(this.constantService.get_api_url(this.constantService.API_ENDPOINT + `/cluster-delete`), {data: _id});
   }
   async getClusters() {
-    let resp: any;
-    resp = await this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT)).toPromise();
+    let resp = <any>await this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT)).toPromise();
     return JSON.parse(this.constantService.getDecryptedData(resp.data));
   }
   getPods(groupId: string, clusterId: string, populate?: string) {
-    return this.http.get<Partial<Idashboard>>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/pods' + `${populate ? '?populate=' + populate : ''}`));
+    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/pods' + `${populate ? '?populate=' + populate : ''}`));
   }
 
   getPodsLogs(groupId: string, clusterId: string, podName: string, h?: string, populate?: string) {
@@ -64,5 +63,8 @@ export class DashboardService {
       urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + appName + '/AppLogs';
     }
     return urlAppLog;
+  }
+  deletePod(groupId: string, clusterId: string, podName: string, populate?: string) {
+    return this.http.delete(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + podName + '/deletePod' + `${populate ? '?populate=' + populate : ''}`));
   }
 }

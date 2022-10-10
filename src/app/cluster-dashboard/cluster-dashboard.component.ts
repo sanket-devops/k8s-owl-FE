@@ -66,7 +66,8 @@ export class ClusterDashboardComponent implements OnInit {
   back() {
     this.router.navigate(['dashboard']);
   }
- isAdmin() {
+  
+  get isAdmin() {
     return this.login && this.login.t === 'admin';
   }
 
@@ -94,7 +95,6 @@ export class ClusterDashboardComponent implements OnInit {
   async viewPodLogs(podName: string, h?: string) {
     this.podLogs = undefined;
     this.podName = podName;
-    let res = [];
     try {
       if (h) {
         this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + h);
@@ -110,7 +110,6 @@ export class ClusterDashboardComponent implements OnInit {
   async downloadPodLogs(podName: string, h?: string) {
     this.podLogs = undefined;
     this.podName = podName;
-    let res = [];
     try {
       if (h) {
         this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + h);
@@ -126,7 +125,6 @@ export class ClusterDashboardComponent implements OnInit {
   async viewAppLogs(appName: string, lines?: string) {
     this.appLogs = undefined;
     this.appName = appName;
-    let res = [];
     try {
       if (lines) {
         this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.appName, '/' + lines);
@@ -142,7 +140,6 @@ export class ClusterDashboardComponent implements OnInit {
   async downloadAppLogs(appName: string, lines?: string) {
     this.appLogs = undefined;
     this.appName = appName;
-    let res = [];
     try {
       if (lines) {
         this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.appName, '/' + lines);
@@ -155,6 +152,18 @@ export class ClusterDashboardComponent implements OnInit {
       console.log(e);
     }
   }
+  async deletePod(podName: string) {
+    this.podName = podName;
+    if (
+      window.confirm(
+        `Do you want to delete "Pod" : ${this.podName} ?`
+      )
+    ) {
+      let resp = await this.dashboardService.deletePod('/' + this.groupId, '/' + this.clusterId, '/' + this.podName).toPromise();
+      toastr.success(resp) && await this.latestPull();
+    }
+  }
+
   async autoReload(event?: any) {
     this.isChecked != this.isChecked
   }
