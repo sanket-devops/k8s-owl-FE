@@ -67,11 +67,11 @@ export class ClusterDashboardComponent implements OnInit {
     this.router.navigate(['dashboard']);
   }
   
-  get isAdmin() {
+  isAdmin() {
     return this.login && this.login.t === 'admin';
   }
 
-  get isUser() {
+  isUser() {
     return this.login && this.login.t === 'user';
   }
 
