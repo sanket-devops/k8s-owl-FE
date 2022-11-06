@@ -21,6 +21,7 @@ export class ClusterDashboardComponent implements OnInit {
   appName: any = undefined;
   podLogs: any = undefined;
   podName: any = undefined;
+  deploymentName: any = undefined;
   groupId: any = undefined;
   clusterId: any = undefined;
   clusterName: any = undefined;
@@ -40,12 +41,12 @@ export class ClusterDashboardComponent implements OnInit {
     private http: HttpClient,
     private title: Title,
   ) {
-    
-   }
+
+  }
 
   ngOnInit(): void {
     this.getCluster(this.dashboardService.groupId, this.dashboardService.clusterId, this.dashboardService.clusterName);
-    
+
     this.intervalId = setInterval(() => {
       if (this.isChecked) {
         this.timer--;
@@ -66,7 +67,7 @@ export class ClusterDashboardComponent implements OnInit {
   back() {
     this.router.navigate(['dashboard']);
   }
-  
+
   isAdmin() {
     return this.login && this.login.t === 'admin';
   }
@@ -76,77 +77,85 @@ export class ClusterDashboardComponent implements OnInit {
   }
 
   async getCluster(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
-    this.clusterData = undefined;
-    this.clusterName = clusterName;
-    this.podName = podName;
-    this.groupId = groupId;
-    this.clusterId = clusterId;
-    this.title.setTitle(`${clusterName}`);
-    let res = [];
-    try {
-      res = <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
-        this.clusterData = data;
-      });
-    } catch (e) {
-      console.log(e);
+    if (groupId === undefined && clusterId === undefined) {
+      this.back();
+    } else {
+      this.clusterData = undefined;
+      this.clusterName = clusterName;
+      this.podName = podName;
+      this.groupId = groupId;
+      this.clusterId = clusterId;
+      this.title.setTitle(`${clusterName}`);
+      let res = [];
+      try {
+        res = <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
+          this.clusterData = data;
+        });
+      } catch (e) {
+        console.log(e);
+      }
     }
     return this.clusterData;
   }
-  async viewPodLogs(podName: string, h?: string) {
+  async viewPodLogs(podName: string, appName: string, h?: string) {
     this.podLogs = undefined;
     this.podName = podName;
+    this.appName = appName
     try {
       if (h) {
-        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + h);
+        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + this.appName, '/' + h);
         window.open(this.podLogs, "", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
       } else {
-        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName);
+        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + this.appName,);
         window.open(this.podLogs, "", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
       }
     } catch (e) {
       console.log(e);
     }
   }
-  async downloadPodLogs(podName: string, h?: string) {
+  async downloadPodLogs(podName: string, appName: string, h?: string) {
     this.podLogs = undefined;
     this.podName = podName;
+    this.appName = appName
     try {
       if (h) {
-        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + h);
+        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + this.appName, '/' + h);
         saveAs.saveAs(this.podLogs, `${this.podName}-(${h}).log`);
       } else {
-        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName);
+        this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + this.appName);
         saveAs.saveAs(this.podLogs, `${this.podName}.log`);
       }
     } catch (e) {
       console.log(e);
     }
   }
-  async viewAppLogs(appName: string, lines?: string) {
+  async viewAppLogs(deploymentName: string, appName: string, lines?: string) {
+    this.deploymentName = deploymentName;
     this.appLogs = undefined;
     this.appName = appName;
     try {
       if (lines) {
-        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.appName, '/' + lines);
+        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.deploymentName, '/' + this.appName, '/' + lines);
         window.open(this.appLogs, "", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
       } else {
-        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.appName);
+        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.deploymentName, '/' + this.appName);
         window.open(this.appLogs, "", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
       }
     } catch (e) {
       console.log(e);
     }
   }
-  async downloadAppLogs(appName: string, lines?: string) {
+  async downloadAppLogs(deploymentName: string, appName: string, lines?: string) {
+    this.deploymentName = deploymentName;
     this.appLogs = undefined;
     this.appName = appName;
     try {
       if (lines) {
-        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.appName, '/' + lines);
+        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.deploymentName, '/' + this.appName, '/' + lines);
         saveAs.saveAs(this.appLogs, `${this.appName}-(lines=${lines}).log`);
       } else {
-        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.appName);
-        saveAs.saveAs(this.appLogs, `${this.appName}.log`);
+        this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.deploymentName, '/' + this.appName);
+        saveAs.saveAs(this.appLogs, `${this.appName}-(all).log`);
       }
     } catch (e) {
       console.log(e);
