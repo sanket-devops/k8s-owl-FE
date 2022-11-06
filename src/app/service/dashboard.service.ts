@@ -44,23 +44,23 @@ export class DashboardService {
     return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/pods' + `${populate ? '?populate=' + populate : ''}`));
   }
 
-  getPodsLogs(groupId: string, clusterId: string, podName: string, h?: string, populate?: string) {
+  getPodsLogs(groupId: string, clusterId: string, podName: string, appName: string, h?: string, populate?: string) {
     let urlLog;
     if (h) {
-      urlLog = this.constantService.API_ENDPOINT + groupId + clusterId + podName + h;
+      urlLog = this.constantService.API_ENDPOINT + groupId + clusterId + podName + appName + h;
     } else {
-      urlLog = this.constantService.API_ENDPOINT + groupId + clusterId + podName;
+      urlLog = this.constantService.API_ENDPOINT + groupId + clusterId + podName + appName;
     }
     // console.log(url);
     // return this.http.get(this.constantService.API_ENDPOINT + groupId + clusterId + podName + `${populate ? '?populate=' + populate : ''}`, {responseType: 'text'});
     return urlLog;
   }
-  getAppLogs(groupId: string, clusterId: string, appName: string, lines?: string, populate?: string) {
+  getAppLogs(groupId: string, clusterId: string, deploymentName: string, appName: string, lines?: string, populate?: string) {
     let urlAppLog;
     if (lines) {
-      urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + appName + lines + '/AppLogs';
+      urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + deploymentName + appName + lines + '/AppLogs';
     } else {
-      urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + appName + '/AppLogs';
+      urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + deploymentName + appName + '/AppLogs';
     }
     return urlAppLog;
   }
