@@ -182,5 +182,8 @@ export class ClusterDashboardComponent implements OnInit {
     await this.getCluster(this.dashboardService.groupId, this.dashboardService.clusterId, this.dashboardService.clusterName);
     this.loading = false;
   }
+  ngOnDestroy(): void {
+    clearInterval(this.intervalId);
+  }
 
 }
