@@ -120,10 +120,10 @@ export class ClusterDashboardComponent implements OnInit {
     try {
       if (h) {
         this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + this.appName, '/' + h);
-        saveAs.saveAs(this.podLogs, `${this.podName}-(${h}).log`);
+        saveAs.saveAs(this.podLogs, `${this.clusterName}-${this.podName}-(${h}).log`);
       } else {
         this.podLogs = this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.podName, '/' + this.appName);
-        saveAs.saveAs(this.podLogs, `${this.podName}.log`);
+        saveAs.saveAs(this.podLogs, `${this.clusterName}-${this.podName}.log`);
       }
     } catch (e) {
       console.log(e);
@@ -152,10 +152,10 @@ export class ClusterDashboardComponent implements OnInit {
     try {
       if (lines) {
         this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.deploymentName, '/' + this.appName, '/' + lines);
-        saveAs.saveAs(this.appLogs, `${this.appName}-(lines=${lines}).log`);
+        saveAs.saveAs(this.appLogs, `${this.clusterName}-${this.appName}-(lines=${lines}).log`);
       } else {
         this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.deploymentName, '/' + this.appName);
-        saveAs.saveAs(this.appLogs, `${this.appName}-(all).log`);
+        saveAs.saveAs(this.appLogs, `${this.clusterName}-${this.appName}-(all).log`);
       }
     } catch (e) {
       console.log(e);
