@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Idashboard, ICluster } from '../interface/Idashboard';
 import { ConstantService } from '../service/constant.service';
 import { saveAs } from 'file-saver';
+import { parseISO, differenceInYears, differenceInDays, differenceInCalendarMonths, differenceInHours, differenceInMinutes, differenceInSeconds } from 'date-fns';
 
 declare let toastr: any;
 declare let $: any;
@@ -33,6 +34,8 @@ export class ClusterDashboardComponent implements OnInit {
   reloadInterval = <any>undefined;
   timer: number = this.intervalTime;
   loading: boolean = false;
+
+  selectedApp: Idashboard[] = <any>undefined;
 
   constructor(
     public constantService: ConstantService,
@@ -64,6 +67,25 @@ export class ClusterDashboardComponent implements OnInit {
     }, 1000);
 
   }
+
+  calculateAge(createdDate: any) {
+    const options: any = {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      // second: 'numeric',
+      hour12: true,
+      // timeZoneName: 'short'
+    };
+  
+    const localDate = new Date(createdDate);
+    const localTimeString = localDate.toLocaleString(undefined, options);
+  
+    return localTimeString;
+  }
+
   back() {
     this.router.navigate(['dashboard']);
   }
@@ -89,7 +111,8 @@ export class ClusterDashboardComponent implements OnInit {
       let res = [];
       try {
         res = <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
-          this.clusterData = data;
+          this.clusterData = data.items;
+          console.log(this.clusterData);
         });
       } catch (e) {
         console.log(e);

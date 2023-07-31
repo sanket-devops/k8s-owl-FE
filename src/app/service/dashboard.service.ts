@@ -40,8 +40,10 @@ export class DashboardService {
     let resp = <any>await this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT)).toPromise();
     return JSON.parse(this.constantService.getDecryptedData(resp.data));
   }
-  getPods(groupId: string, clusterId: string, populate?: string) {
-    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/pods' + `${populate ? '?populate=' + populate : ''}`));
+  getPods(groupId: string, clusterId: string, nameSpace?: string, populate?: string) {
+    let namespace = 'default';
+    // return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/pods' + `${populate ? '?populate=' + populate : ''}`));
+    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + `/${namespace}` + '/pods' + `${populate ? '?populate=' + populate : ''}`));
   }
 
   getPodsLogs(groupId: string, clusterId: string, podName: string, appName: string, h?: string, populate?: string) {

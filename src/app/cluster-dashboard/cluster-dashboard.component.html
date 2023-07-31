@@ -9,8 +9,77 @@
     </button>
     <button type="button" class="btn btn-primary float-end me-2" (click)="back()"><i class="fas fa-project-diagram"></i> Dashboard</button>
 </nav>
+
+<div class="card">
+    <p-table class="table" #dt [value]="clusterData" styleClass="p-datatable-sm" rowGroupMode="rowspan" groupRowsBy="metadata.labels.app"
+        [globalFilterFields]="['metadata.labels.app','metadata.name','spec.nodeName','container.name','status.startTime']"
+        selectionMode="multiple" [(selection)]="selectedApp" [metaKeySelection]="true" [rowHover]="false"
+        dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                <!-- <h5 class="p-m-0">Manage Products</h5> -->
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')" placeholder="Search..." />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th pSortableColumn="metadata.labels.app">App Name<p-sortIcon field="metadata.labels.app"></p-sortIcon></th>
+                <th pSortableColumn="metadata.name">Pod Name<p-sortIcon field="metadata.name"></p-sortIcon></th>
+                <th pSortableColumn="status.startTime">AGE<p-sortIcon field="status.startTime"></p-sortIcon></th>
+                <th pSortableColumn="spec.nodeName">Node Name<p-sortIcon field="spec.nodeName"></p-sortIcon></th>
+                <th pSortableColumn="container.name">Containers<p-sortIcon field="container.name"></p-sortIcon></th>
+                <th pSortableColumn="container.name">Restarts<p-sortIcon field="container.name"></p-sortIcon></th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
+            <tr [pSelectableRow]="app" [pSelectableRowIndex]="rowIndex">
+                <td *ngIf="rowgroup" [attr.rowspan]="rowspan">
+                    <p-tableCheckbox [value]="app"></p-tableCheckbox>
+                </td>
+                <td *ngIf="rowgroup" [attr.rowspan]="rowspan">
+                    <span class="p-text-bold p-ml-2">{{app.metadata.labels.app}}</span>
+                </td>
+                <td>
+                    <p-tableCheckbox [value]="app"></p-tableCheckbox>
+                    {{app.metadata.name}}
+                </td>
+                <td>{{calculateAge(app.status.startTime)}}</td>
+                <td>{{app.spec.nodeName}}</td>
+                <td>
+                    <tr *ngFor="let container of app.spec.containers; index as i" [pSelectableRow]="container" [pSelectableRowIndex]="i" style="border-bottom: 1px solid black;">
+                        <!-- <td>
+                            <p-tableCheckbox [value]="container"></p-tableCheckbox>
+                        </td> -->
+                        <td>{{container.name}}</td>
+                    </tr>
+                </td>
+                <td>
+                    <tr *ngFor="let restartCount of app.status.containerStatuses ; index as i" style="border-bottom: 1px solid black;">
+                        <!-- <td>
+                            <p-tableCheckbox [value]="container"></p-tableCheckbox>
+                        </td> -->
+                        <td>{{restartCount.restartCount}}</td>
+                    </tr>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                In total there are {{this.clusterData ? this.clusterData.length : 0 }} products.
+            </div>
+        </ng-template>
+    </p-table>
+  </div>
   
-<div class="third-div">
+<!-- <div class="third-div">
     <table class="table table-hover">
         <thead>
             <tr>
@@ -32,13 +101,13 @@
             <tr>
                 <th [attr.rowspan]="l"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>
                 <th [attr.rowspan]="l">{{i + 1}}</th>
-                <th [attr.rowspan]="l">{{data.DEPLOYMENT}}</th>
+                <th [attr.rowspan]="l">{{data.metadata.labels.app}}</th>
                 <th [attr.rowspan]="l">{{data.APP}}</th>
-                <td>{{data.PNAME}}</td>
+                <td>{{data.metadata.name}}</td>
                 <td>{{data.RESTARTS}}</td>
                 <td>{{data.NODE}}</td>
                 <td>{{data.AGE}}</td>
-                <td *ngIf="data.READY; else Error">Running</td>
+                <td>{{data.status.pase}}</td>
                 <ng-template #Error>
                     <td>Error...</td>
                 </ng-template>
@@ -108,4 +177,4 @@
             </tr>
         </tbody>
     </table>
-</div>
+</div> -->

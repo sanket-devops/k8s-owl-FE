@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Idashboard, ICluster } from '../interface/Idashboard';
 import { ConstantService } from '../service/constant.service';
 import { saveAs } from 'file-saver';
+import { faL } from '@fortawesome/free-solid-svg-icons';
 
 
 declare let toastr: any;
@@ -122,11 +123,13 @@ export class DashboardComponent implements OnInit {
   }
 
   ClusterDashboard(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
+    this.loading = true;
     this.dashboardService.groupId = groupId;
     this.dashboardService.clusterId = clusterId;
     this.dashboardService.clusterName = clusterName;
     this.dashboardService.podName = podName;
     this.router.navigate(['clusterdashboard']);
+    this.loading = false;
   }
   AddCluster() {
     this.dashboardService.cloneObj = <any>undefined;
