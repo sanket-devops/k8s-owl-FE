@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
+import { Observable, observable } from 'rxjs';
 
 import {ConstantService} from './constant.service';
 // import {CookieService} from 'ngx-cookie-service';
@@ -41,31 +42,35 @@ export class DashboardService {
     return JSON.parse(this.constantService.getDecryptedData(resp.data));
   }
   getPods(groupId: string, clusterId: string, nameSpace?: string, populate?: string) {
-    let namespace = 'default';
     // return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/pods' + `${populate ? '?populate=' + populate : ''}`));
-    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + `/${namespace}` + '/pods' + `${populate ? '?populate=' + populate : ''}`));
+    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + nameSpace + '/pods' + `${populate ? '?populate=' + populate : ''}`));
   }
 
-  getPodsLogs(groupId: string, clusterId: string, podName: string, appName: string, h?: string, populate?: string) {
-    let urlLog;
+  getPodsLogs(groupId: string, clusterId: string, namespace: string, podName: string, appName: string, h?: any): Observable<any> {
     if (h) {
-      urlLog = this.constantService.API_ENDPOINT + groupId + clusterId + podName + appName + h;
+      return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + namespace + podName + appName + h));
     } else {
-      urlLog = this.constantService.API_ENDPOINT + groupId + clusterId + podName + appName;
+      return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + namespace + podName + appName));
     }
-    // console.log(url);
-    // return this.http.get(this.constantService.API_ENDPOINT + groupId + clusterId + podName + `${populate ? '?populate=' + populate : ''}`, {responseType: 'text'});
-    return urlLog;
   }
-  getAppLogs(groupId: string, clusterId: string, deploymentName: string, appName: string, lines?: string, populate?: string) {
-    let urlAppLog;
-    if (lines) {
-      urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + deploymentName + appName + lines + '/AppLogs';
+
+  getAppLogs(groupId: string, clusterId: string, namespace: string, deploymentName: string, h?: any): Observable<any> {
+    if (h) {
+      return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/HourlyLog' + groupId + clusterId + namespace + deploymentName + h));
     } else {
-      urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + deploymentName + appName + '/AppLogs';
+      return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/HourlyLog' + groupId + clusterId + namespace + deploymentName));
     }
-    return urlAppLog;
   }
+
+  // getAppLogs(groupId: string, clusterId: string, deploymentName: string, appName: string, lines?: string, populate?: string) {
+  //   let urlAppLog;
+  //   if (lines) {
+  //     urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + deploymentName + appName + lines + '/AppLogs';
+  //   } else {
+  //     urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + deploymentName + appName + '/AppLogs';
+  //   }
+  //   return urlAppLog;
+  // }
   deletePod(groupId: string, clusterId: string, podName: string, populate?: string) {
     return this.http.delete(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + podName + '/deletePod' + `${populate ? '?populate=' + populate : ''}`));
   }

@@ -12,8 +12,7 @@
 
 <div class="card">
     <p-table class="table" #dt [value]="clusterData" styleClass="p-datatable-sm" rowGroupMode="rowspan" groupRowsBy="metadata.labels.app"
-        [globalFilterFields]="['metadata.labels.app','metadata.name','spec.nodeName','container.name','status.startTime']"
-        selectionMode="multiple" [(selection)]="selectedApp" [metaKeySelection]="true" [rowHover]="false"
+        [globalFilterFields]="['metadata.labels.app','metadata.name','spec.nodeName','container.name','status.startTime','status.phase']"
         dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
         [showCurrentPageReport]="true">
         <ng-template pTemplate="caption">
@@ -27,45 +26,98 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th>
-                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                </th>
                 <th pSortableColumn="metadata.labels.app">App Name<p-sortIcon field="metadata.labels.app"></p-sortIcon></th>
+                <th pSortableColumn="">App Log<p-sortIcon field=""></p-sortIcon></th>
                 <th pSortableColumn="metadata.name">Pod Name<p-sortIcon field="metadata.name"></p-sortIcon></th>
                 <th pSortableColumn="status.startTime">AGE<p-sortIcon field="status.startTime"></p-sortIcon></th>
+                <th pSortableColumn="status.phase">Status<p-sortIcon field="status.phase"></p-sortIcon></th>
                 <th pSortableColumn="spec.nodeName">Node Name<p-sortIcon field="spec.nodeName"></p-sortIcon></th>
-                <th pSortableColumn="container.name">Containers<p-sortIcon field="container.name"></p-sortIcon></th>
-                <th pSortableColumn="container.name">Restarts<p-sortIcon field="container.name"></p-sortIcon></th>
+                <th pSortableColumn="">Containers<p-sortIcon field=""></p-sortIcon></th>
+                <th pSortableColumn="">Containers Log<p-sortIcon field=""></p-sortIcon></th>
+                <th pSortableColumn="">Restarts<p-sortIcon field=""></p-sortIcon></th>
                 <th></th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
-            <tr [pSelectableRow]="app" [pSelectableRowIndex]="rowIndex">
-                <td *ngIf="rowgroup" [attr.rowspan]="rowspan">
-                    <p-tableCheckbox [value]="app"></p-tableCheckbox>
-                </td>
+            <tr>
                 <td *ngIf="rowgroup" [attr.rowspan]="rowspan">
                     <span class="p-text-bold p-ml-2">{{app.metadata.labels.app}}</span>
                 </td>
-                <td>
-                    <p-tableCheckbox [value]="app"></p-tableCheckbox>
-                    {{app.metadata.name}}
+                <td *ngIf="rowgroup" [attr.rowspan]="rowspan">
+                    <div class="dropdown">
+                        <button class="btn btn-info dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-eye"></i>
+                        </button>&nbsp;
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 1)">View 1H</a></li>
+                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 2)">View 2H</a></li>
+                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 12)">View 12H</a></li>
+                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 24)">View 24H</a></li>
+                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 48)">View 48H</a></li>
+                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 72)">View 72H <i class="fas fa-exclamation-circle"></i></a></li>
+                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app)" *ngIf="isAdmin">View Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
+                        </ul>
+                        <button class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton2"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, app.metadata.name, 1)">Download 1H</a></li>
+                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, app.metadata.name, 2)">Download 2H</a></li>
+                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, app.metadata.name, 12)">Download 12H</a></li>
+                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, app.metadata.name, 24)">Download 24H</a></li>
+                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, app.metadata.name, 48)">Download 48H</a></li>
+                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, app.metadata.name, 72)">Download 72H <i class="fas fa-exclamation-circle"></i></a></li>
+                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, app.metadata.name)" *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
+                        </ul>
+                    </div>
                 </td>
+                <td>{{app.metadata.name}}</td>
                 <td>{{calculateAge(app.status.startTime)}}</td>
+                <td>{{app.status.phase}}</td>
                 <td>{{app.spec.nodeName}}</td>
                 <td>
-                    <tr *ngFor="let container of app.spec.containers; index as i" [pSelectableRow]="container" [pSelectableRowIndex]="i" style="border-bottom: 1px solid black;">
-                        <!-- <td>
-                            <p-tableCheckbox [value]="container"></p-tableCheckbox>
-                        </td> -->
+                    <tr *ngFor="let container of app.spec.containers; index as i">
                         <td>{{container.name}}</td>
                     </tr>
                 </td>
                 <td>
-                    <tr *ngFor="let restartCount of app.status.containerStatuses ; index as i" style="border-bottom: 1px solid black;">
-                        <!-- <td>
-                            <p-tableCheckbox [value]="container"></p-tableCheckbox>
-                        </td> -->
+                    <tr *ngFor="let container of app.spec.containers; index as i">
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-eye"></i>
+                                </button>&nbsp;
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 1)">View 1H</a></li>
+                                    <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 2)">View 2H</a></li>
+                                    <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 12)">View 12H</a></li>
+                                    <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 24)">View 24H</a></li>
+                                    <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 48)">View 48H</a></li>
+                                    <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 72)">View 72H <i class="fas fa-exclamation-circle"></i></a></li>
+                                    <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name)" *ngIf="isAdmin">View Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
+                                </ul>
+                                <button class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton2"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                                    <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 1)">Download 1H</a></li>
+                                    <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 2)">Download 2H</a></li>
+                                    <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 12)">Download 12H</a></li>
+                                    <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 24)">Download 24H</a></li>
+                                    <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 48)">Download 48H</a></li>
+                                    <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 72)">Download 72H <i class="fas fa-exclamation-circle"></i></a></li>
+                                    <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name)" *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </td>
+                <td>
+                    <tr *ngFor="let restartCount of app.status.containerStatuses ; index as i">
                         <td>{{restartCount.restartCount}}</td>
                     </tr>
                 </td>
