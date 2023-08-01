@@ -131,7 +131,6 @@ export class ClusterDashboardComponent implements OnInit {
           let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
           let windowData = (data.data).replace(/\n\t/g, '<br />').replace(/\n/g, '<br />');
           newWindow?.document.write(`<p>${windowData}</p>`)
-          
         },
         (error) => {
           console.log(error);
@@ -150,15 +149,15 @@ export class ClusterDashboardComponent implements OnInit {
       console.log(e);
     }
   }
+
   async downloadPodLogs(podName: string, appName: string, h?: any) {
-    this.podLogs = undefined;
     this.podName = podName;
     this.appName = appName
     try {
       if (h) {
         this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.podName, '/' + this.appName, '/' + h).subscribe((data: any) => {
           let downloadData = new Blob([data.data], { type: 'text/plain' });
-          saveAs.saveAs(downloadData, `${this.clusterName}-${this.podName}-(${h}).log`)
+          saveAs.saveAs(downloadData, `${this.clusterName}-${this.podName}-(${h}H).log`)
         },
         (error) => {
           console.log(error);
@@ -207,65 +206,31 @@ export class ClusterDashboardComponent implements OnInit {
       console.log(e);
     }
   }
-  async downloadAppLogs(podName: string, appName: string, h?: any) {
-    this.podLogs = undefined;
-    this.podName = podName;
-    this.appName = appName
+  async downloadAppLogs(deploymentName: string, h?: any) {
+    this.deploymentName = deploymentName;
     try {
       if (h) {
-        this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.podName, '/' + this.appName, '/' + h).subscribe((data: any) => {
-          let downloadData = new Blob([data.data], { type: 'text/plain' });
-          saveAs.saveAs(downloadData, `${this.clusterName}-${this.podName}-(${h}).log`)
+        this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.deploymentName, '/' + h).subscribe((data: any) => {
+          let readydtoDwnloadData = new Blob([data.data], { type: 'text/plain' });
+          saveAs.saveAs(readydtoDwnloadData, `${this.clusterName}-${this.deploymentName}-(${h}H).log`)
         },
         (error) => {
           console.log(error);
-        });
+        })
       } else {
-        this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.podName, '/' + this.appName).subscribe((data: any) => {
-          let downloadData = new Blob([data.data], { type: 'text/plain' });
-          saveAs.saveAs(downloadData, `${this.clusterName}-${this.podName}.log`)
+        this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.deploymentName).subscribe((data: any) => {
+          let readydtoDwnloadData = new Blob([data.data], { type: 'text/plain' });
+          saveAs.saveAs(readydtoDwnloadData, `${this.clusterName}-${this.deploymentName}-(all).log`)
         },
         (error) => {
           console.log(error);
-        });
+        })
       }
     } catch (e) {
       console.log(e);
     }
   }
 
-  // async viewAppLogs(deploymentName: string, appName: string, lines?: string) {
-  //   this.deploymentName = deploymentName;
-  //   this.appLogs = undefined;
-  //   this.appName = appName;
-  //   try {
-  //     if (lines) {
-  //       this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.deploymentName, '/' + this.appName, '/' + lines);
-  //       window.open(this.appLogs, "", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
-  //     } else {
-  //       this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.deploymentName, '/' + this.appName);
-  //       window.open(this.appLogs, "", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
-  //     }
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }
-  // async downloadAppLogs(deploymentName: string, appName: string, lines?: string) {
-  //   this.deploymentName = deploymentName;
-  //   this.appLogs = undefined;
-  //   this.appName = appName;
-  //   try {
-  //     if (lines) {
-  //       this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.deploymentName, '/' + this.appName, '/' + lines);
-  //       saveAs.saveAs(this.appLogs, `${this.clusterName}-${this.appName}-(lines=${lines}).log`);
-  //     } else {
-  //       this.appLogs = this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.deploymentName, '/' + this.appName);
-  //       saveAs.saveAs(this.appLogs, `${this.clusterName}-${this.appName}-(all).log`);
-  //     }
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }
   async deletePod(podName: string) {
     this.podName = podName;
     if (

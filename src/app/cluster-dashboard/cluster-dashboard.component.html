@@ -63,13 +63,13 @@
                             <i class="fas fa-download"></i>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, app.metadata.name, 1)">Download 1H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, app.metadata.name, 2)">Download 2H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, app.metadata.name, 12)">Download 12H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, app.metadata.name, 24)">Download 24H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, app.metadata.name, 48)">Download 48H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, app.metadata.name, 72)">Download 72H <i class="fas fa-exclamation-circle"></i></a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, app.metadata.name)" *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
+                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 1)">Download 1H</a></li>
+                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 2)">Download 2H</a></li>
+                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 12)">Download 12H</a></li>
+                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 24)">Download 24H</a></li>
+                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 48)">Download 48H</a></li>
+                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 72)">Download 72H <i class="fas fa-exclamation-circle"></i></a></li>
+                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app)" *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
                         </ul>
                     </div>
                 </td>
