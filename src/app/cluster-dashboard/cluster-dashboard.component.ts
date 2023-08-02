@@ -238,7 +238,7 @@ export class ClusterDashboardComponent implements OnInit {
         `Do you want to delete "Pod" : ${this.podName} ?`
       )
     ) {
-      let resp = await this.dashboardService.deletePod('/' + this.groupId, '/' + this.clusterId, '/' + this.podName).toPromise();
+      let resp = await this.dashboardService.deletePod('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.podName).toPromise();
       toastr.success(resp) && await this.latestPull();
     }
   }

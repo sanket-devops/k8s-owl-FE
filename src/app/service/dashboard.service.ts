@@ -42,7 +42,6 @@ export class DashboardService {
     return JSON.parse(this.constantService.getDecryptedData(resp.data));
   }
   getPods(groupId: string, clusterId: string, nameSpace?: string, populate?: string) {
-    // return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/pods' + `${populate ? '?populate=' + populate : ''}`));
     return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + nameSpace + '/pods' + `${populate ? '?populate=' + populate : ''}`));
   }
 
@@ -62,16 +61,8 @@ export class DashboardService {
     }
   }
 
-  // getAppLogs(groupId: string, clusterId: string, deploymentName: string, appName: string, lines?: string, populate?: string) {
-  //   let urlAppLog;
-  //   if (lines) {
-  //     urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + deploymentName + appName + lines + '/AppLogs';
-  //   } else {
-  //     urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + deploymentName + appName + '/AppLogs';
-  //   }
-  //   return urlAppLog;
-  // }
-  deletePod(groupId: string, clusterId: string, podName: string, populate?: string) {
-    return this.http.delete(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + podName + '/deletePod' + `${populate ? '?populate=' + populate : ''}`));
+  deletePod(groupId: string, clusterId: string, namespace: string, podName: string, populate?: string) {
+    return this.http.delete(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/DeletePod' + groupId + clusterId + namespace + podName + `${populate ? '?populate=' + populate : ''}`));
   }
+
 }

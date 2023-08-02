@@ -29,6 +29,7 @@
                 <th pSortableColumn="metadata.labels.app">App Name<p-sortIcon field="metadata.labels.app"></p-sortIcon></th>
                 <th pSortableColumn="">App Log<p-sortIcon field=""></p-sortIcon></th>
                 <th pSortableColumn="metadata.name">Pod Name<p-sortIcon field="metadata.name"></p-sortIcon></th>
+                <th pSortableColumn="">Delete Pod<p-sortIcon field=""></p-sortIcon></th>
                 <th pSortableColumn="status.startTime">AGE<p-sortIcon field="status.startTime"></p-sortIcon></th>
                 <th pSortableColumn="status.phase">Status<p-sortIcon field="status.phase"></p-sortIcon></th>
                 <th pSortableColumn="spec.nodeName">Node Name<p-sortIcon field="spec.nodeName"></p-sortIcon></th>
@@ -74,6 +75,11 @@
                     </div>
                 </td>
                 <td>{{app.metadata.name}}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm" type="button" (click)="deletePod(app.metadata.name)" *ngIf="isAdmin">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
                 <td>{{calculateAge(app.status.startTime)}}</td>
                 <td>{{app.status.phase}}</td>
                 <td>{{app.spec.nodeName}}</td>
@@ -130,103 +136,3 @@
         </ng-template>
     </p-table>
   </div>
-  
-<!-- <div class="third-div">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>
-                <th scope="col">#</th>
-                <th scope="col">DEPLOYMENT</th>
-                <th scope="col">APP</th>
-                <th scope="col">PNAME</th>
-                <th scope="col">RESTARTS</th>
-                <th scope="col">NODE</th>
-                <th scope="col">AGE</th>
-                <th scope="col">REDAY</th>
-                <th scope="col">Pod Logs Action</th>
-                <th scope="col">App Logs Action</th>
-                <th scope="col" *ngIf="isAdmin">Actions</th>
-            </tr>
-        </thead>
-        <tbody *ngFor="let data of this.clusterData;let i =index ;let l = count">
-            <tr>
-                <th [attr.rowspan]="l"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>
-                <th [attr.rowspan]="l">{{i + 1}}</th>
-                <th [attr.rowspan]="l">{{data.metadata.labels.app}}</th>
-                <th [attr.rowspan]="l">{{data.APP}}</th>
-                <td>{{data.metadata.name}}</td>
-                <td>{{data.RESTARTS}}</td>
-                <td>{{data.NODE}}</td>
-                <td>{{data.AGE}}</td>
-                <td>{{data.status.pase}}</td>
-                <ng-template #Error>
-                    <td>Error...</td>
-                </ng-template>
-                <td>
-                    <div class="dropdown">
-                        <button class="btn btn-info dropdown-toggle me-2" type="button" id="dropdownMenuButton1"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, data.APP, '1h')">View 1H</a></li>
-                            <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, data.APP, '2h')">View 2H</a></li>
-                            <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, data.APP, '12h')">View 12H</a></li>
-                            <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, data.APP, '24h')">View 24H</a></li>
-                            <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, data.APP, '48h')">View 48H</a></li>
-                            <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, data.APP, '72h')">View 72H <i class="fas fa-exclamation-circle"></i></a></li>
-                            <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, data.APP)" *ngIf="isAdmin">View Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
-                        </ul>
-                        <button class="btn btn-success dropdown-toggle me-2" type="button" id="dropdownMenuButton2"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-download"></i>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, data.APP, '1h')">Download 1H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, data.APP, '2h')">Download 2H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, data.APP, '12h')">Download 12H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, data.APP, '24h')">Download 24H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, data.APP, '48h')">Download 48H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, data.APP, '72h')">Download 72H <i class="fas fa-exclamation-circle"></i></a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, data.APP)" *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
-                        </ul>
-                    </div>
-                </td>
-                <td>
-                    <div class="dropdown">
-                        <button class="btn btn-info dropdown-toggle me-2" type="button" id="dropdownMenuButton3"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-                            <li><a class="dropdown-item" (click)="viewAppLogs(data.DEPLOYMENT, data.APP, '100')">View 100 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(data.DEPLOYMENT, data.APP, '1000')">View 1000 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(data.DEPLOYMENT, data.APP, '10000')">View 10000 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(data.DEPLOYMENT, data.APP, '100000')">View 100000 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(data.DEPLOYMENT, data.APP, '1000000')">View 1000000 Lines<i class="fas fa-exclamation-circle"></i></a></li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(data.DEPLOYMENT, data.APP)" *ngIf="isAdmin">View Full App Logs <i class="fas fa-exclamation-circle"></i></a></li>
-                        </ul>
-                        <button class="btn btn-success dropdown-toggle me-2" type="button" id="dropdownMenuButton4"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-download"></i>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton4">
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(data.DEPLOYMENT, data.APP, '100')">Download 100 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(data.DEPLOYMENT, data.APP, '1000')">Download 1000 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(data.DEPLOYMENT, data.APP, '10000')">Download 10000 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(data.DEPLOYMENT, data.APP, '100000')">Download 100000 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(data.DEPLOYMENT, data.APP, '1000000')">Download 1000000 Lines <i class="fas fa-exclamation-circle"></i></a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(data.DEPLOYMENT, data.APP)" *ngIf="isAdmin">Download Full App Logs <i class="fas fa-exclamation-circle"></i></a></li>
-                        </ul>
-                    </div>
-                </td>
-                <td>
-                    <button class="btn btn-danger me-2" type="button" (click)="deletePod(data.PNAME)" *ngIf="isAdmin">
-                        <i class="fas fa-trash-alt"></i>
-                </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div> -->
