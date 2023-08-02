@@ -29,7 +29,7 @@
                 <th pSortableColumn="metadata.labels.app">App Name<p-sortIcon field="metadata.labels.app"></p-sortIcon></th>
                 <th pSortableColumn="">App Log<p-sortIcon field=""></p-sortIcon></th>
                 <th pSortableColumn="metadata.name">Pod Name<p-sortIcon field="metadata.name"></p-sortIcon></th>
-                <th *ngIf="isAdmin()" pSortableColumn="">Del Pod<p-sortIcon field=""></p-sortIcon></th>
+                <th *ngIf="isAdmin" pSortableColumn="">Del Pod<p-sortIcon field=""></p-sortIcon></th>
                 <th pSortableColumn="status.startTime">AGE<p-sortIcon field="status.startTime"></p-sortIcon></th>
                 <th pSortableColumn="status.phase">Status<p-sortIcon field="status.phase"></p-sortIcon></th>
                 <th pSortableColumn="spec.nodeName">Node Name<p-sortIcon field="spec.nodeName"></p-sortIcon></th>
@@ -57,7 +57,7 @@
                             <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 24)">View 24H</a></li>
                             <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 48)">View 48H</a></li>
                             <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 72)">View 72H <i class="fas fa-exclamation-circle"></i></a></li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app)" *ngIf="isAdmin()">View Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
+                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app)" *ngIf="isAdmin">View Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
                         </ul>
                         <button class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton2"
                             data-bs-toggle="dropdown" aria-expanded="false">
@@ -70,12 +70,12 @@
                             <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 24)">Download 24H</a></li>
                             <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 48)">Download 48H</a></li>
                             <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 72)">Download 72H <i class="fas fa-exclamation-circle"></i></a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app)" *ngIf="isAdmin()">Download Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
+                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app)" *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
                         </ul>
                     </div>
                 </td>
                 <td>{{app.metadata.name}}</td>
-                <td *ngIf="isAdmin()">
+                <td *ngIf="isAdmin">
                     <button class="btn btn-danger btn-sm" type="button" (click)="deletePod(app.metadata.name)" *ngIf="isAdmin">
                         <i class="fas fa-trash-alt"></i>
                     </button>
@@ -103,7 +103,7 @@
                                     <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 24)">View 24H</a></li>
                                     <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 48)">View 48H</a></li>
                                     <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 72)">View 72H <i class="fas fa-exclamation-circle"></i></a></li>
-                                    <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name)" *ngIf="isAdmin()">View Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
+                                    <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name)" *ngIf="isAdmin">View Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
                                 </ul>
                                 <button class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton2"
                                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -116,7 +116,7 @@
                                     <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 24)">Download 24H</a></li>
                                     <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 48)">Download 48H</a></li>
                                     <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 72)">Download 72H <i class="fas fa-exclamation-circle"></i></a></li>
-                                    <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name)" *ngIf="isAdmin()">Download Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
+                                    <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name)" *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
                                 </ul>
                             </div>
                         </td>

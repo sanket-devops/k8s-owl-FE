@@ -28,6 +28,7 @@ export class ClusterDashboardComponent implements OnInit {
   nameSpace: string = 'default';
   clusterName: any = undefined;
   clusterData: any = undefined;
+  user:string = "user";
   login = { u: '', p: '', t: '' };
   isChecked = true;
   intervalTime: number = 60;
@@ -49,6 +50,16 @@ export class ClusterDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    try {
+      this.login = JSON.parse(
+        this.constantService.getDecryptedData(localStorage.getItem('token'))
+      );
+      let isValidUser = this.constantService.isValidUser(this.login);
+      this.user = this.login.u;
+      if (!isValidUser) return this.logout();
+    } catch (error) {
+      return this.logout();
+    }
     this.getCluster(this.dashboardService.groupId, this.dashboardService.clusterId, this.dashboardService.clusterName);
 
     this.intervalId = setInterval(() => {
@@ -91,12 +102,17 @@ export class ClusterDashboardComponent implements OnInit {
     this.router.navigate(['dashboard']);
   }
 
-  isAdmin() {
+  get isAdmin() {
     return this.login && this.login.t === 'admin';
   }
 
-  isUser() {
+  get isUser() {
     return this.login && this.login.t === 'user';
+  }
+
+  logout() {
+    localStorage.clear();
+    this.router.navigate(['login']);
   }
 
   async getCluster(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
