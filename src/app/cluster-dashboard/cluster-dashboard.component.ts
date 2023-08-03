@@ -9,6 +9,24 @@ import { saveAs } from 'file-saver';
 import { data, error } from 'jquery';
 
 declare let toastr: any;
+toastr.options = {
+  "closeButton": true,
+  "debug": false,
+  "newestOnTop": false,
+  "progressBar": true,
+  "positionClass": "toast-top-right",
+  "preventDuplicates": true,
+  "onclick": null,
+  "showDuration": "300",
+  "hideDuration": "1000",
+  "timeOut": "5000",
+  "extendedTimeOut": "5000",
+  "showEasing": "swing",
+  "hideEasing": "linear",
+  "showMethod": "fadeIn",
+  "hideMethod": "fadeOut"
+}
+
 declare let $: any;
 declare let _: any;
 
@@ -28,6 +46,7 @@ export class ClusterDashboardComponent implements OnInit {
   nameSpace: string = 'default';
   clusterName: any = undefined;
   clusterData: any = undefined;
+  downloadData: any;
   user:string = "user";
   login = { u: '', p: '', t: '' };
   isChecked = true;
@@ -129,7 +148,7 @@ export class ClusterDashboardComponent implements OnInit {
       try {
         res = <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace).subscribe((data: any) => {
           this.clusterData = data.items;
-          console.log(this.clusterData);
+          // console.log(this.clusterData);
         });
       } catch (e) {
         console.log(e);
@@ -171,17 +190,25 @@ export class ClusterDashboardComponent implements OnInit {
     this.appName = appName
     try {
       if (h) {
+        let _clusterName = this.clusterName;
+        let _podName = this.podName;
+        let _appName = this.appName;
         this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.podName, '/' + this.appName, '/' + h).subscribe((data: any) => {
-          let downloadData = new Blob([data.data], { type: 'text/plain' });
-          saveAs.saveAs(downloadData, `${this.clusterName}-${this.podName}-(${h}H).log`)
+          this.downloadData = new File([data.data], `${_clusterName}-${_podName}-${_appName}-(${h}H).log`, { type: 'text/plain' });
+          saveAs.saveAs(this.downloadData, `${_clusterName}-${_podName}-${_appName}-(${h}H).log`)
+          toastr.success(`Download Started: ${_clusterName}-${_podName}-${_appName}-(${h}H).log`);
         },
         (error) => {
           console.log(error);
         });
       } else {
+        let _clusterName = this.clusterName;
+        let _podName = this.podName;
+        let _appName = this.appName;
         this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.podName, '/' + this.appName).subscribe((data: any) => {
-          let downloadData = new Blob([data.data], { type: 'text/plain' });
-          saveAs.saveAs(downloadData, `${this.clusterName}-${this.podName}.log`)
+          this.downloadData = new File([data.data], `${_clusterName}-${_podName}-${_appName}.log`, { type: 'text/plain' });
+          saveAs.saveAs(this.downloadData, `${this.clusterName}-${this.podName}-${_appName}.log`)
+          toastr.success(`Download Started: ${this.clusterName}-${this.podName}-${_appName}.log`);
         },
         (error) => {
           console.log(error);
@@ -226,17 +253,23 @@ export class ClusterDashboardComponent implements OnInit {
     this.deploymentName = deploymentName;
     try {
       if (h) {
+        let _clusterName = this.clusterName;
+        let _deploymentName = this.deploymentName;
         this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.deploymentName, '/' + h).subscribe((data: any) => {
-          let readydtoDwnloadData = new Blob([data.data], { type: 'text/plain' });
-          saveAs.saveAs(readydtoDwnloadData, `${this.clusterName}-${this.deploymentName}-(${h}H).log`)
+          this.downloadData = new File([data.data], `${_clusterName}-${_deploymentName}-(${h}H).log`, { type: 'text/plain' });
+          saveAs.saveAs(this.downloadData, `${_clusterName}-${_deploymentName}-(${h}H).log`)
+          toastr.success(`Download Started: ${_clusterName}-${_deploymentName}-(${h}H).log`);
         },
         (error) => {
           console.log(error);
         })
       } else {
+        let _clusterName = this.clusterName;
+        let _deploymentName = this.deploymentName;
         this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.deploymentName).subscribe((data: any) => {
-          let readydtoDwnloadData = new Blob([data.data], { type: 'text/plain' });
-          saveAs.saveAs(readydtoDwnloadData, `${this.clusterName}-${this.deploymentName}-(all).log`)
+          this.downloadData = new File([data.data], `${_clusterName}-${_deploymentName}-(all).log`, { type: 'text/plain' });
+          saveAs.saveAs(this.downloadData, `${_clusterName}-${_deploymentName}-(all).log`)
+          toastr.success(`Download Started: ${_clusterName}-${_deploymentName}-(all).log`);
         },
         (error) => {
           console.log(error);

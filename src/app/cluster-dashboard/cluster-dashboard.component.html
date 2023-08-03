@@ -123,8 +123,15 @@
                     </tr>
                 </td>
                 <td>
-                    <tr *ngFor="let restartCount of app.status.containerStatuses ; index as i">
-                        <td>{{restartCount.restartCount}}</td>
+                    <tr *ngFor="let status of app.status.containerStatuses ; index as i">
+                        <td>
+                            <p *ngIf="status.restartCount === 0">
+                                {{status.restartCount}}
+                            </p>
+                            <p *ngIf="status.restartCount > 0">
+                                {{status.restartCount}} ({{calculateAge(status.lastState.terminated.finishedAt)}}) 
+                            </p>
+                        </td>
                     </tr>
                 </td>
             </tr>
