@@ -27,6 +27,7 @@ import {DialogModule} from 'primeng/dialog';
 import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {ProgressBarModule} from 'primeng/progressbar';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {InputTextModule} from 'primeng/inputtext';
 import {FileUploadModule} from 'primeng/fileupload';
 import {ToolbarModule} from 'primeng/toolbar';
@@ -65,6 +66,7 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
     ButtonModule,
     DropdownModule,
     ProgressBarModule,
+    ProgressSpinnerModule,
     InputTextModule,
     FileUploadModule,
     ToolbarModule,

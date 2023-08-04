@@ -57,6 +57,7 @@ export class ClusterDashboardComponent implements OnInit {
   loading: boolean = false;
   selectedNamespace: any = {name: 'default', status: 'Active'};
   namespaces: any[] = [];
+  isSpinner: any = [];
 
   selectedApp: Idashboard[] = <any>undefined;
 
@@ -101,6 +102,11 @@ export class ClusterDashboardComponent implements OnInit {
 
   }
 
+  removeItemFromisSpinner (index: number) {
+    let indexToRemove = index - 1;
+    this.isSpinner.splice(indexToRemove, 1);
+  }
+
   calculateAge(createdDate: any) {
     const options: any = {
       year: 'numeric',
@@ -137,7 +143,9 @@ export class ClusterDashboardComponent implements OnInit {
   }
 
   async getCluster(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
+    let indexOfItem = this.isSpinner.push("GetCluster");
     if (groupId === undefined && clusterId === undefined) {
+      this.removeItemFromisSpinner(indexOfItem);
       this.back();
     } else {
       this.clusterData = undefined;
@@ -157,6 +165,7 @@ export class ClusterDashboardComponent implements OnInit {
               this.clusterData = data.items;
               // console.log(this.clusterData);
             });
+            this.removeItemFromisSpinner(indexOfItem);
           });
         }
         else {
@@ -164,10 +173,12 @@ export class ClusterDashboardComponent implements OnInit {
           <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
             this.clusterData = data.items;
             // console.log(this.clusterData);
+            this.removeItemFromisSpinner(indexOfItem);
           });
         }
          
       } catch (e) {
+        this.removeItemFromisSpinner(indexOfItem);
         console.log(e);
       }
     }
@@ -175,6 +186,7 @@ export class ClusterDashboardComponent implements OnInit {
   }
 
   async viewPodLogs(podName: string, appName: string, h?: any) {
+    let indexOfItem = this.isSpinner.push(podName + '-' + appName);
     this.podName = podName;
     this.appName = appName
     try {
@@ -183,6 +195,7 @@ export class ClusterDashboardComponent implements OnInit {
           let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
           let windowData = (data.data).replace(/\n\t/g, '<br />').replace(/\n/g, '<br />');
           newWindow?.document.write(`<p>${windowData}</p>`)
+          this.removeItemFromisSpinner(indexOfItem);
         },
         (error) => {
           console.log(error);
@@ -192,17 +205,21 @@ export class ClusterDashboardComponent implements OnInit {
           let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
           let windowData = (data.data).replace(/\n\t/g, '<br />').replace(/\n/g, '<br />');
           newWindow?.document.write(`<p>${windowData}</p>`)
+          this.removeItemFromisSpinner(indexOfItem);
         },
         (error) => {
+          this.removeItemFromisSpinner(indexOfItem);
           console.log(error);
         })
       }
     } catch (e) {
+      this.removeItemFromisSpinner(indexOfItem);
       console.log(e);
     }
   }
 
   async downloadPodLogs(podName: string, appName: string, h?: any) {
+    let indexOfItem = this.isSpinner.push(podName + '-' + appName);
     this.podName = podName;
     this.appName = appName
     try {
@@ -214,6 +231,7 @@ export class ClusterDashboardComponent implements OnInit {
           this.downloadData = new File([data.data], `${_clusterName}-${_podName}-${_appName}-(${h}H).log`, { type: 'text/plain' });
           saveAs.saveAs(this.downloadData, `${_clusterName}-${_podName}-${_appName}-(${h}H).log`)
           toastr.success(`Download Started: ${_clusterName}-${_podName}-${_appName}-(${h}H).log`);
+          this.removeItemFromisSpinner(indexOfItem);
         },
         (error) => {
           console.log(error);
@@ -226,17 +244,21 @@ export class ClusterDashboardComponent implements OnInit {
           this.downloadData = new File([data.data], `${_clusterName}-${_podName}-${_appName}.log`, { type: 'text/plain' });
           saveAs.saveAs(this.downloadData, `${this.clusterName}-${this.podName}-${_appName}.log`)
           toastr.success(`Download Started: ${this.clusterName}-${this.podName}-${_appName}.log`);
+          this.removeItemFromisSpinner(indexOfItem);
         },
         (error) => {
+          this.removeItemFromisSpinner(indexOfItem);
           console.log(error);
         });
       }
     } catch (e) {
+      this.removeItemFromisSpinner(indexOfItem);
       console.log(e);
     }
   }
 
   async viewAppLogs(deploymentName: string, h?: any) {
+    let indexOfItem = this.isSpinner.push(deploymentName);
     this.deploymentName = deploymentName;
     try {
       if (h) {
@@ -246,6 +268,7 @@ export class ClusterDashboardComponent implements OnInit {
             let windowData = logs.replace(/\n\t/g, '<br />').replace(/\n/g, '<br />');
             newWindow?.document.write(`<p>${windowData}</p>`)
           });
+          this.removeItemFromisSpinner(indexOfItem);
         },
         (error) => {
           console.log(error);
@@ -257,16 +280,20 @@ export class ClusterDashboardComponent implements OnInit {
             let windowData = logs.replace(/\n\t/g, '<br />').replace(/\n/g, '<br />');
             newWindow?.document.write(`<p>${windowData}</p>`)
           });
+          this.removeItemFromisSpinner(indexOfItem);
         },
         (error) => {
+          this.removeItemFromisSpinner(indexOfItem);
           console.log(error);
         })
       }
     } catch (e) {
+      this.removeItemFromisSpinner(indexOfItem);
       console.log(e);
     }
   }
   async downloadAppLogs(deploymentName: string, h?: any) {
+    let indexOfItem = this.isSpinner.push(deploymentName);
     this.deploymentName = deploymentName;
     try {
       if (h) {
@@ -276,6 +303,7 @@ export class ClusterDashboardComponent implements OnInit {
           this.downloadData = new File([data.data], `${_clusterName}-${_deploymentName}-(${h}H).log`, { type: 'text/plain' });
           saveAs.saveAs(this.downloadData, `${_clusterName}-${_deploymentName}-(${h}H).log`)
           toastr.success(`Download Started: ${_clusterName}-${_deploymentName}-(${h}H).log`);
+          this.removeItemFromisSpinner(indexOfItem);
         },
         (error) => {
           console.log(error);
@@ -287,12 +315,15 @@ export class ClusterDashboardComponent implements OnInit {
           this.downloadData = new File([data.data], `${_clusterName}-${_deploymentName}-(all).log`, { type: 'text/plain' });
           saveAs.saveAs(this.downloadData, `${_clusterName}-${_deploymentName}-(all).log`)
           toastr.success(`Download Started: ${_clusterName}-${_deploymentName}-(all).log`);
+          this.removeItemFromisSpinner(indexOfItem);
         },
         (error) => {
+          this.removeItemFromisSpinner(indexOfItem);
           console.log(error);
         })
       }
     } catch (e) {
+      this.removeItemFromisSpinner(indexOfItem);
       console.log(e);
     }
   }
