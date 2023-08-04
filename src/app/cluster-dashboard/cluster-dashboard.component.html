@@ -21,7 +21,24 @@
                 <span class="p-input-icon-left">
                     <i class="pi pi-search"></i>
                     <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')" placeholder="Search..." />
-                </span>
+                </span>&nbsp;
+
+                <p-dropdown [options]="namespaces" [(ngModel)]="selectedNamespace" optionLabel="name" [filter]="true" filterBy="name"
+                    [showClear]="true" placeholder="{{selectedNamespace?.name}}">
+                    <ng-template pTemplate="selectedItem">
+                        <div *ngIf="selectedNamespace">
+                            <div>{{selectedNamespace.name}}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-namespace pTemplate="item">
+                        <div>
+                            <div>{{namespace.name}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>&nbsp;
+
+                <button pButton (click)="latestPull($event)" *ngIf="isAdmin" type="button" icon="pi pi-sync" class="p-button-success p-button-text p-button-rounded p-button-sm"></button>
+
             </div>
         </ng-template>
         <ng-template pTemplate="header">
@@ -138,7 +155,7 @@
         </ng-template>
         <ng-template pTemplate="summary">
             <div class="p-d-flex p-ai-center p-jc-between">
-                In total there are {{this.clusterData ? this.clusterData.length : 0 }} products.
+                In total there are {{this.clusterData ? this.clusterData.length : 0 }} pods.
             </div>
         </ng-template>
     </p-table>

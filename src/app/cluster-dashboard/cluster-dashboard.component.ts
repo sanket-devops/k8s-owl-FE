@@ -43,7 +43,7 @@ export class ClusterDashboardComponent implements OnInit {
   deploymentName: any = undefined;
   groupId: any = undefined;
   clusterId: any = undefined;
-  nameSpace: string = 'default';
+  // nameSpace: string = 'default';
   clusterName: any = undefined;
   clusterData: any = undefined;
   downloadData: any;
@@ -55,6 +55,8 @@ export class ClusterDashboardComponent implements OnInit {
   reloadInterval = <any>undefined;
   timer: number = this.intervalTime;
   loading: boolean = false;
+  selectedNamespace: any = {name: 'default', status: 'Active'};
+  namespaces: any[] = [];
 
   selectedApp: Idashboard[] = <any>undefined;
 
@@ -144,12 +146,27 @@ export class ClusterDashboardComponent implements OnInit {
       this.groupId = groupId;
       this.clusterId = clusterId;
       this.title.setTitle(`${clusterName}`);
-      let res = [];
       try {
-        res = <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace).subscribe((data: any) => {
-          this.clusterData = data.items;
-          // console.log(this.clusterData);
-        });
+        if (this.selectedNamespace) {
+          <any>this.dashboardService.getNamespaces('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
+            this.namespaces = [];
+            data.items.forEach((namespace: any) => {
+              this.namespaces.push({name: namespace.metadata.name, status: namespace.status.phase})            
+            });
+            <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
+              this.clusterData = data.items;
+              // console.log(this.clusterData);
+            });
+          });
+        }
+        else {
+          this.selectedNamespace = {name: 'default', status: 'Active'};
+          <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
+            this.clusterData = data.items;
+            // console.log(this.clusterData);
+          });
+        }
+         
       } catch (e) {
         console.log(e);
       }
@@ -162,7 +179,7 @@ export class ClusterDashboardComponent implements OnInit {
     this.appName = appName
     try {
       if (h) {
-        this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.podName, '/' + this.appName, '/' + h).subscribe((data: any) => {
+        this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.podName, '/' + this.appName, '/' + h).subscribe((data: any) => {
           let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
           let windowData = (data.data).replace(/\n\t/g, '<br />').replace(/\n/g, '<br />');
           newWindow?.document.write(`<p>${windowData}</p>`)
@@ -171,7 +188,7 @@ export class ClusterDashboardComponent implements OnInit {
           console.log(error);
         })
       } else {
-        this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.podName, '/' + this.appName).subscribe((data: any) => {
+        this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.podName, '/' + this.appName).subscribe((data: any) => {
           let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
           let windowData = (data.data).replace(/\n\t/g, '<br />').replace(/\n/g, '<br />');
           newWindow?.document.write(`<p>${windowData}</p>`)
@@ -193,7 +210,7 @@ export class ClusterDashboardComponent implements OnInit {
         let _clusterName = this.clusterName;
         let _podName = this.podName;
         let _appName = this.appName;
-        this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.podName, '/' + this.appName, '/' + h).subscribe((data: any) => {
+        this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.podName, '/' + this.appName, '/' + h).subscribe((data: any) => {
           this.downloadData = new File([data.data], `${_clusterName}-${_podName}-${_appName}-(${h}H).log`, { type: 'text/plain' });
           saveAs.saveAs(this.downloadData, `${_clusterName}-${_podName}-${_appName}-(${h}H).log`)
           toastr.success(`Download Started: ${_clusterName}-${_podName}-${_appName}-(${h}H).log`);
@@ -205,7 +222,7 @@ export class ClusterDashboardComponent implements OnInit {
         let _clusterName = this.clusterName;
         let _podName = this.podName;
         let _appName = this.appName;
-        this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.podName, '/' + this.appName).subscribe((data: any) => {
+        this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.podName, '/' + this.appName).subscribe((data: any) => {
           this.downloadData = new File([data.data], `${_clusterName}-${_podName}-${_appName}.log`, { type: 'text/plain' });
           saveAs.saveAs(this.downloadData, `${this.clusterName}-${this.podName}-${_appName}.log`)
           toastr.success(`Download Started: ${this.clusterName}-${this.podName}-${_appName}.log`);
@@ -223,7 +240,7 @@ export class ClusterDashboardComponent implements OnInit {
     this.deploymentName = deploymentName;
     try {
       if (h) {
-        this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.deploymentName, '/' + h).subscribe((data: any) => {
+        this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.deploymentName, '/' + h).subscribe((data: any) => {
           let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
           data.data.forEach((logs: any) => {
             let windowData = logs.replace(/\n\t/g, '<br />').replace(/\n/g, '<br />');
@@ -234,7 +251,7 @@ export class ClusterDashboardComponent implements OnInit {
           console.log(error);
         })
       } else {
-        this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.deploymentName).subscribe((data: any) => {
+        this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.deploymentName).subscribe((data: any) => {
           let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
           data.data.forEach((logs: any) => {
             let windowData = logs.replace(/\n\t/g, '<br />').replace(/\n/g, '<br />');
@@ -255,7 +272,7 @@ export class ClusterDashboardComponent implements OnInit {
       if (h) {
         let _clusterName = this.clusterName;
         let _deploymentName = this.deploymentName;
-        this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.deploymentName, '/' + h).subscribe((data: any) => {
+        this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.deploymentName, '/' + h).subscribe((data: any) => {
           this.downloadData = new File([data.data], `${_clusterName}-${_deploymentName}-(${h}H).log`, { type: 'text/plain' });
           saveAs.saveAs(this.downloadData, `${_clusterName}-${_deploymentName}-(${h}H).log`)
           toastr.success(`Download Started: ${_clusterName}-${_deploymentName}-(${h}H).log`);
@@ -266,7 +283,7 @@ export class ClusterDashboardComponent implements OnInit {
       } else {
         let _clusterName = this.clusterName;
         let _deploymentName = this.deploymentName;
-        this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.deploymentName).subscribe((data: any) => {
+        this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.deploymentName).subscribe((data: any) => {
           this.downloadData = new File([data.data], `${_clusterName}-${_deploymentName}-(all).log`, { type: 'text/plain' });
           saveAs.saveAs(this.downloadData, `${_clusterName}-${_deploymentName}-(all).log`)
           toastr.success(`Download Started: ${_clusterName}-${_deploymentName}-(all).log`);
@@ -287,7 +304,7 @@ export class ClusterDashboardComponent implements OnInit {
         `Do you want to delete "Pod" : ${this.podName} ?`
       )
     ) {
-      let resp = await this.dashboardService.deletePod('/' + this.groupId, '/' + this.clusterId, '/' + this.nameSpace, '/' + this.podName).toPromise();
+      let resp = await this.dashboardService.deletePod('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.podName).toPromise();
       toastr.success(resp) && await this.latestPull();
     }
   }

@@ -41,6 +41,10 @@ export class DashboardService {
     let resp = <any>await this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT)).toPromise();
     return JSON.parse(this.constantService.getDecryptedData(resp.data));
   }
+  getNamespaces(groupId: string, clusterId: string, populate?: string) {
+    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/namespaces' + groupId + clusterId + `${populate ? '?populate=' + populate : ''}`));
+  }
+
   getPods(groupId: string, clusterId: string, nameSpace?: string, populate?: string) {
     return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + nameSpace + '/pods' + `${populate ? '?populate=' + populate : ''}`));
   }
