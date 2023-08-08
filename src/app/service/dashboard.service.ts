@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import { Observable, observable } from 'rxjs';
 
@@ -54,6 +54,21 @@ export class DashboardService {
       return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + namespace + podName + appName + h));
     } else {
       return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + namespace + podName + appName));
+    }
+  }
+
+  viewFollowLog(groupId: string, clusterId: string, namespace: string, podName: string, appName: string, tailLines?: any): Observable<string>  {
+    if (tailLines) {
+      // const httpOptions = {
+      //   headers: new HttpHeaders({
+      //     'Accept': 'text/plain, */*',
+      //     'Content-Type': 'application/json' // We send JSON
+      //   }),
+      //   responseType: 'text' as 'json'  // We accept plain text as response.
+      // };
+      return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/follow' + groupId + clusterId + namespace + podName + appName + tailLines));
+    } else {
+      return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/follow' + groupId + clusterId + namespace + podName + appName));
     }
   }
 

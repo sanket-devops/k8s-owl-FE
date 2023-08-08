@@ -44,15 +44,15 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th pSortableColumn="metadata.labels.app">App Name<p-sortIcon field="metadata.labels.app"></p-sortIcon></th>
-                <th class="nowrap text-center" pSortableColumn="">App Log<p-sortIcon field=""></p-sortIcon></th>
-                <th pSortableColumn="metadata.name">Pod Name<p-sortIcon field="metadata.name"></p-sortIcon></th>
+                <th pSortableColumn="metadata.labels.app">App<p-sortIcon field="metadata.labels.app"></p-sortIcon></th>
+                <th class="nowrap text-center">App Log</th>
+                <th pSortableColumn="metadata.name">Pod<p-sortIcon field="metadata.name"></p-sortIcon></th>
                 <th class="nowrap text-center" *ngIf="isAdmin"><i class="fas fa-trash-alt"></i></th>
                 <th pSortableColumn="status.startTime">AGE<p-sortIcon field="status.startTime"></p-sortIcon></th>
                 <th pSortableColumn="status.phase">Status<p-sortIcon field="status.phase"></p-sortIcon></th>
-                <th pSortableColumn="spec.nodeName">Node Name<p-sortIcon field="spec.nodeName"></p-sortIcon></th>
+                <th pSortableColumn="spec.nodeName">Node<p-sortIcon field="spec.nodeName"></p-sortIcon></th>
                 <th pSortableColumn="">Conatainers<p-sortIcon field=""></p-sortIcon></th>
-                <th class="nowrap text-center" pSortableColumn="">Containers Log<p-sortIcon field=""></p-sortIcon></th>
+                <th class="nowrap text-center">Containers Log</th>
                 <th pSortableColumn="">Restarts<p-sortIcon field=""></p-sortIcon></th>
                 <th></th>
             </tr>
@@ -100,9 +100,10 @@
                 </td>
                 <td >{{app.metadata.name}}</td>
                 <td class="nowrap text-center" *ngIf="isAdmin">
-                    <button class="btn btn-danger btn-sm" type="button" (click)="deletePod(app.metadata.name)" *ngIf="isAdmin">
+                    <button pButton (click)="deletePod(app.metadata.name)" *ngIf="isAdmin" icon="pi pi-trash" type="button" class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
+                    <!-- <button class="btn btn-danger btn-sm" type="button" (click)="deletePod(app.metadata.name)" *ngIf="isAdmin">
                         <i class="fas fa-trash-alt"></i>
-                    </button>
+                    </button> -->
                 </td>
                 <td>{{calculateAge(app.status.startTime)}}</td>
                 <td>{{app.status.phase}}</td>
@@ -148,6 +149,8 @@
                                     <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 72)">Download 72H <i class="fas fa-exclamation-circle"></i></a></li>
                                     <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name)" *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
                                 </ul>
+                                <button pButton (click)="viewFollowLog(app.metadata.name, container.name, 100)" *ngIf="isAdmin" icon="pi pi-play" type="button" class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
+                                <button pButton (click)="viewFollowLog(app.metadata.name, container.name, '100')" *ngIf="isAdmin" icon="pi pi-stop" type="button" class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
                             </div>
                         </td>
                     </tr>
@@ -173,3 +176,7 @@
         </ng-template>
     </p-table>
   </div>
+
+  <div *ngIf="followLogs">
+    <pre *ngFor="let log of followLogs">{{log}}</pre>
+</div>

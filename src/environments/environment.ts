@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   hmr: false,
-  API_BASE_URL: 'http://localhost:8008'
+  API_BASE_URL: 'http://localhost:8008',
+  WS_BASE_URL: 'ws://localhost:8009',
 
 };
 

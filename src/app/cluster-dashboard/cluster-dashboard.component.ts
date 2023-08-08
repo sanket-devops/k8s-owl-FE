@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { DashboardService } from '../service/dashboard.service';
 import { Router } from '@angular/router';
@@ -58,6 +58,8 @@ export class ClusterDashboardComponent implements OnInit {
   selectedNamespace: any = {name: 'default', status: 'Active'};
   namespaces: any[] = [];
   isSpinner: any = [];
+  followLogs: string[] = [];
+  ws: any;
 
   selectedApp: Idashboard[] = <any>undefined;
 
@@ -101,7 +103,7 @@ export class ClusterDashboardComponent implements OnInit {
     }, 1000);
 
   }
-
+  
   removeItemFromisSpinner (index: number) {
     let indexToRemove = index - 1;
     this.isSpinner.splice(indexToRemove, 1);
@@ -198,6 +200,7 @@ export class ClusterDashboardComponent implements OnInit {
           this.removeItemFromisSpinner(indexOfItem);
         },
         (error) => {
+          this.removeItemFromisSpinner(indexOfItem);
           console.log(error);
         })
       } else {
@@ -234,6 +237,7 @@ export class ClusterDashboardComponent implements OnInit {
           this.removeItemFromisSpinner(indexOfItem);
         },
         (error) => {
+          this.removeItemFromisSpinner(indexOfItem);
           console.log(error);
         });
       } else {
@@ -257,6 +261,69 @@ export class ClusterDashboardComponent implements OnInit {
     }
   }
 
+  async viewFollowLog(podName: string, appName: string, tailLines?: any) {
+    let indexOfItem = this.isSpinner.push(podName + '-' + appName);
+    this.podName = podName;
+    this.appName = appName
+    try {
+      if (typeof(tailLines) === 'number') {
+        this.dashboardService.viewFollowLog('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.podName, '/' + this.appName, '/' + tailLines).subscribe((data: any) => {
+          let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
+  
+          this.ws = new window.WebSocket(`${this.constantService.WS_ENDPOINT}/${data.id}`);
+          this.ws.onopen = () => {
+            console.log("Socket Connected...");
+          };
+          this.ws.onmessage = (msg: any) => {
+            // console.log(msg);
+            newWindow?.document.write(`<p>${msg.data}</p>`)
+          };
+          this.ws.onerror = (e: any) => {
+            console.error(e);
+          };
+  
+          this.ws.onclose = (e: any) => {
+            console.log("Socket Disconnected...");
+          };
+  
+          this.removeItemFromisSpinner(indexOfItem);
+        },
+          (error) => {
+            this.removeItemFromisSpinner(indexOfItem);
+            console.log(error);
+          });
+      } else if (typeof(tailLines) === 'string') {
+        this.dashboardService.viewFollowLog('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.podName, '/' + this.appName, '/' + tailLines).subscribe((data: any) => {
+  
+          this.ws = new window.WebSocket(`${this.constantService.WS_ENDPOINT}/${data.id}/stop`);
+          this.ws.onopen = () => {
+            console.log("Socket Dissconected...");
+          };
+          this.ws.onmessage = (msg: any) => {
+          };
+          this.ws.onerror = (e: any) => {
+            console.error(e);
+          };
+  
+          this.ws.onclose = (e: any) => {
+            console.log("Socket Disconnected...");
+          };
+  
+          this.removeItemFromisSpinner(indexOfItem);
+        },
+          (error) => {
+            this.removeItemFromisSpinner(indexOfItem);
+            console.log(error);
+          });
+        
+      }
+
+    } catch (e) {
+      this.removeItemFromisSpinner(indexOfItem);
+      console.log(e);
+    }
+  }
+
   async viewAppLogs(deploymentName: string, h?: any) {
     let indexOfItem = this.isSpinner.push(deploymentName);
     this.deploymentName = deploymentName;
@@ -271,6 +338,7 @@ export class ClusterDashboardComponent implements OnInit {
           this.removeItemFromisSpinner(indexOfItem);
         },
         (error) => {
+          this.removeItemFromisSpinner(indexOfItem);
           console.log(error);
         })
       } else {
@@ -306,6 +374,7 @@ export class ClusterDashboardComponent implements OnInit {
           this.removeItemFromisSpinner(indexOfItem);
         },
         (error) => {
+          this.removeItemFromisSpinner(indexOfItem);
           console.log(error);
         })
       } else {
