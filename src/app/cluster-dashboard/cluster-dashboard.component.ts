@@ -58,8 +58,11 @@ export class ClusterDashboardComponent implements OnInit {
   selectedNamespace: any = {name: 'default', status: 'Active'};
   namespaces: any[] = [];
   isSpinner: any = [];
-  followLogs: string[] = [];
+  followLogs: string = '';
   ws: any;
+  followLogModal: boolean = false;
+  selectedPod: any = <any>undefined;
+  selectedContainer: any = <any>undefined;
 
   selectedApp: Idashboard[] = <any>undefined;
 
@@ -125,6 +128,10 @@ export class ClusterDashboardComponent implements OnInit {
     const localTimeString = localDate.toLocaleString(undefined, options);
   
     return localTimeString;
+  }
+
+  showFollowLogDialog() {
+    this.followLogModal = true;
   }
 
   back() {
@@ -267,16 +274,14 @@ export class ClusterDashboardComponent implements OnInit {
     this.appName = appName
     try {
       if (typeof(tailLines) === 'number') {
+        this.followLogs = '';
         this.dashboardService.viewFollowLog('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.podName, '/' + this.appName, '/' + tailLines).subscribe((data: any) => {
-          let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
-  
           this.ws = new window.WebSocket(`${this.constantService.WS_ENDPOINT}/${data.id}`);
           this.ws.onopen = () => {
             console.log("Socket Connected...");
           };
           this.ws.onmessage = (msg: any) => {
-            // console.log(msg);
-            newWindow?.document.write(`<p>${msg.data}</p>`)
+            this.followLogs += msg.data;
           };
           this.ws.onerror = (e: any) => {
             console.error(e);
@@ -293,31 +298,20 @@ export class ClusterDashboardComponent implements OnInit {
             console.log(error);
           });
       } else if (typeof(tailLines) === 'string') {
-        this.dashboardService.viewFollowLog('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.podName, '/' + this.appName, '/' + tailLines).subscribe((data: any) => {
-  
-          this.ws = new window.WebSocket(`${this.constantService.WS_ENDPOINT}/${data.id}/stop`);
-          this.ws.onopen = () => {
-            console.log("Socket Dissconected...");
-          };
-          this.ws.onmessage = (msg: any) => {
-          };
-          this.ws.onerror = (e: any) => {
-            console.error(e);
-          };
-  
-          this.ws.onclose = (e: any) => {
-            console.log("Socket Disconnected...");
-          };
-  
-          this.removeItemFromisSpinner(indexOfItem);
-        },
-          (error) => {
-            this.removeItemFromisSpinner(indexOfItem);
-            console.log(error);
-          });
-        
+        this.ws = new window.WebSocket(`${this.constantService.WS_ENDPOINT}/${podName}-${appName}/stop`);
+        this.ws.onopen = () => {
+          console.log("Socket Dissconected...");
+        };
+        this.ws.onmessage = (msg: any) => {
+        };
+        this.ws.onerror = (e: any) => {
+          console.error(e);
+        };
+        this.ws.onclose = (e: any) => {
+          console.log("Socket Disconnected...");
+        };
+        this.removeItemFromisSpinner(indexOfItem);
       }
-
     } catch (e) {
       this.removeItemFromisSpinner(indexOfItem);
       console.log(e);

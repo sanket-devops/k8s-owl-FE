@@ -16,6 +16,7 @@ import { LoginComponent } from './login/login.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ClusterDashboardComponent } from './cluster-dashboard/cluster-dashboard.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {ClipboardModule} from '@angular/cdk/clipboard';
 
 import {TableModule} from 'primeng/table';
 import {ToastModule} from 'primeng/toast';
@@ -75,6 +76,7 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
     InputNumberModule,
     ConfirmDialogModule,
     InputTextareaModule,
+    ClipboardModule,
 
   ],
   providers: [ConstantService, DashboardService],
