@@ -60,6 +60,7 @@
                 <th pSortableColumn="spec.nodeName">Node<p-sortIcon field="spec.nodeName"></p-sortIcon></th>
                 <th pSortableColumn="">Conatainers<p-sortIcon field=""></p-sortIcon></th>
                 <th class="nowrap text-center">Containers Log</th>
+                <th class="nowrap text-center" *ngIf="isAdmin">Previous & Live</th>
                 <th pSortableColumn="">Restarts<p-sortIcon field=""></p-sortIcon></th>
                 <th></th>
             </tr>
@@ -206,11 +207,23 @@
                                         *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a>
                                 </li>
                             </ul>
-                            <button pButton
-                                (click)="this.selectedPod = app.metadata.name; this.selectedContainer = container.name; showFollowLogDialog(); viewFollowLog(app.metadata.name, container.name, 100)"
-                                *ngIf="isAdmin" icon="pi pi-play" type="button"
-                                class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
                         </div>
+                    </td>
+                </tr>
+            </td>
+            <td *ngIf="isAdmin">
+                <tr *ngFor="let container of app.spec.containers; index as i">
+                    <td>
+                        <button pButton
+                        (click)="this.selectedPod = app.metadata.name; this.selectedContainer = container.name; downloadPodPreviousLogs(app.metadata.name, container.name)"
+                        *ngIf="isAdmin" icon="pi pi-replay" type="button"
+                        class="p-button-secondary p-button-text p-button-rounded p-button-sm"></button>
+                    </td>
+                    <td>
+                        <button pButton
+                            (click)="this.selectedPod = app.metadata.name; this.selectedContainer = container.name; viewFollowLog(app.metadata.name, container.name, 100)"
+                            *ngIf="isAdmin" icon="pi pi-play" type="button"
+                            class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
                     </td>
                 </tr>
             </td>
@@ -242,7 +255,7 @@
     [baseZIndex]="100" [draggable]="true" [resizable]="true" [closeOnEscape]="false" [closable]="false">
     
     <ng-template pTemplate="context">
-        <ng-container *ngIf="followLogs"><pre>{{followLogs}}</pre></ng-container>
+        <ng-container id="scrollableContainer" *ngIf="followLogs"><pre>{{followLogs}}</pre></ng-container>
     </ng-template>
 
     <ng-template pTemplate="footer">

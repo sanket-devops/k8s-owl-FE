@@ -271,25 +271,61 @@ export class ClusterDashboardComponent implements OnInit {
   async viewFollowLog(podName: string, appName: string, tailLines?: any) {
     let indexOfItem = this.isSpinner.push(podName + '-' + appName);
     this.podName = podName;
-    this.appName = appName
+    this.appName = appName;
+
+    let winHtml = `
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>${this.podName} / ${this.appName}</title>
+        </head>
+        <body>
+        </body>
+    </html>`;
+
+    let winUrl = URL.createObjectURL(
+      new Blob([winHtml], { type: 'text/html' })
+    );
+
+    let newWindow = window.open(winUrl, `${this.podName} / ${this.appName}`, "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
+
     try {
       if (typeof(tailLines) === 'number') {
         this.followLogs = '';
         this.dashboardService.viewFollowLog('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.podName, '/' + this.appName, '/' + tailLines).subscribe((data: any) => {
-          this.ws = new window.WebSocket(`${this.constantService.WS_ENDPOINT}/${data.id}`);
-          this.ws.onopen = () => {
+          let ws = new window.WebSocket(`${this.constantService.WS_ENDPOINT}/${data.id}`);
+          ws.onopen = () => {
             console.log("Socket Connected...");
           };
-          this.ws.onmessage = (msg: any) => {
+          ws.onmessage = (msg: any) => {
+            setTimeout(() => {
+              let newItem = document.createElement('p');
+              newItem.textContent = msg.data;
+              newWindow?.document.body.appendChild(newItem);
+            }, 10);
+              // newWindow?.document.write(`<p>${msg.data}</p>`)
+              // newWindow?.document.write(`<pre>${msg.data}</pre>`)
             this.followLogs += msg.data;
           };
-          this.ws.onerror = (e: any) => {
+          ws.onerror = (e: any) => {
             console.error(e);
           };
   
-          this.ws.onclose = (e: any) => {
+          ws.onclose = (e: any) => {
             console.log("Socket Disconnected...");
           };
+
+          setTimeout(() => {
+            if (newWindow) {
+              newWindow.onunload = () => {
+                ws = new window.WebSocket(`${this.constantService.WS_ENDPOINT}/${podName}-${appName}/stop`);
+                ws.onclose = (e: any) => {
+                  console.log("Socket Disconnected...");
+                };
+                this.removeItemFromisSpinner(indexOfItem);
+              }
+            }
+          }, 1000);
   
           this.removeItemFromisSpinner(indexOfItem);
         },
@@ -312,6 +348,30 @@ export class ClusterDashboardComponent implements OnInit {
         };
         this.removeItemFromisSpinner(indexOfItem);
       }
+    } catch (e) {
+      this.removeItemFromisSpinner(indexOfItem);
+      console.log(e);
+    }
+  }
+
+  async downloadPodPreviousLogs(podName: string, appName: string) {
+    let indexOfItem = this.isSpinner.push(podName + '-' + appName);
+    this.podName = podName;
+    this.appName = appName
+    try {
+      let _clusterName = this.clusterName;
+      let _podName = this.podName;
+      let _appName = this.appName;
+      this.dashboardService.getPodsPreviousLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.podName, '/' + this.appName).subscribe((data: any) => {
+        this.downloadData = new File([data.data], `${_clusterName}-${_podName}-${_appName}-(previous).log`, { type: 'text/plain' });
+        saveAs.saveAs(this.downloadData, `${this.clusterName}-${this.podName}-${_appName}-(previous).log`)
+        toastr.success(`Download Started: ${this.clusterName}-${this.podName}-${_appName}-(previous).log`);
+        this.removeItemFromisSpinner(indexOfItem);
+      },
+      (error) => {
+        this.removeItemFromisSpinner(indexOfItem);
+        console.log(error);
+      })
     } catch (e) {
       this.removeItemFromisSpinner(indexOfItem);
       console.log(e);

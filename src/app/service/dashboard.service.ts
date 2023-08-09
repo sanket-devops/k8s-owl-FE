@@ -56,6 +56,9 @@ export class DashboardService {
       return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + namespace + podName + appName));
     }
   }
+  getPodsPreviousLogs(groupId: string, clusterId: string, namespace: string, podName: string, appName: string): Observable<any> {
+    return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/previous' + groupId + clusterId + namespace + podName + appName));
+  }
 
   viewFollowLog(groupId: string, clusterId: string, namespace: string, podName: string, appName: string, tailLines?: any): Observable<string>  {
     if (tailLines) {
