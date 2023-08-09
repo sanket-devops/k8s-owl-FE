@@ -71,59 +71,63 @@
                     <span class="p-text-bold p-ml-2">{{app.metadata.labels.app}}</span>
                 </td>
                 <td class="nowrap text-center" *ngIf="rowgroup" [attr.rowspan]="rowspan">
-                    <div class="dropdown nowrap text-center">
-                        <button class="btn btn-info dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <ng-container *ngFor="let spinner of this.isSpinner">
-                                <p-progressSpinner *ngIf="spinner === app.metadata.labels.app"
-                                    [style]="{width: '20px', height: '15px'}" styleClass="custom-spinner"
-                                    strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>&nbsp;
-                            </ng-container>
-                            <i class="fas fa-eye"></i>
-                        </button>&nbsp;
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 1)">View 1H</a>
-                            </li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 2)">View 2H</a>
-                            </li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 12)">View 12H</a>
-                            </li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 24)">View 24H</a>
-                            </li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 48)">View 48H</a>
-                            </li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 72)">View 72H <i
-                                        class="fas fa-exclamation-circle"></i></a></li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app)"
-                                    *ngIf="isAdmin">View Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
-                        </ul>
-                        <button class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton2"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <ng-container *ngFor="let spinner of this.isSpinner">
-                                <p-progressSpinner *ngIf="spinner === app.metadata.labels.app"
-                                    [style]="{width: '20px', height: '15px'}" styleClass="custom-spinner"
-                                    strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>&nbsp;
-                            </ng-container>
-                            <i class="fas fa-download"></i>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 1)">Download
-                                    1H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 2)">Download
-                                    2H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 12)">Download
-                                    12H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 24)">Download
-                                    24H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 48)">Download
-                                    48H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 72)">Download
-                                    72H <i class="fas fa-exclamation-circle"></i></a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app)"
-                                    *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a>
-                            </li>
-                        </ul>
-                    </div>
+                    <tr>
+                        <td>
+                            <button class="btn btn-info dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <ng-container *ngFor="let spinner of this.isSpinner">
+                                    <p-progressSpinner *ngIf="spinner === app.metadata.labels.app"
+                                        [style]="{width: '20px', height: '15px'}" styleClass="custom-spinner" strokeWidth="8"
+                                        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>&nbsp;
+                                </ng-container>
+                                <i class="fas fa-eye"></i>
+                            </button>&nbsp;
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 1)">View 1H</a>
+                                </li>
+                                <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 2)">View 2H</a>
+                                </li>
+                                <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 12)">View 12H</a>
+                                </li>
+                                <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 24)">View 24H</a>
+                                </li>
+                                <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 48)">View 48H</a>
+                                </li>
+                                <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 72)">View 72H <i
+                                            class="fas fa-exclamation-circle"></i></a></li>
+                                <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app)" *ngIf="isAdmin">View Full
+                                        Logs <i class="fas fa-exclamation-circle"></i></a></li>
+                            </ul>
+                        </td>
+                        <td>
+                            <button class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton2"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <ng-container *ngFor="let spinner of this.isSpinner">
+                                    <p-progressSpinner *ngIf="spinner === app.metadata.labels.app"
+                                        [style]="{width: '20px', height: '15px'}" styleClass="custom-spinner" strokeWidth="8"
+                                        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>&nbsp;
+                                </ng-container>
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                                <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 1)">Download
+                                        1H</a></li>
+                                <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 2)">Download
+                                        2H</a></li>
+                                <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 12)">Download
+                                        12H</a></li>
+                                <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 24)">Download
+                                        24H</a></li>
+                                <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 48)">Download
+                                        48H</a></li>
+                                <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 72)">Download
+                                        72H <i class="fas fa-exclamation-circle"></i></a></li>
+                                <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app)" *ngIf="isAdmin">Download
+                                        Full Logs <i class="fas fa-exclamation-circle"></i></a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
                 </td>
                 <td>{{app.metadata.name}}</td>
                 <td class="nowrap text-center" *ngIf="isAdmin">
@@ -144,70 +148,62 @@
             <td>
                 <tr *ngFor="let container of app.spec.containers; index as i">
                     <td>
-                        <div class="dropdown">
-                            <button class="btn btn-info dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <ng-container *ngFor="let spinner of this.isSpinner">
-                                    <p-progressSpinner *ngIf="spinner === (app.metadata.name + '-' + container.name)"
-                                        [style]="{width: '20px', height: '15px'}" styleClass="custom-spinner"
-                                        strokeWidth="8" fill="#EEEEEE"
-                                        animationDuration=".5s"></p-progressSpinner>&nbsp;
-                                </ng-container>
-                                <i class="fas fa-eye"></i>
-                            </button>&nbsp;
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item"
-                                        (click)="viewPodLogs(app.metadata.name, container.name, 1)">View 1H</a></li>
-                                <li><a class="dropdown-item"
-                                        (click)="viewPodLogs(app.metadata.name, container.name, 2)">View 2H</a></li>
-                                <li><a class="dropdown-item"
-                                        (click)="viewPodLogs(app.metadata.name, container.name, 12)">View 12H</a></li>
-                                <li><a class="dropdown-item"
-                                        (click)="viewPodLogs(app.metadata.name, container.name, 24)">View 24H</a></li>
-                                <li><a class="dropdown-item"
-                                        (click)="viewPodLogs(app.metadata.name, container.name, 48)">View 48H</a></li>
-                                <li><a class="dropdown-item"
-                                        (click)="viewPodLogs(app.metadata.name, container.name, 72)">View 72H <i
-                                            class="fas fa-exclamation-circle"></i></a></li>
-                                <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name)"
-                                        *ngIf="isAdmin">View Full Logs <i class="fas fa-exclamation-circle"></i></a>
-                                </li>
-                            </ul>
-                            <button class="btn btn-success dropdown-toggle btn-sm" type="button"
-                                id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-                                <ng-container *ngFor="let spinner of this.isSpinner">
-                                    <p-progressSpinner *ngIf="spinner === (app.metadata.name + '-' + container.name)"
-                                        [style]="{width: '20px', height: '15px'}" styleClass="custom-spinner"
-                                        strokeWidth="8" fill="#EEEEEE"
-                                        animationDuration=".5s"></p-progressSpinner>&nbsp;
-                                </ng-container>
-                                <i class="fas fa-download"></i>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                                <li><a class="dropdown-item"
-                                        (click)="downloadPodLogs(app.metadata.name, container.name, 1)">Download 1H</a>
-                                </li>
-                                <li><a class="dropdown-item"
-                                        (click)="downloadPodLogs(app.metadata.name, container.name, 2)">Download 2H</a>
-                                </li>
-                                <li><a class="dropdown-item"
-                                        (click)="downloadPodLogs(app.metadata.name, container.name, 12)">Download
-                                        12H</a></li>
-                                <li><a class="dropdown-item"
-                                        (click)="downloadPodLogs(app.metadata.name, container.name, 24)">Download
-                                        24H</a></li>
-                                <li><a class="dropdown-item"
-                                        (click)="downloadPodLogs(app.metadata.name, container.name, 48)">Download
-                                        48H</a></li>
-                                <li><a class="dropdown-item"
-                                        (click)="downloadPodLogs(app.metadata.name, container.name, 72)">Download 72H <i
-                                            class="fas fa-exclamation-circle"></i></a></li>
-                                <li><a class="dropdown-item"
-                                        (click)="downloadPodLogs(app.metadata.name, container.name)"
-                                        *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a>
-                                </li>
-                            </ul>
-                        </div>
+                        <button class="btn btn-info dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <ng-container *ngFor="let spinner of this.isSpinner">
+                                <p-progressSpinner *ngIf="spinner === (app.metadata.name + '-' + container.name)"
+                                    [style]="{width: '20px', height: '15px'}" styleClass="custom-spinner" strokeWidth="8"
+                                    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>&nbsp;
+                            </ng-container>
+                            <i class="fas fa-eye"></i>
+                        </button>&nbsp;
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 1)">View 1H</a>
+                            </li>
+                            <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 2)">View 2H</a>
+                            </li>
+                            <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 12)">View 12H</a>
+                            </li>
+                            <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 24)">View 24H</a>
+                            </li>
+                            <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 48)">View 48H</a>
+                            </li>
+                            <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 72)">View 72H <i
+                                        class="fas fa-exclamation-circle"></i></a></li>
+                            <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name)"
+                                    *ngIf="isAdmin">View Full Logs <i class="fas fa-exclamation-circle"></i></a>
+                            </li>
+                        </ul>
+                    </td>
+                    <td>
+                        <button class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton2"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <ng-container *ngFor="let spinner of this.isSpinner">
+                                <p-progressSpinner *ngIf="spinner === (app.metadata.name + '-' + container.name)"
+                                    [style]="{width: '20px', height: '15px'}" styleClass="custom-spinner" strokeWidth="8"
+                                    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>&nbsp;
+                            </ng-container>
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 1)">Download
+                                    1H</a>
+                            </li>
+                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 2)">Download
+                                    2H</a>
+                            </li>
+                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 12)">Download
+                                    12H</a></li>
+                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 24)">Download
+                                    24H</a></li>
+                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 48)">Download
+                                    48H</a></li>
+                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 72)">Download
+                                    72H <i class="fas fa-exclamation-circle"></i></a></li>
+                            <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name)"
+                                    *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a>
+                            </li>
+                        </ul>
                     </td>
                 </tr>
             </td>
