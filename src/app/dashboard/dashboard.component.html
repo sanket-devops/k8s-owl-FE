@@ -28,8 +28,14 @@
           <th [attr.rowspan]="clusterCount">{{i + 1}}</th>
           <th [attr.rowspan]="clusterCount">{{data.groupName}}</th>
           <th [attr.rowspan]="clusterCount" *ngIf="isAdmin">
-            <button type="button" (click)="editData(data)" class="btn btn-secondary me-2"><i class="fas fa-edit fa-fw"></i> Edit</button>
-            <button type="button" (click)="deleteData(data)" class="btn btn-danger me-2"><i class="fas fa-trash-alt"></i> Delete</button>
+            <tr>
+              <td>
+                <button type="button" (click)="editData(data)" class="btn btn-secondary me-2"><i class="fas fa-edit fa-fw"></i> Edit</button>
+              </td>
+              <td>
+                <button type="button" (click)="deleteData(data)" class="btn btn-danger me-2"><i class="fas fa-trash-alt"></i> Delete</button>
+              </td>
+            </tr>
           </th>
         </tr>
         <tr *ngFor="let clustersData of data.clusters">
