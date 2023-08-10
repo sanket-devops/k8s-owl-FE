@@ -6,7 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Idashboard, ICluster } from '../interface/Idashboard';
 import { ConstantService } from '../service/constant.service';
 import { saveAs } from 'file-saver';
-import { data, error } from 'jquery';
+import { data, error, event } from 'jquery';
 
 declare let toastr: any;
 toastr.options = {
@@ -63,7 +63,6 @@ export class ClusterDashboardComponent implements OnInit {
   followLogModal: boolean = false;
   selectedPod: any = <any>undefined;
   selectedContainer: any = <any>undefined;
-
   selectedApp: Idashboard[] = <any>undefined;
 
   constructor(
@@ -289,6 +288,25 @@ export class ClusterDashboardComponent implements OnInit {
 
     let newWindow = window.open(winUrl, `${this.podName} / ${this.appName}`, "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
 
+
+    setInterval(() => {
+      if (newWindow?.document.body.offsetHeight) {
+        let threshold = 2000;
+        let verticalScroll = newWindow?.scrollY || newWindow?.pageYOffset;
+        let horizontalScroll = newWindow?.scrollX || newWindow?.pageXOffset;
+        let height = newWindow.document.body.scrollHeight;
+
+        // console.log('Vertical Scroll:', verticalScroll);
+        // console.log('Horizontal Scroll:', horizontalScroll);
+        // console.log('Scroll Hight:', newWindow.document.body.scrollHeight);
+        console.log((height - verticalScroll) < threshold);
+        if ((height - verticalScroll) < threshold ) {
+          newWindow?.scrollTo(0, newWindow.document.body.scrollHeight);
+        }
+
+      }
+    }, 100);
+
     try {
       if (typeof(tailLines) === 'number') {
         this.followLogs = '';
@@ -302,6 +320,11 @@ export class ClusterDashboardComponent implements OnInit {
               let newItem = document.createElement('p');
               newItem.textContent = msg.data;
               newWindow?.document.body.appendChild(newItem);
+              // newWindow?.scrollTo(0, newWindow.document.body.scrollHeight);
+              // console.log(newWindow?.document.body.scrollHeight);
+              // console.log(newWindow?.document.body.scrollTop);
+              // console.log(newWindow?.scrollY);
+              // console.log(newWindow?.scrollX);
             }, 10);
               // newWindow?.document.write(`<p>${msg.data}</p>`)
               // newWindow?.document.write(`<pre>${msg.data}</pre>`)
