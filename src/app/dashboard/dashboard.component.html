@@ -13,7 +13,7 @@
 
 <div class="secound-div">
   <table class="table table-striped table-hover">
-    <thead>
+    <thead style="text-align: center">
       <tr>
         <th scope="col">#</th>
         <th scope="col">Group Name</th>
@@ -23,19 +23,14 @@
         <th scope="col">Action</th>
       </tr>
     </thead>
-    <tbody *ngFor="let data of clusterArr ;let i =index">
+    <tbody style="text-align: center" *ngFor="let data of clusterArr ;let i =index">
         <tr>
           <th [attr.rowspan]="clusterCount">{{i + 1}}</th>
           <th [attr.rowspan]="clusterCount">{{data.groupName}}</th>
-          <th [attr.rowspan]="clusterCount" *ngIf="isAdmin">
-            <tr>
-              <td>
-                <button type="button" (click)="editData(data)" class="btn btn-secondary me-2"><i class="fas fa-edit fa-fw"></i></button>
-              </td>
-              <td>
-                <button type="button" (click)="deleteData(data)" class="btn btn-danger me-2"><i class="fas fa-trash-alt"></i></button>
-              </td>
-            </tr>
+          <th NOWRAP [attr.rowspan]="clusterCount" *ngIf="isAdmin">
+            <button type="button" (click)="editData(data)" class="btn btn-secondary me-2"><i
+                class="fas fa-edit fa-fw"></i></button>
+            <button type="button" (click)="deleteData(data)" class="btn btn-danger me-2"><i class="fas fa-trash-alt"></i></button>
           </th>
         </tr>
         <tr *ngFor="let clustersData of data.clusters">
