@@ -230,7 +230,7 @@
                                 {{status.restartCount}}
                             </p>
                             <p *ngIf="status.restartCount > 0">
-                                {{status.restartCount}} ({{calculateAge(status.lastState.terminated.finishedAt)}})
+                                {{status.restartCount}} ({{calculateAge(status.lastState.terminated?.finishedAt)}})
                             </p>
                         </td>
                     </tr>

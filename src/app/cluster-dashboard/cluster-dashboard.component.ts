@@ -299,7 +299,7 @@ export class ClusterDashboardComponent implements OnInit {
         // console.log('Vertical Scroll:', verticalScroll);
         // console.log('Horizontal Scroll:', horizontalScroll);
         // console.log('Scroll Hight:', newWindow.document.body.scrollHeight);
-        console.log((height - verticalScroll) < threshold);
+        // console.log((height - verticalScroll) < threshold);
         if ((height - verticalScroll) < threshold ) {
           newWindow?.scrollTo(0, newWindow.document.body.scrollHeight);
         }
