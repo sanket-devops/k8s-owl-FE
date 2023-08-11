@@ -70,7 +70,7 @@
                 <td *ngIf="rowgroup" [attr.rowspan]="rowspan">
                     <span class="p-text-bold p-ml-2">{{app.metadata.labels.app}}</span>
                 </td>
-                <td class="nowrap text-center" *ngIf="rowgroup" [attr.rowspan]="rowspan">
+                <td NOWRAP class="text-center" *ngIf="rowgroup" [attr.rowspan]="rowspan">
                     <tr>
                         <td>
                             <button class="btn btn-info dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1"
@@ -145,7 +145,7 @@
                         <td>{{container.name}}</td>
                     </tr>
                 </td>
-                <td>
+                <td NOWRAP>
                     <tr *ngFor="let container of app.spec.containers; index as i">
                         <td>
                             <button class="btn btn-info dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1"
@@ -207,7 +207,7 @@
                         </td>
                     </tr>
                 </td>
-                <td *ngIf="isAdmin">
+                <td NOWRAP *ngIf="isAdmin">
                     <tr *ngFor="let container of app.spec.containers; index as i">
                         <td>
                             <button pButton
@@ -223,7 +223,7 @@
                         </td>
                     </tr>
                 </td>
-                <td>
+                <td NOWRAP>
                     <tr *ngFor="let status of app.status.containerStatuses ; index as i">
                         <td>
                             <p *ngIf="status.restartCount === 0">
