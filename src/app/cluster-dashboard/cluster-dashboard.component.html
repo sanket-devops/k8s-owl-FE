@@ -138,7 +138,14 @@
                     </button> -->
                 </td>
                 <td>{{calculateAge(app.status.startTime)}}</td>
-                <td>{{app.status.phase}}</td>
+                <td>
+                    <span *ngIf="app.status.phase === 'Pending'" style="color:blue;">{{app.status.phase}}</span>
+                    <span *ngIf="app.status.phase === 'Running'" style="color:green;">{{app.status.phase}}</span>
+                    <span *ngIf="app.status.phase === 'Succeeded'" style="color:aqua;">{{app.status.phase}}</span>
+                    <span *ngIf="app.status.phase === 'Failed'" style="color:red;">{{app.status.phase}}</span>
+                    <span *ngIf="app.status.phase === 'Unknown'" style="color:red;">{{app.status.phase}}</span>
+                    <!-- <span *ngIf="app.status.containerStatuses[rowIndex]?.state?.terminated?.exitCode" style="color:red;">Terminating</span> -->
+                </td>
                 <td>{{app.spec.nodeName}}</td>
                 <td>
                     <tr *ngFor="let container of app.spec.containers; index as i">
@@ -229,7 +236,7 @@
                             <p *ngIf="status.restartCount === 0">
                                 {{status.restartCount}}
                             </p>
-                            <p *ngIf="status.restartCount > 0">
+                            <p *ngIf="status.restartCount > 0" style="color:red;">
                                 {{status.restartCount}} ({{calculateAge(status.lastState.terminated?.finishedAt)}})
                             </p>
                         </td>
