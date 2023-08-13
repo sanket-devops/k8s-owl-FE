@@ -62,24 +62,9 @@ export class DashboardService {
 
   viewFollowLog(groupId: string, clusterId: string, namespace: string, podName: string, appName: string, tailLines?: any): Observable<string>  {
     if (tailLines) {
-      // const httpOptions = {
-      //   headers: new HttpHeaders({
-      //     'Accept': 'text/plain, */*',
-      //     'Content-Type': 'application/json' // We send JSON
-      //   }),
-      //   responseType: 'text' as 'json'  // We accept plain text as response.
-      // };
       return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/follow' + groupId + clusterId + namespace + podName + appName + tailLines));
     } else {
       return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/follow' + groupId + clusterId + namespace + podName + appName));
-    }
-  }
-
-  getAppLogs(groupId: string, clusterId: string, namespace: string, deploymentName: string, h?: any): Observable<any> {
-    if (h) {
-      return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/HourlyLog' + groupId + clusterId + namespace + deploymentName + h));
-    } else {
-      return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/HourlyLog' + groupId + clusterId + namespace + deploymentName));
     }
   }
 

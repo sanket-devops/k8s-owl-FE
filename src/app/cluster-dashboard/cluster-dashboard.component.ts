@@ -286,8 +286,7 @@ export class ClusterDashboardComponent implements OnInit {
       new Blob([winHtml], { type: 'text/html' })
     );
 
-    let newWindow = window.open(winUrl, `${this.podName} / ${this.appName}`, "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
-
+    let newWindow = window.open(winUrl, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
 
     setInterval(() => {
       if (newWindow?.document.body.offsetHeight) {
@@ -295,15 +294,9 @@ export class ClusterDashboardComponent implements OnInit {
         let verticalScroll = newWindow?.scrollY || newWindow?.pageYOffset;
         let horizontalScroll = newWindow?.scrollX || newWindow?.pageXOffset;
         let height = newWindow.document.body.scrollHeight;
-
-        // console.log('Vertical Scroll:', verticalScroll);
-        // console.log('Horizontal Scroll:', horizontalScroll);
-        // console.log('Scroll Hight:', newWindow.document.body.scrollHeight);
-        // console.log((height - verticalScroll) < threshold);
         if ((height - verticalScroll) < threshold ) {
           newWindow?.scrollTo(0, newWindow.document.body.scrollHeight);
         }
-
       }
     }, 100);
 
@@ -317,17 +310,8 @@ export class ClusterDashboardComponent implements OnInit {
           };
           ws.onmessage = (msg: any) => {
             setTimeout(() => {
-              let newItem = document.createElement('p');
-              newItem.textContent = msg.data;
-              newWindow?.document.body.appendChild(newItem);
-              // newWindow?.scrollTo(0, newWindow.document.body.scrollHeight);
-              // console.log(newWindow?.document.body.scrollHeight);
-              // console.log(newWindow?.document.body.scrollTop);
-              // console.log(newWindow?.scrollY);
-              // console.log(newWindow?.scrollX);
+              newWindow?.document.write(`<p style="font-family: Arial, Helvetica, sans-serif">${msg.data}</p>`)
             }, 10);
-              // newWindow?.document.write(`<p>${msg.data}</p>`)
-              // newWindow?.document.write(`<pre>${msg.data}</pre>`)
             this.followLogs += msg.data;
           };
           ws.onerror = (e: any) => {
@@ -406,67 +390,144 @@ export class ClusterDashboardComponent implements OnInit {
     this.deploymentName = deploymentName;
     try {
       if (h) {
-        this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.deploymentName, '/' + h).subscribe((data: any) => {
-          let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
-          data.data.forEach((logs: any) => {
-            let windowData = logs.replace(/\n\t/g, '<br />').replace(/\n/g, '<br />');
-            newWindow?.document.write(`<p>${windowData}</p>`)
-          });
-          this.removeItemFromisSpinner(indexOfItem);
-        },
-        (error) => {
-          this.removeItemFromisSpinner(indexOfItem);
-          console.log(error);
-        })
+        let _clusterName = this.clusterName;
+        let _deploymentName = this.deploymentName;
+        let _clusterData = this.clusterData
+        let _deploymentLogs: string = '';
+        let promiseArr: Promise<any>[] = [];
+
+        for (let pod = 0; pod < _clusterData.length; pod++) {
+          if (_clusterData[pod].metadata.labels.app === _deploymentName) {
+            let podName = _clusterData[pod].metadata.name;
+            for (let container = 0; container < _clusterData[pod].spec.containers.length; container++) {
+              promiseArr.push(new Promise<void>(async (resolve, reject) => {
+                let containerName = _clusterData[pod].spec.containers[container].name;
+                this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + podName, '/' + containerName, '/' + h).subscribe((data: any) => {
+                  _deploymentLogs += `<br />>>>>>>>> Log ${podName} => ${containerName} Start <<<<<<<<<br /><br />`
+                  _deploymentLogs += data.data.replace(/\n\t/g, '<br />').replace(/\n/g, '<br />');
+                  _deploymentLogs += `<br />>>>>>>>> Log ${podName} => ${containerName} End <<<<<<<<<br />`
+                  resolve();
+                },
+                  (error) => {
+                    this.removeItemFromisSpinner(indexOfItem);
+                    console.log(error);
+                  });
+              }));
+            }
+          }
+        }
+        await Promise.all(promiseArr)
+        let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
+        newWindow?.document.write(`<title>${_clusterName}-${_deploymentName}-(${h}H)</title><p style="font-family: Arial, Helvetica, sans-serif">${_deploymentLogs}</p>`)
+        toastr.success(`New Window Started: ${_clusterName}-${_deploymentName}-(${h}H).log`);
+        this.removeItemFromisSpinner(indexOfItem);
       } else {
-        this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.deploymentName).subscribe((data: any) => {
-          let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
-          data.data.forEach((logs: any) => {
-            let windowData = logs.replace(/\n\t/g, '<br />').replace(/\n/g, '<br />');
-            newWindow?.document.write(`<p>${windowData}</p>`)
-          });
-          this.removeItemFromisSpinner(indexOfItem);
-        },
-        (error) => {
-          this.removeItemFromisSpinner(indexOfItem);
-          console.log(error);
-        })
+        let _clusterName = this.clusterName;
+        let _deploymentName = this.deploymentName;
+        let _clusterData = this.clusterData
+        let _deploymentLogs: string = '';
+        let promiseArr: Promise<any>[] = [];
+
+        for (let pod = 0; pod < _clusterData.length; pod++) {
+          if (_clusterData[pod].metadata.labels.app === _deploymentName) {
+            let podName = _clusterData[pod].metadata.name;
+            for (let container = 0; container < _clusterData[pod].spec.containers.length; container++) {
+              promiseArr.push(new Promise<void>(async (resolve, reject) => {
+                let containerName = _clusterData[pod].spec.containers[container].name;
+                this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + podName, '/' + containerName).subscribe((data: any) => {
+                  _deploymentLogs += `<br />>>>>>>>> Log ${podName} => ${containerName} Start <<<<<<<<<br /><br />`
+                  _deploymentLogs += data.data.replace(/\n\t/g, '<br />').replace(/\n/g, '<br />');
+                  _deploymentLogs += `<br />>>>>>>>> Log ${podName} => ${containerName} End <<<<<<<<<br />`
+                  resolve();
+                },
+                  (error) => {
+                    this.removeItemFromisSpinner(indexOfItem);
+                    console.log(error);
+                  });
+              }));
+            }
+          }
+        }
+        await Promise.all(promiseArr)
+        let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
+        newWindow?.document.write(`<title>${_clusterName}-${_deploymentName}-(all)</title><p style="font-family: Arial, Helvetica, sans-serif">${_deploymentLogs}</p>`)
+        toastr.success(`New Window Started: ${_clusterName}-${_deploymentName}-(all).log`);
+        this.removeItemFromisSpinner(indexOfItem);
       }
     } catch (e) {
       this.removeItemFromisSpinner(indexOfItem);
       console.log(e);
     }
   }
-  async downloadAppLogs(deploymentName: string, h?: any) {
-    let indexOfItem = this.isSpinner.push(deploymentName);
-    this.deploymentName = deploymentName;
+  async downloadAppLogs(_deploymentName: string, h?: any) {
+    // console.log(_clusterData);
+    let indexOfItem = this.isSpinner.push(_deploymentName);
+    this.deploymentName = _deploymentName;
     try {
       if (h) {
         let _clusterName = this.clusterName;
         let _deploymentName = this.deploymentName;
-        this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.deploymentName, '/' + h).subscribe((data: any) => {
-          this.downloadData = new File([data.data], `${_clusterName}-${_deploymentName}-(${h}H).log`, { type: 'text/plain' });
-          saveAs.saveAs(this.downloadData, `${_clusterName}-${_deploymentName}-(${h}H).log`)
-          toastr.success(`Download Started: ${_clusterName}-${_deploymentName}-(${h}H).log`);
-          this.removeItemFromisSpinner(indexOfItem);
-        },
-        (error) => {
-          this.removeItemFromisSpinner(indexOfItem);
-          console.log(error);
-        })
+        let _clusterData = this.clusterData
+        let _deploymentLogs: string = '';
+        let promiseArr: Promise<any>[] = [];
+
+        for (let pod = 0; pod < _clusterData.length; pod++) {
+          if (_clusterData[pod].metadata.labels.app === _deploymentName) {
+            let podName = _clusterData[pod].metadata.name;
+            for (let container = 0; container < _clusterData[pod].spec.containers.length; container++) {
+              promiseArr.push(new Promise<void>(async (resolve, reject) => {
+                let containerName = _clusterData[pod].spec.containers[container].name;
+                this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + podName, '/' + containerName, '/' + h).subscribe((data: any) => {
+                  _deploymentLogs += `\n>>>>>>>> Log ${podName} => ${containerName} Start <<<<<<<<\n\n`
+                  _deploymentLogs += data.data;
+                  _deploymentLogs += `\n>>>>>>>> Log ${podName} => ${containerName} End <<<<<<<<\n`
+                  resolve();
+                },
+                  (error) => {
+                    this.removeItemFromisSpinner(indexOfItem);
+                    console.log(error);
+                  });
+              }));
+            }
+          }
+        }
+        await Promise.all(promiseArr)
+        let _downloadLogs = new File([_deploymentLogs], `${_clusterName}-${_deploymentName}-(${h}H).log`, { type: 'text/plain' });
+        saveAs.saveAs(_downloadLogs, `${_clusterName}-${_deploymentName}-(${h}H).log`)
+        toastr.success(`Download Started: ${_clusterName}-${_deploymentName}-(${h}H).log`);
+        this.removeItemFromisSpinner(indexOfItem);
       } else {
         let _clusterName = this.clusterName;
         let _deploymentName = this.deploymentName;
-        this.dashboardService.getAppLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.deploymentName).subscribe((data: any) => {
-          this.downloadData = new File([data.data], `${_clusterName}-${_deploymentName}-(all).log`, { type: 'text/plain' });
-          saveAs.saveAs(this.downloadData, `${_clusterName}-${_deploymentName}-(all).log`)
-          toastr.success(`Download Started: ${_clusterName}-${_deploymentName}-(all).log`);
-          this.removeItemFromisSpinner(indexOfItem);
-        },
-        (error) => {
-          this.removeItemFromisSpinner(indexOfItem);
-          console.log(error);
-        })
+        let _clusterData = this.clusterData
+        let _deploymentLogs: string = '';
+        let promiseArr: Promise<any>[] = [];
+
+        for (let pod = 0; pod < _clusterData.length; pod++) {
+          if (_clusterData[pod].metadata.labels.app === _deploymentName) {
+            let podName = _clusterData[pod].metadata.name;
+            for (let container = 0; container < _clusterData[pod].spec.containers.length; container++) {
+              promiseArr.push(new Promise<void>(async (resolve, reject) => {
+                let containerName = _clusterData[pod].spec.containers[container].name;
+                this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + podName, '/' + containerName).subscribe((data: any) => {
+                  _deploymentLogs += `\n>>>>>>>> Log ${podName} => ${containerName} Start <<<<<<<<\n\n`
+                  _deploymentLogs += data.data;
+                  _deploymentLogs += `\n>>>>>>>> Log ${podName} => ${containerName} End <<<<<<<<\n`
+                  resolve();
+                },
+                  (error) => {
+                    this.removeItemFromisSpinner(indexOfItem);
+                    console.log(error);
+                  });
+              }));
+            }
+          }
+        }
+        await Promise.all(promiseArr)
+        let _downloadLogs = new File([_deploymentLogs], `${_clusterName}-${_deploymentName}-(all).log`, { type: 'text/plain' });
+        saveAs.saveAs(_downloadLogs, `${_clusterName}-${_deploymentName}-(all).log`)
+        toastr.success(`Download Started: ${_clusterName}-${_deploymentName}-(all).log`);
+        this.removeItemFromisSpinner(indexOfItem);
       }
     } catch (e) {
       this.removeItemFromisSpinner(indexOfItem);
