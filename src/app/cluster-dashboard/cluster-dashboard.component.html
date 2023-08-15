@@ -53,6 +53,7 @@
             <tr>
                 <th pSortableColumn="metadata.labels.app">App<p-sortIcon field="metadata.labels.app"></p-sortIcon></th>
                 <th NOWRAP>App Log</th>
+                <th class="nowrap text-center" *ngIf="isAdmin"><i class="fas fa-trash-alt"></i></th>
                 <th pSortableColumn="metadata.name">Pod<p-sortIcon field="metadata.name"></p-sortIcon></th>
                 <th class="nowrap text-center" *ngIf="isAdmin"><i class="fas fa-trash-alt"></i></th>
                 <th pSortableColumn="status.startTime">AGE<p-sortIcon field="status.startTime"></p-sortIcon></th>
@@ -129,13 +130,14 @@
                         </td>
                     </tr>
                 </td>
+                <td class="text-center" *ngIf="rowgroup" [attr.rowspan]="rowspan">
+                    <button pButton (click)="rolloutRestart(app.metadata.labels.app)" *ngIf="isAdmin" icon="pi pi-trash"
+                    type="button" class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
+                </td>
                 <td>{{app.metadata.name}}</td>
                 <td class="nowrap text-center" *ngIf="isAdmin">
                     <button pButton (click)="deletePod(app.metadata.name)" *ngIf="isAdmin" icon="pi pi-trash"
                         type="button" class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
-                    <!-- <button class="btn btn-danger btn-sm" type="button" (click)="deletePod(app.metadata.name)" *ngIf="isAdmin">
-                        <i class="fas fa-trash-alt"></i>
-                    </button> -->
                 </td>
                 <td>{{calculateAge(app.status.startTime)}}</td>
                 <td>
@@ -144,7 +146,6 @@
                     <span *ngIf="app.status.phase === 'Succeeded'" style="color:aqua;">{{app.status.phase}}</span>
                     <span *ngIf="app.status.phase === 'Failed'" style="color:red;">{{app.status.phase}}</span>
                     <span *ngIf="app.status.phase === 'Unknown'" style="color:red;">{{app.status.phase}}</span>
-                    <!-- <span *ngIf="app.status.containerStatuses[rowIndex]?.state?.terminated?.exitCode" style="color:red;">Terminating</span> -->
                 </td>
                 <td>{{app.spec.nodeName}}</td>
                 <td>

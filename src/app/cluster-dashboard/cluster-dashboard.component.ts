@@ -547,6 +547,17 @@ export class ClusterDashboardComponent implements OnInit {
     }
   }
 
+  async rolloutRestart(deploymentName: string) {
+    if (
+      window.confirm(
+        `Do you want to rollout restart "Deployment" : ${deploymentName} ?`
+      )
+    ) {
+      let resp = await this.dashboardService.rolloutRestart('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + deploymentName).toPromise();
+      toastr.success(`Rollout Restarting: ${deploymentName}`) && await this.latestPull();
+    }
+  }
+
   async autoReload(event?: any) {
     this.isChecked != this.isChecked
   }
