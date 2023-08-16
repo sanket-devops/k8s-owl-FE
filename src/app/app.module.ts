@@ -37,6 +37,9 @@ import {RadioButtonModule} from 'primeng/radiobutton';
 import {InputNumberModule} from 'primeng/inputnumber';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {InputTextareaModule} from 'primeng/inputtextarea';
+import {TooltipModule} from 'primeng/tooltip';
+import {DividerModule} from 'primeng/divider';
+import {EditorModule} from 'primeng/editor';
 
 @NgModule({
   declarations: [
@@ -77,6 +80,9 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
     ConfirmDialogModule,
     InputTextareaModule,
     ClipboardModule,
+    TooltipModule,
+    DividerModule,
+    EditorModule
 
   ],
   providers: [ConstantService, DashboardService],

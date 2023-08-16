@@ -7,6 +7,7 @@ import { Idashboard, ICluster } from '../interface/Idashboard';
 import { ConstantService } from '../service/constant.service';
 import { saveAs } from 'file-saver';
 import { data, error, event } from 'jquery';
+import { JsonPipe } from '@angular/common';
 
 declare let toastr: any;
 toastr.options = {
@@ -64,6 +65,9 @@ export class ClusterDashboardComponent implements OnInit {
   selectedPod: any = <any>undefined;
   selectedContainer: any = <any>undefined;
   selectedApp: Idashboard[] = <any>undefined;
+  manifestDialog: boolean = false;
+  deploymentManifest: any = undefined;
+  updatedDeploymentManifest: any = undefined;
 
   constructor(
     public constantService: ConstantService,
@@ -554,7 +558,54 @@ export class ClusterDashboardComponent implements OnInit {
       )
     ) {
       let resp = await this.dashboardService.rolloutRestart('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + deploymentName).toPromise();
-      toastr.success(`Rollout Restarting: ${deploymentName}`) && await this.latestPull();
+      toastr.success(`Rollout Restarting: ${deploymentName}`) 
+    }
+  }
+
+  async showManifestDialog(deploymentName: string) {
+    this.manifestDialog = true;
+    this.deploymentName = deploymentName;
+    setTimeout(() => {
+      this.dashboardService.getDeploymentManifest('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + deploymentName).subscribe((data: any) => {
+        this.deploymentManifest = JSON.stringify(data, undefined, 4);
+        this.updatedDeploymentManifest = JSON.stringify(data, undefined, 4);
+        console.log(this.deploymentManifest);
+        toastr.success(`Get Deployment Manifest: ${deploymentName}`);
+      });
+    }, 100);
+  }
+
+  async updateDeploymentManifest() {
+    // console.log(this.deploymentManifest);
+    //     let data: any = {
+    //     groupId: this.groupId,
+    //     clusterId: this.clusterId,
+    //     namespace: this.selectedNamespace.name,
+    //     deploymentName: this.deploymentName,
+    //     data: this.deploymentManifest,
+    //   }
+    // this.dashboardService.updateDeploymentManifest(data).subscribe((data: any) => {
+    //   toastr.success(`Deployment Update: ${this.deploymentName}`);
+    //   this.manifestDialog = false;
+    //   this.latestPull();
+    // });
+    if (this.updatedDeploymentManifest && (this.updatedDeploymentManifest !== this.deploymentManifest)) {
+      let data: any = {
+        groupId: this.groupId,
+        clusterId: this.clusterId,
+        namespace: this.selectedNamespace.name,
+        deploymentName: this.deploymentName,
+        data: this.updatedDeploymentManifest,
+      }
+      // console.log(data);
+      this.dashboardService.updateDeploymentManifest(data).subscribe((data: any) => {
+        toastr.success(`Deployment Update: ${this.deploymentName}`);
+        this.manifestDialog = false;
+        this.latestPull();
+      });
+    }
+    else {
+      toastr.warning(`No Change Found: ${this.deploymentName}`);
     }
   }
 

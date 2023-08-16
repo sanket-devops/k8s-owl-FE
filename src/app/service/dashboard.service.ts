@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import { Observable, observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import {ConstantService} from './constant.service';
 // import {CookieService} from 'ngx-cookie-service';
@@ -71,8 +71,17 @@ export class DashboardService {
   deletePod(groupId: string, clusterId: string, namespace: string, podName: string, populate?: string) {
     return this.http.delete(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/DeletePod' + groupId + clusterId + namespace + podName + `${populate ? '?populate=' + populate : ''}`));
   }
+
   rolloutRestart(groupId: string, clusterId: string, namespace: string, deploymentName: string, populate?: string) {
     return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/restart' + groupId + clusterId + namespace + deploymentName + `${populate ? '?populate=' + populate : ''}`));
+  }
+
+  getDeploymentManifest(groupId: string, clusterId: string, namespace: string, deploymentName: string, populate?: string): Observable<any> {
+    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/manifest' + groupId + clusterId + namespace + deploymentName + `${populate ? '?populate=' + populate : ''}`));
+  }
+
+  updateDeploymentManifest(data: any): Observable<any> {
+    return this.http.post<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/cluster/deployment/update-deployment'), data);
   }
 
 }
