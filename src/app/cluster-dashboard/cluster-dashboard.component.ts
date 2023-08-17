@@ -294,7 +294,7 @@ export class ClusterDashboardComponent implements OnInit {
 
     setInterval(() => {
       if (newWindow?.document.body.offsetHeight) {
-        let threshold = 2000;
+        let threshold = 5000;
         let verticalScroll = newWindow?.scrollY || newWindow?.pageYOffset;
         let horizontalScroll = newWindow?.scrollX || newWindow?.pageXOffset;
         let height = newWindow.document.body.scrollHeight;
@@ -576,19 +576,6 @@ export class ClusterDashboardComponent implements OnInit {
   }
 
   async updateDeploymentManifest() {
-    // console.log(this.deploymentManifest);
-    //     let data: any = {
-    //     groupId: this.groupId,
-    //     clusterId: this.clusterId,
-    //     namespace: this.selectedNamespace.name,
-    //     deploymentName: this.deploymentName,
-    //     data: this.deploymentManifest,
-    //   }
-    // this.dashboardService.updateDeploymentManifest(data).subscribe((data: any) => {
-    //   toastr.success(`Deployment Update: ${this.deploymentName}`);
-    //   this.manifestDialog = false;
-    //   this.latestPull();
-    // });
     if (this.updatedDeploymentManifest && (this.updatedDeploymentManifest !== this.deploymentManifest)) {
       let data: any = {
         groupId: this.groupId,
