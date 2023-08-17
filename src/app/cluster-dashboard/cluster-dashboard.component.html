@@ -154,9 +154,9 @@
                 <td>
                     <tr *ngFor="let status of app.status.containerStatuses">
                         <td>
-                            <span *ngIf="status.state['waiting']" style="color:blue;">{{status.state['waiting'].reason}}</span>
+                            <span *ngIf="status.state['waiting']" style="color:brown;" pTooltip="{{status.state['waiting'].message}}" >{{status.state['waiting'].reason}}</span>
                             <span *ngIf="status.state['running']" style="color:green;">{{app.status.phase}}</span>
-                            <span *ngIf="status.state['terminated']" style="color:red;">Terminating</span>
+                            <span *ngIf="status.state['terminated']" style="color:red;" pTooltip="{{status.state['waiting'].reason}}" >Terminating</span>
                         </td>
                     </tr>
                 </td>
