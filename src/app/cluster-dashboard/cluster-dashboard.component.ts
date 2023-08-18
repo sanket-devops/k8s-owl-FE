@@ -558,7 +558,7 @@ export class ClusterDashboardComponent implements OnInit {
       )
     ) {
       let resp = await this.dashboardService.rolloutRestart('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + deploymentName).toPromise();
-      toastr.success(`Rollout Restarting: ${deploymentName}`) 
+      toastr.success(`Rollout Restarting: ${deploymentName}`) && await this.latestPull();
     }
   }
 
