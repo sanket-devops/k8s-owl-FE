@@ -6,7 +6,10 @@
   <button type="button" *ngIf="isAdmin" class="btn btn-success float-start me-2" (click)="AddCluster()"><i class="fas fa-plus fa-fw"></i> Add</button>
   <button type="button" class="btn btn-secondary me-2" (click)="latestPull($event)"><i class="fas fa-sync-alt fa-fw"></i> Reload in <span class="timer">{{timer}}</span></button>
   <button type="button" class="btn btn-secondary me-2">
-    <mat-slide-toggle [(ngModel)]="isChecked" name="check" (change)="autoReload($event)"><i class="fas fa-sync-alt fa-fw"></i> Auto Reload 60/s: {{isChecked}}</mat-slide-toggle>
+    <i class="fas fa-sync-alt fa-fw"></i> Auto Reload
+    <input type="text" style="width:40px; height: 18px; text-align: center;" class="p-inputtext-sm"
+      [(ngModel)]="intervalTime" pInputText pTooltip="Interval Time In Second" />/s&nbsp;
+    <mat-slide-toggle [(ngModel)]="isChecked" name="check" (change)="autoReload($event)"></mat-slide-toggle>
   </button>
   <button type="button" class="btn btn-danger float-end me-2" (click)="logout()"><i class="fas fa-sign-out-alt fa-fw"></i> Logout</button>
 </nav>

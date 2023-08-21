@@ -8,8 +8,10 @@
             class="fas fa-sync-alt fa-fw"></i> Reload in <span class="timer">{{timer}}</span></button>
     <h1>{{clusterName}}</h1>
     <button type="button" class="btn btn-secondary me-2">
-        <mat-slide-toggle [(ngModel)]="isChecked" name="check" (change)="autoReload($event)"><i
-                class="fas fa-sync-alt fa-fw"></i> Auto Reload 60/s: {{isChecked}}</mat-slide-toggle>
+        <i class="fas fa-sync-alt fa-fw"></i> Auto Reload
+        <input type="text" style="width:40px; height: 18px; text-align: center;" class="p-inputtext-sm"
+            [(ngModel)]="intervalTime" pInputText pTooltip="Interval Time In Second" />/s&nbsp;
+        <mat-slide-toggle [(ngModel)]="isChecked" name="check" (change)="autoReload($event)"></mat-slide-toggle>
     </button>
     <button type="button" class="btn btn-primary float-end me-2" (click)="back()"><i class="fas fa-project-diagram"></i>
         Dashboard</button>
