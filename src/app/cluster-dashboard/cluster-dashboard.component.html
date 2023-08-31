@@ -1,7 +1,10 @@
 <nav class="navbar navbar-light bg-light">
-    <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '50px', height: '50px'}"
-        styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
-    <a *ngIf="!this.isSpinner.length" class="navbar-brand" href="#">
+    <!-- <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '50px', height: '50px'}"
+        styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner> -->
+    <!-- <a *ngIf="!this.isSpinner.length" class="navbar-brand" href="#">
+        <img src="assets/img/k8s.svg" width="80" height="50" alt="">
+    </a> -->
+    <a class="navbar-brand" href="#">
         <img src="assets/img/k8s.svg" width="80" height="50" alt="">
     </a>
     <button type="button" class="btn btn-secondary me-2" (click)="latestPull($event)"><i
@@ -49,6 +52,8 @@
                 <button pButton *ngIf="isAdmin" (click)="latestPull($event)" type="button" icon="pi pi-sync"
                     class="p-button-success p-button-text p-button-rounded p-button-sm"></button>
 
+                <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '30px', height: '30px'}"
+                    styleClass="custom-spinner" class="float-end" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
             </div>
         </ng-template>
         <ng-template pTemplate="header">
@@ -146,19 +151,12 @@
                         type="button" class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
                 </td>
                 <td>{{calculateAge(app.status.startTime)}}</td>
-                <!-- <td>
-                    <span *ngIf="app.status.phase === 'Pending'" style="color:blue;">{{app.status.phase}}</span>
-                    <span *ngIf="app.status.phase === 'Running'" style="color:green;">{{app.status.phase}}</span>
-                    <span *ngIf="app.status.phase === 'Succeeded'" style="color:aqua;">{{app.status.phase}}</span>
-                    <span *ngIf="app.status.phase === 'Failed'" style="color:red;">{{app.status.phase}}</span>
-                    <span *ngIf="app.status.phase === 'Unknown'" style="color:red;">{{app.status.phase}}</span>
-                </td> -->
                 <td>
                     <tr *ngFor="let status of app.status.containerStatuses">
                         <td>
                             <span *ngIf="status.state['waiting']" style="color:brown;" pTooltip="{{status.state['waiting'].message}}" >{{status.state['waiting'].reason}}</span>
-                            <span *ngIf="status.state['running']" style="color:green;">{{app.status.phase}}</span>
-                            <span *ngIf="status.state['terminated']" style="color:red;" pTooltip="{{status.state['waiting'].reason}}" >Terminating</span>
+                            <span *ngIf="!app.metadata.deletionTimestamp && status.state['running']" style="color:green;">{{app.status.phase}}</span>
+                            <span *ngIf="app.metadata.deletionTimestamp" style="color:red;" pTooltip="{{calculateAge(app.metadata.deletionTimestamp)}}" >Terminating</span>
                         </td>
                     </tr>
                 </td>
