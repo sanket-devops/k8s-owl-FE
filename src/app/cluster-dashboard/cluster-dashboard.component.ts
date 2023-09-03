@@ -47,6 +47,9 @@ export class ClusterDashboardComponent implements OnInit {
   // nameSpace: string = 'default';
   clusterName: any = undefined;
   clusterData: any = undefined;
+  podMetricsData: any = undefined;
+  nodeMetricsData: any = undefined;
+  clusterActiveIndex: number = 0;
   downloadData: any;
   user:string = "user";
   login = { u: '', p: '', t: '' };
@@ -133,6 +136,21 @@ export class ClusterDashboardComponent implements OnInit {
     return localTimeString;
   }
 
+  calculateMetrics(metrics: any) {
+    let matches = metrics.match(/^(\d+)([A-Za-z]+)$/);
+
+    if (matches) {
+      let numberPart = matches[1];
+      let stringPart = matches[2];
+      // console.log("Number:", numberPart); // Output: Number: 57320
+      // console.log("String:", stringPart); // Output: String: Ki
+      return numberPart;
+    } else {
+      // console.log("Invalid format");
+      return metrics;
+    }
+  }
+
   showFollowLogDialog() {
     this.followLogModal = true;
   }
@@ -168,17 +186,44 @@ export class ClusterDashboardComponent implements OnInit {
       this.title.setTitle(`${clusterName}`);
       try {
         if (this.selectedNamespace) {
-          <any>this.dashboardService.getNamespaces('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
-            this.namespaces = [];
-            data.items.forEach((namespace: any) => {
-              this.namespaces.push({name: namespace.metadata.name, status: namespace.status.phase})            
-            });
-            <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
-              this.clusterData = data.items;
-              // console.log(this.clusterData);
-            });
-            this.removeItemFromisSpinner(indexOfItem);
-          });
+          switch (this.clusterActiveIndex) {
+            case 0:
+              <any>this.dashboardService.getNamespaces('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
+                this.namespaces = [];
+                data.items.forEach((namespace: any) => {
+                  this.namespaces.push({ name: namespace.metadata.name, status: namespace.status.phase })
+                });
+                <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
+                  this.clusterData = data.items;
+                  // console.log(this.clusterData);
+                });
+                this.removeItemFromisSpinner(indexOfItem);
+              });
+              break;
+              case 1:
+                <any>this.dashboardService.getNamespaces('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
+                  this.namespaces = [];
+                  data.items.forEach((namespace: any) => {
+                    this.namespaces.push({ name: namespace.metadata.name, status: namespace.status.phase })
+                  });
+                  <any>this.dashboardService.getPodMetrics('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
+                    this.podMetricsData = data.items;
+                    // console.log(this.metricsData);
+                  });
+                  this.removeItemFromisSpinner(indexOfItem);
+                });
+              break;
+              case 2:
+                <any>this.dashboardService.getNodeMetrics('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
+                  this.nodeMetricsData = data.items;
+                  // console.log(this.metricsData);
+                  this.removeItemFromisSpinner(indexOfItem);
+                });
+              break;
+
+            default:
+              break;
+          }
         }
         else {
           this.selectedNamespace = {name: 'default', status: 'Active'};

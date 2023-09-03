@@ -40,6 +40,7 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
 import {TooltipModule} from 'primeng/tooltip';
 import {DividerModule} from 'primeng/divider';
 import {EditorModule} from 'primeng/editor';
+import {TabViewModule} from 'primeng/tabview';
 
 @NgModule({
   declarations: [
@@ -82,7 +83,8 @@ import {EditorModule} from 'primeng/editor';
     ClipboardModule,
     TooltipModule,
     DividerModule,
-    EditorModule
+    EditorModule,
+    TabViewModule
 
   ],
   providers: [ConstantService, DashboardService],
