@@ -53,6 +53,8 @@
         
                         <button pButton *ngIf="isAdmin" (click)="latestPull($event)" type="button" icon="pi pi-sync"
                             class="p-button-success p-button-text p-button-rounded p-button-sm"></button>
+                        <button pButton *ngIf="isAdmin" (click)="deleteEvictedPod(clusterData)" pTooltip="Delete All Evicted Pods" type="button" icon="pi pi-trash"
+                            class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
         
                         <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '30px', height: '30px'}"
                             styleClass="custom-spinner" class="float-end" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
@@ -161,6 +163,7 @@
                                     <span *ngIf="app.metadata.deletionTimestamp" style="color:red;" pTooltip="{{calculateAge(app.metadata.deletionTimestamp)}}" >Terminating</span>
                                 </td>
                             </tr>
+                            <span *ngIf="!app.metadata.deletionTimestamp && !app.status.containerStatuses && app.status.phase" style="color:darkgray;" pTooltip="{{app.status.message}}" >{{app.status.reason}}</span>
                         </td>
                         <td>{{app.spec.nodeName}}</td>
                         <td>
@@ -235,11 +238,11 @@
                                 <td>
                                     <button pButton pTooltip="View Live Logs"
                                         (click)="this.selectedPod = app.metadata.name; this.selectedContainer = container.name; viewFollowLog(app.metadata.name, container.name, 100)"
-                                        *ngIf="isAdmin" icon="pi pi-play" type="button"
+                                        *ngIf="isAdmin && app.status.phase === 'Running'" icon="pi pi-play" type="button"
                                         class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
                                 </td>
                                 <td>
-                                    <button *ngIf="app.status.containerStatuses[i].restartCount > 0" pButton pTooltip="Download Previous Logs"
+                                    <button *ngIf="app.status.phase === 'Running' && app.status.containerStatuses[i].restartCount > 0" pButton pTooltip="Download Previous Logs"
                                         (click)="this.selectedPod = app.metadata.name; this.selectedContainer = container.name; downloadPodPreviousLogs(app.metadata.name, container.name)"
                                         icon="pi pi-replay" type="button"
                                         class="p-button-secondary p-button-text p-button-rounded p-button-sm"></button>

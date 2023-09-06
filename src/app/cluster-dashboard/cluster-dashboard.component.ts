@@ -592,7 +592,34 @@ export class ClusterDashboardComponent implements OnInit {
       )
     ) {
       let resp = await this.dashboardService.deletePod('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.podName).toPromise();
-      toastr.success(resp) && await this.latestPull();
+      // console.log(JSON.parse(JSON.stringify(resp)).metadata.name);
+      toastr.success(`Pod is Deleted: ${JSON.parse(JSON.stringify(resp)).metadata.name}`) && await this.latestPull();
+    }
+  }
+
+  async deleteEvictedPod(pods: any) {
+    if (
+      window.confirm(
+        `Do you want to delete "Evicted Pods"?`
+      )
+    ) {
+      this.loading = true;
+      let podCount = 0;
+      pods.forEach( async (pod: any) => {
+        if (pod.status.reason) {
+          let resp = await this.dashboardService.deletePod('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + pod.metadata.name).toPromise();
+            // console.log(JSON.parse(JSON.stringify(resp)).metadata.name);
+            toastr.success(`Pod is Deleted: ${JSON.parse(JSON.stringify(resp)).metadata.name}`);
+        }
+        else {
+          podCount = podCount + 1;
+        }
+      });
+      if (podCount === pods.length) {
+        toastr.success(`No Evicted Pods Found!`);
+      }
+      this.loading = false;
+      this.latestPull();
     }
   }
 
