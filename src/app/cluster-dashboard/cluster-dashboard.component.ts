@@ -235,7 +235,7 @@ export class ClusterDashboardComponent implements OnInit {
                 });
                 <any>this.dashboardService.getNodes('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
                   this.nodesData = data.items;
-                  console.log(this.nodesData);
+                  // console.log(this.nodesData);
                 });
               break;
 

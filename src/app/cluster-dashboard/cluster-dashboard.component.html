@@ -339,7 +339,7 @@
         </p-table>
         </p-tabPanel>
         <p-tabPanel *ngIf="isAdmin" header="Nodes">
-            <p-table #dt [value]="nodeMetricsData" responsiveLayout="scroll" styleClass="p-datatable-sm" rowGroupMode="rowspan"
+            <p-table #nmt [value]="nodeMetricsData" responsiveLayout="scroll" styleClass="p-datatable-sm" rowGroupMode="rowspan"
             groupRowsBy="metadata.labels.app"
             [globalFilterFields]="['metadata.name','metadata.creationTimestamp','usage.cpu','usage.memory']"
             dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -349,7 +349,7 @@
                     <h2 style="font-weight:bold" class="p-m-0">Node Metrics List</h2>
                     <span class="p-input-icon-left">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                        <input pInputText type="text" (input)="nmt.filterGlobal($any($event.target).value, 'contains')"
                             placeholder="Search..." />
                     </span>
                     <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '30px', height: '30px'}"
@@ -381,9 +381,9 @@
                 </div>
             </ng-template>
         </p-table>
-        <p-table #dt [value]="nodesData" responsiveLayout="scroll" styleClass="p-datatable-sm" rowGroupMode="rowspan"
-        groupRowsBy="metadata.labels.app"
-        [globalFilterFields]="['metadata.name','metadata.creationTimestamp','usage.cpu','usage.memory']"
+        <p-table #nt [value]="nodesData" responsiveLayout="scroll" styleClass="p-datatable-sm" rowGroupMode="rowspan"
+        groupRowsBy="metadata.name"
+        [globalFilterFields]="['metadata.name','metadata.creationTimestamp','status.capacity.cpu','status.capacity.memory','status.nodeInfo.containerRuntimeVersion','status.nodeInfo.kubeletVersion','status.nodeInfo.osImage','status.addresses']"
         dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
         [showCurrentPageReport]="true">
         <ng-template pTemplate="caption">
@@ -391,7 +391,7 @@
                 <h2 style="font-weight:bold" class="p-m-0">Node List</h2>
                 <span class="p-input-icon-left">
                     <i class="pi pi-search"></i>
-                    <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                    <input pInputText type="text" (input)="nt.filterGlobal($any($event.target).value, 'contains')"
                         placeholder="Search..." />
                 </span>
                 <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '30px', height: '30px'}"
@@ -402,7 +402,6 @@
             <tr>
                 <th pSortableColumn="metadata.name">NAME<p-sortIcon field="metadata.name"></p-sortIcon></th>
                 <th pSortableColumn="metadata.creationTimestamp">AGE<p-sortIcon field="metadata.creationTimestamp"></p-sortIcon></th>
-                <!-- <th pSortableColumn="metadata.name">POD<p-sortIcon field="metadata.name"></p-sortIcon></th> -->
                 <th pSortableColumn="status.capacity.cpu">CPU<p-sortIcon field="status.capacity.cpu"></p-sortIcon></th>
                 <th pSortableColumn="status.capacity.memory">MEMORY<p-sortIcon field="status.capacity.memory"></p-sortIcon></th>
                 <th pSortableColumn="status.nodeInfo.containerRuntimeVersion">RUNTIME<p-sortIcon field="status.nodeInfo.containerRuntimeVersion"></p-sortIcon></th>
@@ -417,7 +416,6 @@
                 <td style="font-weight:bold">{{app.metadata.name}}</td>
                 <td>{{calculateAge(app.metadata.creationTimestamp)}}</td>
                 <td style="font-weight:bold">{{app.status.capacity.cpu}} CORE</td>
-                <!-- <td style="font-weight:bold">{{(calculateMetrics(app.status.capacity.cpu)/1000000).toFixed(2)}}m</td> -->
                 <td style="font-weight:bold">{{(calculateMetrics(app.status.capacity.memory)/1024/1024).toFixed(2)}}Gi</td>
                 <td>{{app.status.nodeInfo.containerRuntimeVersion}}</td>
                 <td>{{app.status.nodeInfo.kubeletVersion}}</td>
