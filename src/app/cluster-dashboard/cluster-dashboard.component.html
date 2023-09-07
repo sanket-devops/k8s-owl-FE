@@ -381,6 +381,62 @@
                 </div>
             </ng-template>
         </p-table>
+        <p-table #dt [value]="nodesData" responsiveLayout="scroll" styleClass="p-datatable-sm" rowGroupMode="rowspan"
+        groupRowsBy="metadata.labels.app"
+        [globalFilterFields]="['metadata.name','metadata.creationTimestamp','usage.cpu','usage.memory']"
+        dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                <h2 style="font-weight:bold" class="p-m-0">Node List</h2>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                        placeholder="Search..." />
+                </span>
+                <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '30px', height: '30px'}"
+                    styleClass="custom-spinner" class="float-end" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="metadata.name">NAME<p-sortIcon field="metadata.name"></p-sortIcon></th>
+                <th pSortableColumn="metadata.creationTimestamp">AGE<p-sortIcon field="metadata.creationTimestamp"></p-sortIcon></th>
+                <!-- <th pSortableColumn="metadata.name">POD<p-sortIcon field="metadata.name"></p-sortIcon></th> -->
+                <th pSortableColumn="status.capacity.cpu">CPU<p-sortIcon field="status.capacity.cpu"></p-sortIcon></th>
+                <th pSortableColumn="status.capacity.memory">MEMORY<p-sortIcon field="status.capacity.memory"></p-sortIcon></th>
+                <th pSortableColumn="status.nodeInfo.containerRuntimeVersion">RUNTIME<p-sortIcon field="status.nodeInfo.containerRuntimeVersion"></p-sortIcon></th>
+                <th pSortableColumn="status.nodeInfo.kubeletVersion">K8S<p-sortIcon field="status.nodeInfo.kubeletVersion"></p-sortIcon></th>
+                <th pSortableColumn="status.nodeInfo.osImage">OS<p-sortIcon field="status.nodeInfo.osImage"></p-sortIcon></th>
+                <th pSortableColumn="status.addresses">ADD<p-sortIcon field="status.addresses"></p-sortIcon></th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
+            <tr>
+                <td style="font-weight:bold">{{app.metadata.name}}</td>
+                <td>{{calculateAge(app.metadata.creationTimestamp)}}</td>
+                <td style="font-weight:bold">{{app.status.capacity.cpu}} CORE</td>
+                <!-- <td style="font-weight:bold">{{(calculateMetrics(app.status.capacity.cpu)/1000000).toFixed(2)}}m</td> -->
+                <td style="font-weight:bold">{{(calculateMetrics(app.status.capacity.memory)/1024/1024).toFixed(2)}}Gi</td>
+                <td>{{app.status.nodeInfo.containerRuntimeVersion}}</td>
+                <td>{{app.status.nodeInfo.kubeletVersion}}</td>
+                <td>{{app.status.nodeInfo.osImage}}</td>
+                <td>
+                    <tr *ngFor="let address of app.status.addresses">
+                        <td>
+                            {{address.address}}
+                        </td>
+                    </tr>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                In total there are {{this.nodesData ? this.nodesData.length : 0 }} nodes.
+            </div>
+        </ng-template>
+    </p-table>
         </p-tabPanel>
     </p-tabView>
 </div>

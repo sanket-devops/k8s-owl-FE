@@ -49,6 +49,7 @@ export class ClusterDashboardComponent implements OnInit {
   clusterData: any = undefined;
   podMetricsData: any = undefined;
   nodeMetricsData: any = undefined;
+  nodesData: any = undefined;
   clusterActiveIndex: number = 0;
   downloadData: any;
   user:string = "user";
@@ -188,19 +189,24 @@ export class ClusterDashboardComponent implements OnInit {
         if (this.selectedNamespace) {
           switch (this.clusterActiveIndex) {
             case 0:
-              <any>this.dashboardService.getNamespaces('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
-                this.namespaces = [];
-                data.items.forEach((namespace: any) => {
-                  this.namespaces.push({ name: namespace.metadata.name, status: namespace.status.phase })
+              try {
+                <any>this.dashboardService.getNamespaces('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
+                  this.namespaces = [];
+                  data.items.forEach((namespace: any) => {
+                    this.namespaces.push({ name: namespace.metadata.name, status: namespace.status.phase })
+                  });
+                  <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
+                    this.clusterData = data.items;
+                    // console.log(this.clusterData);
+                  });
+                  this.removeItemFromisSpinner(indexOfItem);
                 });
-                <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
-                  this.clusterData = data.items;
-                  // console.log(this.clusterData);
-                });
+              } catch (error) {
                 this.removeItemFromisSpinner(indexOfItem);
-              });
+              }
               break;
-              case 1:
+            case 1:
+              try {
                 <any>this.dashboardService.getNamespaces('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
                   this.namespaces = [];
                   data.items.forEach((namespace: any) => {
@@ -212,12 +218,24 @@ export class ClusterDashboardComponent implements OnInit {
                   });
                   this.removeItemFromisSpinner(indexOfItem);
                 });
+              } catch (error) {
+                this.removeItemFromisSpinner(indexOfItem);
+              }
               break;
-              case 2:
-                <any>this.dashboardService.getNodeMetrics('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
-                  this.nodeMetricsData = data.items;
-                  // console.log(this.metricsData);
+            case 2:
+              <any>this.dashboardService.getNodeMetrics('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
+                this.nodeMetricsData = data.items;
+                // console.log(this.metricsData);
+              },
+                (err: any) => {
                   this.removeItemFromisSpinner(indexOfItem);
+                },
+                () => {
+                  this.removeItemFromisSpinner(indexOfItem);
+                });
+                <any>this.dashboardService.getNodes('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
+                  this.nodesData = data.items;
+                  console.log(this.nodesData);
                 });
               break;
 
@@ -226,14 +244,17 @@ export class ClusterDashboardComponent implements OnInit {
           }
         }
         else {
-          this.selectedNamespace = {name: 'default', status: 'Active'};
-          <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
-            this.clusterData = data.items;
-            // console.log(this.clusterData);
+          try {
+            this.selectedNamespace = {name: 'default', status: 'Active'};
+            <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
+              this.clusterData = data.items;
+              // console.log(this.clusterData);
+              this.removeItemFromisSpinner(indexOfItem);
+            });
+          } catch (error) {
             this.removeItemFromisSpinner(indexOfItem);
-          });
+          }
         }
-         
       } catch (e) {
         this.removeItemFromisSpinner(indexOfItem);
         console.log(e);
