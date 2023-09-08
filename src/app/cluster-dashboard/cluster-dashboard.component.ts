@@ -8,6 +8,7 @@ import { ConstantService } from '../service/constant.service';
 import { saveAs } from 'file-saver';
 import { data, error, event } from 'jquery';
 import { JsonPipe } from '@angular/common';
+import { forkJoin } from 'rxjs';
 
 declare let toastr: any;
 toastr.options = {
@@ -72,6 +73,7 @@ export class ClusterDashboardComponent implements OnInit {
   manifestDialog: boolean = false;
   deploymentManifest: any = undefined;
   updatedDeploymentManifest: any = undefined;
+  nodeMetricsMixData: any = undefined;
 
   constructor(
     public constantService: ConstantService,
@@ -223,19 +225,15 @@ export class ClusterDashboardComponent implements OnInit {
               }
               break;
             case 2:
-              <any>this.dashboardService.getNodeMetrics('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
-                this.nodeMetricsData = data.items;
-                // console.log(this.metricsData);
+              <any>this.dashboardService.getNodes('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
+                this.nodeMetricsMixData = data;
+                // console.log(this.nodesData);
               },
                 (err: any) => {
                   this.removeItemFromisSpinner(indexOfItem);
                 },
                 () => {
                   this.removeItemFromisSpinner(indexOfItem);
-                });
-                <any>this.dashboardService.getNodes('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
-                  this.nodesData = data.items;
-                  // console.log(this.nodesData);
                 });
               break;
 

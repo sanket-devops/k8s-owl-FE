@@ -339,102 +339,59 @@
         </p-table>
         </p-tabPanel>
         <p-tabPanel *ngIf="isAdmin" header="Nodes">
-            <p-table #nmt [value]="nodeMetricsData" responsiveLayout="scroll" styleClass="p-datatable-sm" rowGroupMode="rowspan"
-            groupRowsBy="metadata.labels.app"
-            [globalFilterFields]="['metadata.name','metadata.creationTimestamp','usage.cpu','usage.memory']"
-            dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-            [showCurrentPageReport]="true">
-            <ng-template pTemplate="caption">
-                <div class="p-d-flex p-ai-center p-jc-between">
-                    <h2 style="font-weight:bold" class="p-m-0">Node Metrics List</h2>
-                    <span class="p-input-icon-left">
-                        <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="nmt.filterGlobal($any($event.target).value, 'contains')"
-                            placeholder="Search..." />
-                    </span>
-                    <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '30px', height: '30px'}"
-                        styleClass="custom-spinner" class="float-end" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
-                </div>
-            </ng-template>
-            <ng-template pTemplate="header">
-                <tr>
-                    <th pSortableColumn="metadata.name">NAME<p-sortIcon field="metadata.name"></p-sortIcon></th>
-                    <!-- <th pSortableColumn="metadata.name">POD<p-sortIcon field="metadata.name"></p-sortIcon></th> -->
-                    <th pSortableColumn="metadata.creationTimestamp">AGE<p-sortIcon field="metadata.creationTimestamp"></p-sortIcon></th>
-                    <th pSortableColumn="usage.cpu">CPU<p-sortIcon field="usage.cpu"></p-sortIcon></th>
-                    <th pSortableColumn="usage.memory">MEMORY<p-sortIcon field="usage.memory"></p-sortIcon></th>
-                    <th></th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
-                <tr>
-                    <td style="font-weight:bold">{{app.metadata.name}}</td>
-                    <!-- <td>{{app.metadata.name}}</td> -->
-                    <td>{{calculateAge(app.metadata.creationTimestamp)}}</td>
-                    <td style="font-weight:bold">{{(calculateMetrics(app.usage.cpu)/1000000).toFixed(2)}}m</td>
-                    <td style="font-weight:bold">{{(calculateMetrics(app.usage.memory)/1024).toFixed(2)}}Mi</td>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="summary">
-                <div class="p-d-flex p-ai-center p-jc-between">
-                    In total there are {{this.nodeMetricsData ? this.nodeMetricsData.length : 0 }} nodes.
-                </div>
-            </ng-template>
-        </p-table>
-        <p-table #nt [value]="nodesData" responsiveLayout="scroll" styleClass="p-datatable-sm" rowGroupMode="rowspan"
-        groupRowsBy="metadata.name"
-        [globalFilterFields]="['metadata.name','metadata.creationTimestamp','status.capacity.cpu','status.capacity.memory','status.nodeInfo.containerRuntimeVersion','status.nodeInfo.kubeletVersion','status.nodeInfo.osImage','status.addresses']"
-        dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        [showCurrentPageReport]="true">
-        <ng-template pTemplate="caption">
-            <div class="p-d-flex p-ai-center p-jc-between">
-                <h2 style="font-weight:bold" class="p-m-0">Node List</h2>
-                <span class="p-input-icon-left">
-                    <i class="pi pi-search"></i>
-                    <input pInputText type="text" (input)="nt.filterGlobal($any($event.target).value, 'contains')"
-                        placeholder="Search..." />
-                </span>
-                <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '30px', height: '30px'}"
-                    styleClass="custom-spinner" class="float-end" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
-            </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th pSortableColumn="metadata.name">NAME<p-sortIcon field="metadata.name"></p-sortIcon></th>
-                <th pSortableColumn="metadata.creationTimestamp">AGE<p-sortIcon field="metadata.creationTimestamp"></p-sortIcon></th>
-                <th pSortableColumn="status.capacity.cpu">CPU<p-sortIcon field="status.capacity.cpu"></p-sortIcon></th>
-                <th pSortableColumn="status.capacity.memory">MEMORY<p-sortIcon field="status.capacity.memory"></p-sortIcon></th>
-                <th pSortableColumn="status.nodeInfo.containerRuntimeVersion">RUNTIME<p-sortIcon field="status.nodeInfo.containerRuntimeVersion"></p-sortIcon></th>
-                <th pSortableColumn="status.nodeInfo.kubeletVersion">K8S<p-sortIcon field="status.nodeInfo.kubeletVersion"></p-sortIcon></th>
-                <th pSortableColumn="status.nodeInfo.osImage">OS<p-sortIcon field="status.nodeInfo.osImage"></p-sortIcon></th>
-                <th pSortableColumn="status.addresses">ADD<p-sortIcon field="status.addresses"></p-sortIcon></th>
-                <th></th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
-            <tr>
-                <td style="font-weight:bold">{{app.metadata.name}}</td>
-                <td>{{calculateAge(app.metadata.creationTimestamp)}}</td>
-                <td style="font-weight:bold">{{app.status.capacity.cpu}} CORE</td>
-                <td style="font-weight:bold">{{(calculateMetrics(app.status.capacity.memory)/1024/1024).toFixed(2)}}Gi</td>
-                <td>{{app.status.nodeInfo.containerRuntimeVersion}}</td>
-                <td>{{app.status.nodeInfo.kubeletVersion}}</td>
-                <td>{{app.status.nodeInfo.osImage}}</td>
-                <td>
-                    <tr *ngFor="let address of app.status.addresses">
-                        <td>
-                            {{address.address}}
-                        </td>
+            <p-table #nt [value]="nodeMetricsMixData" responsiveLayout="scroll" styleClass="p-datatable-sm"
+                rowGroupMode="rowspan" groupRowsBy="name"
+                [globalFilterFields]="['name','age','totalCpu','usageCpu','totalMemory','usageMemory','runtime','kubelet','hostOs','address']"
+                dataKey="name" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true">
+                <ng-template pTemplate="caption">
+                    <div class="p-d-flex p-ai-center p-jc-between">
+                        <!-- <h2 style="font-weight:bold" class="p-m-0">Nodes</h2> -->
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="nt.filterGlobal($any($event.target).value, 'contains')"
+                                placeholder="Search..." />
+                        </span>
+                        <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '30px', height: '30px'}"
+                            styleClass="custom-spinner" class="float-end" strokeWidth="8" fill="#EEEEEE"
+                            animationDuration=".5s"></p-progressSpinner>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="name">NAME<p-sortIcon field="name"></p-sortIcon></th>
+                        <th pSortableColumn="age">AGE<p-sortIcon field="age"></p-sortIcon></th>
+                        <th pSortableColumn="totalCpu">CPU<p-sortIcon field="totalCpu"></p-sortIcon></th>
+                        <th pSortableColumn="usageCpu">CPU USED<p-sortIcon field="usageCpu"></p-sortIcon></th>
+                        <th pSortableColumn="totalMemory">MEMORY<p-sortIcon field="totalMemory"></p-sortIcon></th>
+                        <th pSortableColumn="usageMemory">MEMORY USED<p-sortIcon field="usageMemory"></p-sortIcon></th>
+                        <th pSortableColumn="runtime">RUNTIME<p-sortIcon field="runtime"></p-sortIcon></th>
+                        <th pSortableColumn="kubelet">K8S<p-sortIcon field="kubelet"></p-sortIcon></th>
+                        <th pSortableColumn="hostOs">OS<p-sortIcon field="hostOs"></p-sortIcon></th>
+                        <th pSortableColumn="address">ADDRESS<p-sortIcon field="address"></p-sortIcon></th>
+                        <th></th>
                     </tr>
-                </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="summary">
-            <div class="p-d-flex p-ai-center p-jc-between">
-                In total there are {{this.nodesData ? this.nodesData.length : 0 }} nodes.
-            </div>
-        </ng-template>
-    </p-table>
+                </ng-template>
+                <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
+                    <tr>
+                        <td style="font-weight:bold">{{app.name}}</td>
+                        <td>{{calculateAge(app.age)}}</td>
+                        <td style="font-weight:bold">{{app.totalCpu}} CORE</td>
+                        <td style="font-weight:bold">{{(calculateMetrics(app.usageCpu)/1000000).toFixed(2)}}m</td>
+                        <td style="font-weight:bold">{{(calculateMetrics(app.totalMemory)/1024/1024).toFixed(2)}}Gi</td>
+                        <td style="font-weight:bold">{{(calculateMetrics(app.usageMemory)/1024/1024).toFixed(2)}}Gi</td>
+                        <td>{{app.runtime}}</td>
+                        <td>{{app.kubelet}}</td>
+                        <td>{{app.hostOs}}</td>
+                        <td>{{app.address}}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="p-d-flex p-ai-center p-jc-between">
+                        In total there are {{this.nodeMetricsMixData ? this.nodeMetricsMixData.length : 0 }} nodes.
+                    </div>
+                </ng-template>
+            </p-table>
         </p-tabPanel>
     </p-tabView>
 </div>

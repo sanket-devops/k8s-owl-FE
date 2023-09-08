@@ -49,8 +49,11 @@ export class DashboardService {
     return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + nameSpace + '/pods' + `${populate ? '?populate=' + populate : ''}`));
   }
   getNodes(groupId: string, clusterId: string, populate?: string) {
-    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/nodes' + `${populate ? '?populate=' + populate : ''}`));
+    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/nodesMetricsMix' + `${populate ? '?populate=' + populate : ''}`));
   }
+  // getNodes(groupId: string, clusterId: string, populate?: string) {
+  //   return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/nodes' + `${populate ? '?populate=' + populate : ''}`));
+  // }
   getPodMetrics(groupId: string, clusterId: string, nameSpace?: string, populate?: string) {
     return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/metrics' + groupId + clusterId + nameSpace + '/pods' + `${populate ? '?populate=' + populate : ''}`));
   }
