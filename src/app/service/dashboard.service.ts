@@ -15,7 +15,6 @@ export class DashboardService {
   clusterName: any = undefined;
   groupId: any = undefined;
   clusterId: any = undefined;
-  clusterData: any = undefined;
   podName: any = undefined;
 
   constructor(private http: HttpClient, public constantService: ConstantService) {
@@ -44,21 +43,11 @@ export class DashboardService {
   getNamespaces(groupId: string, clusterId: string, populate?: string) {
     return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/namespaces' + groupId + clusterId + `${populate ? '?populate=' + populate : ''}`));
   }
-
-  getPods(groupId: string, clusterId: string, nameSpace?: string, populate?: string) {
-    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + nameSpace + '/pods' + `${populate ? '?populate=' + populate : ''}`));
-  }
   getNodes(groupId: string, clusterId: string, populate?: string) {
     return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/nodesMetricsMix' + `${populate ? '?populate=' + populate : ''}`));
   }
-  // getNodes(groupId: string, clusterId: string, populate?: string) {
-  //   return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/nodes' + `${populate ? '?populate=' + populate : ''}`));
-  // }
-  getPodMetrics(groupId: string, clusterId: string, nameSpace?: string, populate?: string) {
-    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/metrics' + groupId + clusterId + nameSpace + '/pods' + `${populate ? '?populate=' + populate : ''}`));
-  }
-  getNodeMetrics(groupId: string, clusterId: string, populate?: string) {
-    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/metrics' + groupId + clusterId + '/nodes' + `${populate ? '?populate=' + populate : ''}`));
+  getPods(groupId: string, clusterId: string, nameSpace?: string, populate?: string) {
+    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + nameSpace + '/podsMetricsMix' + `${populate ? '?populate=' + populate : ''}`));
   }
 
   getPodsLogs(groupId: string, clusterId: string, namespace: string, podName: string, appName: string, h?: any): Observable<any> {

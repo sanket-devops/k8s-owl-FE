@@ -8,7 +8,7 @@ import { ConstantService } from '../service/constant.service';
 import { saveAs } from 'file-saver';
 import { data, error, event } from 'jquery';
 import { JsonPipe } from '@angular/common';
-import { forkJoin } from 'rxjs';
+import { from, zip } from 'rxjs';
 
 declare let toastr: any;
 toastr.options = {
@@ -47,10 +47,9 @@ export class ClusterDashboardComponent implements OnInit {
   clusterId: any = undefined;
   // nameSpace: string = 'default';
   clusterName: any = undefined;
-  clusterData: any = undefined;
-  podMetricsData: any = undefined;
   nodeMetricsData: any = undefined;
   nodesData: any = undefined;
+  podsData: any = undefined;
   clusterActiveIndex: number = 0;
   downloadData: any;
   user:string = "user";
@@ -175,13 +174,16 @@ export class ClusterDashboardComponent implements OnInit {
     this.router.navigate(['login']);
   }
 
+  clear(table: any) {
+    table.clear();
+}
+
   async getCluster(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
     let indexOfItem = this.isSpinner.push("GetCluster");
     if (groupId === undefined && clusterId === undefined) {
       this.removeItemFromisSpinner(indexOfItem);
       this.back();
     } else {
-      this.clusterData = undefined;
       this.clusterName = clusterName;
       this.podName = podName;
       this.groupId = groupId;
@@ -191,40 +193,24 @@ export class ClusterDashboardComponent implements OnInit {
         if (this.selectedNamespace) {
           switch (this.clusterActiveIndex) {
             case 0:
-              try {
-                <any>this.dashboardService.getNamespaces('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
-                  this.namespaces = [];
-                  data.items.forEach((namespace: any) => {
-                    this.namespaces.push({ name: namespace.metadata.name, status: namespace.status.phase })
-                  });
-                  <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
-                    this.clusterData = data.items;
-                    // console.log(this.clusterData);
-                  });
-                  this.removeItemFromisSpinner(indexOfItem);
+              <any>this.dashboardService.getNamespaces('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
+                this.namespaces = [];
+                data.items.forEach((namespace: any) => {
+                  this.namespaces.push({ name: namespace.metadata.name, status: namespace.status.phase })
                 });
-              } catch (error) {
-                this.removeItemFromisSpinner(indexOfItem);
-              }
+                <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
+                  this.podsData = data.items;
+                  console.log(this.podsData);
+                },
+                  (err: any) => {
+                    this.removeItemFromisSpinner(indexOfItem);
+                  },
+                  () => {
+                    this.removeItemFromisSpinner(indexOfItem);
+                  });
+              });
               break;
             case 1:
-              try {
-                <any>this.dashboardService.getNamespaces('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
-                  this.namespaces = [];
-                  data.items.forEach((namespace: any) => {
-                    this.namespaces.push({ name: namespace.metadata.name, status: namespace.status.phase })
-                  });
-                  <any>this.dashboardService.getPodMetrics('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
-                    this.podMetricsData = data.items;
-                    // console.log(this.metricsData);
-                  });
-                  this.removeItemFromisSpinner(indexOfItem);
-                });
-              } catch (error) {
-                this.removeItemFromisSpinner(indexOfItem);
-              }
-              break;
-            case 2:
               <any>this.dashboardService.getNodes('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
                 this.nodeMetricsMixData = data;
                 // console.log(this.nodesData);
@@ -245,7 +231,7 @@ export class ClusterDashboardComponent implements OnInit {
           try {
             this.selectedNamespace = {name: 'default', status: 'Active'};
             <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
-              this.clusterData = data.items;
+              this.podsData = data.items;
               // console.log(this.clusterData);
               this.removeItemFromisSpinner(indexOfItem);
             });
@@ -258,7 +244,7 @@ export class ClusterDashboardComponent implements OnInit {
         console.log(e);
       }
     }
-    return this.clusterData;
+    return this.podsData;
   }
 
   async viewPodLogs(podName: string, appName: string, h?: any) {
@@ -460,7 +446,7 @@ export class ClusterDashboardComponent implements OnInit {
       if (h) {
         let _clusterName = this.clusterName;
         let _deploymentName = this.deploymentName;
-        let _clusterData = this.clusterData
+        let _clusterData = this.podsData
         let _deploymentLogs: string = '';
         let promiseArr: Promise<any>[] = [];
 
@@ -492,7 +478,7 @@ export class ClusterDashboardComponent implements OnInit {
       } else {
         let _clusterName = this.clusterName;
         let _deploymentName = this.deploymentName;
-        let _clusterData = this.clusterData
+        let _clusterData = this.podsData
         let _deploymentLogs: string = '';
         let promiseArr: Promise<any>[] = [];
 
@@ -535,7 +521,7 @@ export class ClusterDashboardComponent implements OnInit {
       if (h) {
         let _clusterName = this.clusterName;
         let _deploymentName = this.deploymentName;
-        let _clusterData = this.clusterData
+        let _clusterData = this.podsData
         let _deploymentLogs: string = '';
         let promiseArr: Promise<any>[] = [];
 
@@ -567,7 +553,7 @@ export class ClusterDashboardComponent implements OnInit {
       } else {
         let _clusterName = this.clusterName;
         let _deploymentName = this.deploymentName;
-        let _clusterData = this.clusterData
+        let _clusterData = this.podsData
         let _deploymentLogs: string = '';
         let promiseArr: Promise<any>[] = [];
 
