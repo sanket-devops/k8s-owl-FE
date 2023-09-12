@@ -22,8 +22,8 @@
 
 <div class="card">
     <p-tabView (onChange)="latestPull()" [(activeIndex)]="clusterActiveIndex">
-        <p-tabPanel header="Deployment">
-            <p-table #dt [value]="podsData" responsiveLayout="scroll" styleClass="p-datatable-sm" rowGroupMode="rowspan"
+        <p-tabPanel header="Pods">
+            <p-table #pt [value]="podsData" responsiveLayout="scroll" styleClass="p-datatable-sm" rowGroupMode="rowspan"
                 groupRowsBy="metadata.labels.app"
                 [globalFilterFields]="['metadata.labels.app','metadata.name','spec.nodeName','spec.containers','status.startTime','status.phase']"
                 dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -34,7 +34,7 @@
                         <!-- <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button> -->
                         <span class="p-input-icon-left">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                            <input pInputText type="text" (input)="pt.filterGlobal($any($event.target).value, 'contains')"
                                 placeholder="Search..." />
                         </span>&nbsp;
         
@@ -216,12 +216,12 @@
                         </td>
                         <td *ngIf="isAdmin">
                             <div *ngFor="let container of app.spec.containers; index as i" class="flex justify-content-center align-items-center">
-                                <td style="font-weight:bold">{{(calculateMetrics(container.usage.cpu)/1000000).toFixed(2)}}m</td>
+                                <td *ngIf="container.usage" style="font-weight:bold">{{(calculateMetrics(container.usage.cpu)/1000000).toFixed(2)}}m</td>
                             </div>
                         </td>
                         <td *ngIf="isAdmin">
                             <div *ngFor="let container of app.spec.containers; index as i" class="flex justify-content-center align-items-center">
-                                <td style="font-weight:bold">{{(calculateMetrics(container.usage.memory)/1024).toFixed(2)}}Mi</td>
+                                <td *ngIf="container.usage" style="font-weight:bold">{{(calculateMetrics(container.usage.memory)/1024).toFixed(2)}}Mi</td>
                             </div>
                         </td>
                         <td NOWRAP>
@@ -323,11 +323,114 @@
                 </ng-template>
             </p-table>
          </p-tabPanel>
+        <p-tabPanel *ngIf="isAdmin" header="Services">
+            <p-table #st [value]="servicesData" responsiveLayout="scroll" styleClass="p-datatable-sm"
+                rowGroupMode="rowspan" groupRowsBy="metadata.name"
+                [globalFilterFields]="['metadata.name','spec.type','spec.clusterIP','spec.externalIPs','spec.ports','metadata.creationTimestamp','spec.selector']"
+                dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true">
+                <ng-template pTemplate="caption">
+                    <div class="p-d-flex p-ai-center p-jc-between">
+                        <!-- <h2 style="font-weight:bold" class="p-m-0">Nodes</h2> -->
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="st.filterGlobal($any($event.target).value, 'contains')"
+                                placeholder="Search..." />
+                        </span>&nbsp;
+        
+                        <p-dropdown *ngIf="isAdmin" [options]="namespaces" [(ngModel)]="selectedNamespace" optionLabel="name"
+                            [filter]="true" filterBy="name" [showClear]="true" placeholder="{{selectedNamespace?.name}}">
+                            <ng-template pTemplate="selectedItem">
+                                <div *ngIf="selectedNamespace">
+                                    <div>{{selectedNamespace.name}}</div>
+                                </div>
+                            </ng-template>
+                            <ng-template let-namespace pTemplate="item">
+                                <div>
+                                    <div>{{namespace.name}}</div>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>&nbsp;
+        
+                        <button pButton *ngIf="isAdmin" (click)="latestPull($event)" type="button" icon="pi pi-sync"
+                            class="p-button-success p-button-text p-button-rounded p-button-sm"></button>
+        
+                        <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '30px', height: '30px'}"
+                            styleClass="custom-spinner" class="float-end" strokeWidth="8" fill="#EEEEEE"
+                            animationDuration=".5s"></p-progressSpinner>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="metadata.name">
+                            <div class="flex justify-content-center align-items-center">NAME<p-sortIcon field="metadata.name"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="spec.type">
+                            <div class="flex justify-content-center align-items-center">TYPE<p-sortIcon field="spec.type"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="spec.clusterIP">
+                            <div class="flex justify-content-center align-items-center">CLUSTER-IP<p-sortIcon field="spec.clusterIP"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="spec.externalIPs">
+                            <div class="flex justify-content-center align-items-center">EXTERNAL-IP<p-sortIcon field="spec.externalIPs"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="spec.ports">
+                            <div class="flex justify-content-center align-items-center">PORT(S)<p-sortIcon field="spec.ports"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="metadata.creationTimestamp">
+                            <div class="flex justify-content-center align-items-center">AGE<p-sortIcon field="metadata.creationTimestamp"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="spec.selector">
+                            <div class="flex justify-content-center align-items-center">SELECTOR<p-sortIcon field="spec.selector"></p-sortIcon></div>
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
+                    <tr>
+                        <td style="font-weight:bold" *ngIf="rowgroup" [attr.rowspan]="rowspan">
+                            <div class="flex justify-content-center align-items-center">{{app.metadata.name}}</div>
+                        </td>
+                        <td>
+                            <div class="flex justify-content-center align-items-center">{{app.spec.type}}</div>
+                        </td>
+                        <td>
+                            <div class="flex justify-content-center align-items-center">{{app.spec.clusterIP}}</div>
+                        </td>
+                        <td>
+                            <div *ngIf="app.spec.externalIPs" class="flex justify-content-center align-items-center">
+                                <td *ngFor="let externalIP of app.spec.externalIPs; index as i">{{externalIP}}</td>
+                            </div>
+                            <div *ngIf="app.status.loadBalancer.ingress"  class="flex justify-content-center align-items-center">
+                                <td *ngFor="let ip of app.status.loadBalancer.ingress; index as i">{{ip.ip}}</td>
+                            </div>
+                        </td>
+                        <td>
+                            <div *ngFor="let port of app.spec.ports; index as i" class="flex justify-content-center align-items-center">
+                                <td style="font-weight:bold" *ngIf="port.nodePort">{{port.port}}:{{port.nodePort}}/{{port.protocol}}</td>
+                                <td style="font-weight:bold" *ngIf="!port.nodePort">{{port.port}}/{{port.protocol}}</td>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex justify-content-center align-items-center">{{calculateAge(app.metadata.creationTimestamp)}}</div>
+                        </td>
+                        <td>
+                            <div class="flex justify-content-center align-items-center" *ngFor="let selector of app.spec.selector | keyvalue">{{selector.key}}={{selector.value}}</div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="p-d-flex p-ai-center p-jc-between">
+                        In total there are {{this.servicesData ? this.servicesData.length : 0 }} services.
+                    </div>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
         <p-tabPanel *ngIf="isAdmin" header="Nodes">
             <p-table #nt [value]="nodeMetricsMixData" responsiveLayout="scroll" styleClass="p-datatable-sm"
-                rowGroupMode="rowspan" groupRowsBy="name"
-                [globalFilterFields]="['name','age','totalCpu','usageCpu','totalMemory','usageMemory','runtime','kubelet','hostOs','address']"
-                dataKey="name" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                rowGroupMode="rowspan" groupRowsBy="metadata.name"
+                [globalFilterFields]="['metadata.name','status.conditions','metadata.creationTimestamp','app.status.capacity.cpu','app.status.cpu','app.status.capacity.memory','app.status.memory','status.nodeInfo.containerRuntimeVersion','status.nodeInfo.kubeletVersion','status.nodeInfo.osImage','status.addresses']"
+                dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 [showCurrentPageReport]="true">
                 <ng-template pTemplate="caption">
                     <div class="p-d-flex p-ai-center p-jc-between">
@@ -344,31 +447,79 @@
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="name">NAME<p-sortIcon field="name"></p-sortIcon></th>
-                        <th pSortableColumn="age">AGE<p-sortIcon field="age"></p-sortIcon></th>
-                        <th pSortableColumn="totalCpu">CPU<p-sortIcon field="totalCpu"></p-sortIcon></th>
-                        <th pSortableColumn="usageCpu">CPU USED<p-sortIcon field="usageCpu"></p-sortIcon></th>
-                        <th pSortableColumn="totalMemory">MEMORY<p-sortIcon field="totalMemory"></p-sortIcon></th>
-                        <th pSortableColumn="usageMemory">MEMORY USED<p-sortIcon field="usageMemory"></p-sortIcon></th>
-                        <th pSortableColumn="runtime">RUNTIME<p-sortIcon field="runtime"></p-sortIcon></th>
-                        <th pSortableColumn="kubelet">K8S<p-sortIcon field="kubelet"></p-sortIcon></th>
-                        <th pSortableColumn="hostOs">OS<p-sortIcon field="hostOs"></p-sortIcon></th>
-                        <th pSortableColumn="address">ADDRESS<p-sortIcon field="address"></p-sortIcon></th>
+                        <th pSortableColumn="metadata.name">
+                            <div class="flex justify-content-center align-items-center">NAME<p-sortIcon field="metadata.name"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.conditions">
+                            <div class="flex justify-content-center align-items-center">STATUS<p-sortIcon field="status.conditions"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="metadata.creationTimestamp">
+                            <div class="flex justify-content-center align-items-center">AGE<p-sortIcon field="metadata.creationTimestamp"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.capacity.cpu">
+                            <div class="flex justify-content-center align-items-center">CPU<p-sortIcon field="status.capacity.cpu"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.usage.cpu">
+                            <div class="flex justify-content-center align-items-center">CPU USED<p-sortIcon field="status.usage.cpu"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.capacity.memory">
+                            <div class="flex justify-content-center align-items-center">MEMORY<p-sortIcon field="status.capacity.memory"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.usage.memory">
+                            <div class="flex justify-content-center align-items-center">MEMORY USED<p-sortIcon field="status.usage.memory"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.nodeInfo.containerRuntimeVersion">
+                            <div class="flex justify-content-center align-items-center">RUNTIME<p-sortIcon field="status.nodeInfo.containerRuntimeVersion"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.nodeInfo.kubeletVersion">
+                            <div class="flex justify-content-center align-items-center">K8S<p-sortIcon field="status.nodeInfo.kubeletVersion"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.nodeInfo.osImage">
+                            <div class="flex justify-content-center align-items-center">OS<p-sortIcon field="status.nodeInfo.osImage"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.addresses">
+                            <div class="flex justify-content-center align-items-center">ADDRESS<p-sortIcon field="status.addresses"></p-sortIcon></div>
+                        </th>
                         <th></th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
                     <tr>
-                        <td style="font-weight:bold">{{app.name}}</td>
-                        <td>{{calculateAge(app.age)}}</td>
-                        <td style="font-weight:bold">{{app.totalCpu}} CORE</td>
-                        <td style="font-weight:bold">{{(calculateMetrics(app.usageCpu)/1000000).toFixed(2)}}m</td>
-                        <td style="font-weight:bold">{{(calculateMetrics(app.totalMemory)/1024/1024).toFixed(2)}}Gi</td>
-                        <td style="font-weight:bold">{{(calculateMetrics(app.usageMemory)/1024/1024).toFixed(2)}}Gi</td>
-                        <td>{{app.runtime}}</td>
-                        <td>{{app.kubelet}}</td>
-                        <td>{{app.hostOs}}</td>
-                        <td>{{app.address}}</td>
+                        <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{app.metadata.name}}</div>
+                        </td>
+                        <td>
+                            <div *ngFor="let condition of app.status.conditions; index as i" class="flex justify-content-center align-items-center">
+                                <td style="font-weight:bold; color:red;" *ngIf="condition.type === 'NetworkUnavailable' && condition.status === 'True'" pTooltip="{{condition.message}}">{{condition.reason}}</td>
+                                <td style="font-weight:bold; color:red;" *ngIf="condition.type === 'MemoryPressure' && condition.status === 'True'" pTooltip="{{condition.message}}">{{condition.reason}}</td>
+                                <td style="font-weight:bold; color:red;" *ngIf="condition.type === 'DiskPressure' && condition.status === 'True'" pTooltip="{{condition.message}}">{{condition.reason}}</td>
+                                <td style="font-weight:bold; color:red;" *ngIf="condition.type === 'PIDPressure' && condition.status === 'True'" pTooltip="{{condition.message}}">{{condition.reason}}</td>
+                                <td style="font-weight:bold; color:green;" *ngIf="condition.type === 'Ready' && condition.status === 'True'" pTooltip="{{condition.message}}">{{condition.type}}</td>
+                                <td style="font-weight:bold; color:red;" *ngIf="condition.type === 'Ready' && condition.status === 'Unknown'" pTooltip="{{condition.message}}">NotReady</td>
+                            </div>
+                        </td>
+                        <td><div class="flex justify-content-center align-items-center">{{calculateAge(app.metadata.creationTimestamp)}}</div>
+                        </td>
+                        <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{app.status.capacity.cpu}} CORE</div>
+                        </td>
+                        <td style="font-weight:bold"><div *ngIf="app.status.usage" class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.usage?.cpu)/1000000).toFixed(2)}}m</div>
+                        </td>
+                        <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.capacity.memory)/1024/1024).toFixed(2)}}Gi</div>
+                        </td>
+                        <td style="font-weight:bold"><div *ngIf="app.status.usage" class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.usage.memory)/1024/1024).toFixed(2)}}Gi</div>
+                        </td>
+                        <td><div class="flex justify-content-center align-items-center">{{app.status.nodeInfo.containerRuntimeVersion}}</div>
+                        </td>
+                        <td><div class="flex justify-content-center align-items-center">{{app.status.nodeInfo.kubeletVersion}}</div>
+                        </td>
+                        <td><div class="flex justify-content-center align-items-center">{{app.status.nodeInfo.osImage}}</div>
+                        </td>
+                        <td>
+                            <div *ngFor="let address of app.status.addresses; index as i" class="flex justify-content-center align-items-center">
+                                <td>{{address.address}}</td>
+                            </div>
+                        </td>
+                        <!-- <td><div class="flex justify-content-center align-items-center">{{app.status.addresses}}</div>
+                        </td> -->
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="summary">

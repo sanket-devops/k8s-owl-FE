@@ -50,6 +50,7 @@ export class ClusterDashboardComponent implements OnInit {
   nodeMetricsData: any = undefined;
   nodesData: any = undefined;
   podsData: any = undefined;
+  servicesData: any = undefined;
   clusterActiveIndex: number = 0;
   downloadData: any;
   user:string = "user";
@@ -198,9 +199,10 @@ export class ClusterDashboardComponent implements OnInit {
                 data.items.forEach((namespace: any) => {
                   this.namespaces.push({ name: namespace.metadata.name, status: namespace.status.phase })
                 });
+                console.log(this.namespaces);
                 <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
                   this.podsData = data.items;
-                  console.log(this.podsData);
+                  // console.log(this.podsData);
                 },
                   (err: any) => {
                     this.removeItemFromisSpinner(indexOfItem);
@@ -211,8 +213,32 @@ export class ClusterDashboardComponent implements OnInit {
               });
               break;
             case 1:
+              <any>this.dashboardService.getNamespaces('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
+                this.namespaces = [];
+                data.items.forEach((namespace: any) => {
+                  this.namespaces.push({ name: namespace.metadata.name, status: namespace.status.phase })
+                });
+                // console.log(this.namespaces);
+                },
+                  (err: any) => {
+                    this.removeItemFromisSpinner(indexOfItem);
+                  },
+                  () => {
+                    <any>this.dashboardService.getServices('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
+                      this.servicesData = data.items;
+                      // console.log(this.servicesData);
+                    },
+                      (err: any) => {
+                        this.removeItemFromisSpinner(indexOfItem);
+                      },
+                      () => {
+                        this.removeItemFromisSpinner(indexOfItem);
+                      });
+                  });
+              break;
+            case 2:
               <any>this.dashboardService.getNodes('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
-                this.nodeMetricsMixData = data;
+                this.nodeMetricsMixData = data.items;
                 // console.log(this.nodesData);
               },
                 (err: any) => {

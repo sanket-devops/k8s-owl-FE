@@ -49,6 +49,9 @@ export class DashboardService {
   getPods(groupId: string, clusterId: string, nameSpace?: string, populate?: string) {
     return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + nameSpace + '/podsMetricsMix' + `${populate ? '?populate=' + populate : ''}`));
   }
+  getServices(groupId: string, clusterId: string, nameSpace?: string, populate?: string) {
+    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + nameSpace + '/services' + `${populate ? '?populate=' + populate : ''}`));
+  }
 
   getPodsLogs(groupId: string, clusterId: string, namespace: string, podName: string, appName: string, h?: any): Observable<any> {
     if (h) {
