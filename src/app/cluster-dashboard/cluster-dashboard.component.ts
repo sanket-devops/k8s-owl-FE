@@ -56,7 +56,7 @@ export class ClusterDashboardComponent implements OnInit {
   user:string = "user";
   login = { u: '', p: '', t: '' };
   isChecked = true;
-  intervalTime: number = 60;
+  intervalTime: number = 30;
   intervalId = <any>undefined;
   reloadInterval = <any>undefined;
   timer: number = this.intervalTime;
@@ -477,7 +477,7 @@ export class ClusterDashboardComponent implements OnInit {
         let promiseArr: Promise<any>[] = [];
 
         for (let pod = 0; pod < _clusterData.length; pod++) {
-          if (_clusterData[pod].metadata.labels.app === _deploymentName) {
+          if (_clusterData[pod].metadata['labels'] && _clusterData[pod].metadata.labels.app === _deploymentName) {
             let podName = _clusterData[pod].metadata.name;
             for (let container = 0; container < _clusterData[pod].spec.containers.length; container++) {
               promiseArr.push(new Promise<void>(async (resolve, reject) => {

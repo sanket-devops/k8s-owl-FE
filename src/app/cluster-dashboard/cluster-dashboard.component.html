@@ -61,7 +61,7 @@
                             styleClass="custom-spinner" class="float-end" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
                     </div>
                 </ng-template>
-                <ng-template pTemplate="header">
+                <ng-template pTemplate="header" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
                     <tr>
                         <th pSortableColumn="metadata.labels.app">
                             <div class="flex justify-content-center align-items-center">LABEL<p-sortIcon field="metadata.labels.app"></p-sortIcon></div>
@@ -110,13 +110,18 @@
                 </ng-template>
                 <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
                     <tr>
-                        <td *ngIf="rowgroup" [attr.rowspan]="rowspan">
+                        <td *ngIf="rowgroup && app.metadata['labels']" [attr.rowspan]="rowspan">
                             <div class="flex justify-content-center align-items-center">
                                 <span style="font-weight:bold" class="p-text-bold p-ml-2">{{app.metadata.labels.app}}</span>
                             </div>
                         </td>
-                        <td NOWRAP class="text-center" *ngIf="rowgroup" [attr.rowspan]="rowspan">
+                        <td *ngIf="!app.metadata['labels']">
                             <div class="flex justify-content-center align-items-center">
+                                <span style="font-weight:bold" class="p-text-bold p-ml-2">{{app.metadata.name}}</span>
+                            </div>
+                        </td>
+                        <td NOWRAP class="text-center" *ngIf="rowgroup" [attr.rowspan]="rowspan">
+                            <div *ngIf="app.metadata['labels']" class="flex justify-content-center align-items-center">
                                 <tr>
                                     <td>
                                         <button class="btn btn-info dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1"
@@ -177,7 +182,7 @@
                             </div>
                         </td>
                         <td class="text-center" *ngIf="rowgroup && isAdmin" [attr.rowspan]="rowspan">
-                            <div class="flex justify-content-center align-items-center">
+                            <div *ngIf="app.metadata['labels']" class="flex justify-content-center align-items-center">
                                 <button pButton pTooltip="Edit Manifest" (click)="showManifestDialog(app.metadata.labels.app)" *ngIf="isAdmin" icon="pi pi-user-edit"
                                 type="button" class="p-button-info p-button-text p-button-rounded p-button-sm"></button>
                                 <button pButton pTooltip="Rollout & Restart" (click)="rolloutRestart(app.metadata.labels.app)" *ngIf="isAdmin" icon="pi pi-trash"
