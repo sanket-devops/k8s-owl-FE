@@ -138,6 +138,18 @@ export class ClusterDashboardComponent implements OnInit {
   
     return localTimeString;
   }
+  calculateRunningPod(containers: any[]) {
+    let totalContainers: number = containers.length
+    let readyContainers: number = 0;
+    // console.log(totalContainers); 
+    containers.forEach((container: any) => {
+      // console.log(container.ready);
+      if (container.ready) {
+        readyContainers = readyContainers + 1;
+      }
+    });
+    return `${readyContainers}/${totalContainers}`;
+  }
 
   calculateMetrics(metrics: any) {
     let matches = metrics.match(/^(\d+)([A-Za-z]+)$/);
@@ -199,7 +211,7 @@ export class ClusterDashboardComponent implements OnInit {
                 data.items.forEach((namespace: any) => {
                   this.namespaces.push({ name: namespace.metadata.name, status: namespace.status.phase })
                 });
-                console.log(this.namespaces);
+                // console.log(this.namespaces);
                 <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
                   this.podsData = data.items;
                   // console.log(this.podsData);

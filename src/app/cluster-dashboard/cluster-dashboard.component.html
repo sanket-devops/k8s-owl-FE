@@ -84,6 +84,9 @@
                         <th pSortableColumn="spec.nodeName">
                             <div class="flex justify-content-center align-items-center">NODE<p-sortIcon field="spec.nodeName"></p-sortIcon></div>
                         </th>
+                        <th pSortableColumn="">
+                            <div class="flex justify-content-center align-items-center">READY<p-sortIcon field=""></p-sortIcon></div>
+                        </th>
                         <th pSortableColumn="status.phase">
                             <div class="flex justify-content-center align-items-center">STATUS<p-sortIcon field="status.phase"></p-sortIcon></div>
                         </th>
@@ -203,6 +206,16 @@
                         </td>
                         <td>
                             <div class="flex justify-content-center align-items-center">{{app.spec.nodeName}}</div>
+                        </td>
+                        <td>
+                            <div class="flex justify-content-center align-items-center">
+                                <td>
+                                    <span style="color:black;">{{calculateRunningPod(app.status.containerStatuses)}}</span>
+                                    <!-- <span *ngIf="!app.metadata.deletionTimestamp && status.state['running']" style="color:green;">{{app.status.phase}}</span>
+                                    <span *ngIf="app.metadata.deletionTimestamp" style="color:red;" pTooltip="{{calculateAge(app.metadata.deletionTimestamp)}}" >Terminating</span> -->
+                                </td>
+                            </div>
+                            <span *ngIf="!app.metadata.deletionTimestamp && !app.status.containerStatuses && app.status.phase" style="color:darkgray;" pTooltip="{{app.status.message}}" >{{app.status.reason}}</span>
                         </td>
                         <td>
                             <div *ngFor="let status of app.status.containerStatuses" class="flex justify-content-center align-items-center">
