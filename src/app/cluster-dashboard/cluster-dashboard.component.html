@@ -210,12 +210,9 @@
                         <td>
                             <div class="flex justify-content-center align-items-center">
                                 <td>
-                                    <span style="color:black;">{{calculateRunningPod(app.status.containerStatuses)}}</span>
-                                    <!-- <span *ngIf="!app.metadata.deletionTimestamp && status.state['running']" style="color:green;">{{app.status.phase}}</span>
-                                    <span *ngIf="app.metadata.deletionTimestamp" style="color:red;" pTooltip="{{calculateAge(app.metadata.deletionTimestamp)}}" >Terminating</span> -->
+                                    <span style="color:black;">{{calculateRunningPod(app)}}</span>
                                 </td>
                             </div>
-                            <span *ngIf="!app.metadata.deletionTimestamp && !app.status.containerStatuses && app.status.phase" style="color:darkgray;" pTooltip="{{app.status.message}}" >{{app.status.reason}}</span>
                         </td>
                         <td>
                             <div *ngFor="let status of app.status.containerStatuses" class="flex justify-content-center align-items-center">
@@ -225,7 +222,9 @@
                                     <span *ngIf="app.metadata.deletionTimestamp" style="color:red;" pTooltip="{{calculateAge(app.metadata.deletionTimestamp)}}" >Terminating</span>
                                 </td>
                             </div>
-                            <span *ngIf="!app.metadata.deletionTimestamp && !app.status.containerStatuses && app.status.phase" style="color:darkgray;" pTooltip="{{app.status.message}}" >{{app.status.reason}}</span>
+                            <div class="flex justify-content-center align-items-center">
+                                <span *ngIf="!app.metadata.deletionTimestamp && !app.status.containerStatuses && app.status.phase" style="color:darkgray;" pTooltip="{{app.status.message}}" >{{app.status.reason}}</span>
+                            </div>
                         </td>
                         <td>
                             <div *ngFor="let container of app.spec.containers; index as i" class="flex justify-content-center align-items-center">

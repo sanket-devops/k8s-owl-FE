@@ -138,17 +138,16 @@ export class ClusterDashboardComponent implements OnInit {
   
     return localTimeString;
   }
-  calculateRunningPod(containers: any[]) {
-    let totalContainers: number = containers.length
-    let readyContainers: number = 0;
-    // console.log(totalContainers); 
-    containers.forEach((container: any) => {
-      // console.log(container.ready);
-      if (container.ready) {
-        readyContainers = readyContainers + 1;
-      }
-    });
-    return `${readyContainers}/${totalContainers}`;
+  calculateRunningPod(pod: any) {
+    let totalContainers: number = pod.spec.containers.length
+    if (pod.status.containerStatuses) {
+      let readyContainers: number = 0;
+      pod.status.containerStatuses.forEach((container: any) => {
+        if (container.ready) readyContainers = readyContainers + 1;
+      });
+      return `${readyContainers}/${totalContainers}`;
+    }
+    else return `0/${totalContainers}`;
   }
 
   calculateMetrics(metrics: any) {
