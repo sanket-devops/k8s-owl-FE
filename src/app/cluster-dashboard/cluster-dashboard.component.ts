@@ -191,9 +191,9 @@ export class ClusterDashboardComponent implements OnInit {
 }
 
   async getCluster(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
-    let indexOfItem = this.isSpinner.push("GetCluster");
+    // let indexOfItem = this.isSpinner.push("GetCluster");
     if (groupId === undefined && clusterId === undefined) {
-      this.removeItemFromisSpinner(indexOfItem);
+      // this.removeItemFromisSpinner(indexOfItem);
       this.back();
     } else {
       this.clusterName = clusterName;
@@ -216,10 +216,10 @@ export class ClusterDashboardComponent implements OnInit {
                   // console.log(this.podsData);
                 },
                   (err: any) => {
-                    this.removeItemFromisSpinner(indexOfItem);
+                    // this.removeItemFromisSpinner(indexOfItem);
                   },
                   () => {
-                    this.removeItemFromisSpinner(indexOfItem);
+                    // this.removeItemFromisSpinner(indexOfItem);
                   });
               });
               break;
@@ -232,7 +232,7 @@ export class ClusterDashboardComponent implements OnInit {
                 // console.log(this.namespaces);
                 },
                   (err: any) => {
-                    this.removeItemFromisSpinner(indexOfItem);
+                    // this.removeItemFromisSpinner(indexOfItem);
                   },
                   () => {
                     <any>this.dashboardService.getServices('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
@@ -240,10 +240,10 @@ export class ClusterDashboardComponent implements OnInit {
                       // console.log(this.servicesData);
                     },
                       (err: any) => {
-                        this.removeItemFromisSpinner(indexOfItem);
+                        // this.removeItemFromisSpinner(indexOfItem);
                       },
                       () => {
-                        this.removeItemFromisSpinner(indexOfItem);
+                        // this.removeItemFromisSpinner(indexOfItem);
                       });
                   });
               break;
@@ -253,10 +253,10 @@ export class ClusterDashboardComponent implements OnInit {
                 // console.log(this.nodesData);
               },
                 (err: any) => {
-                  this.removeItemFromisSpinner(indexOfItem);
+                  // this.removeItemFromisSpinner(indexOfItem);
                 },
                 () => {
-                  this.removeItemFromisSpinner(indexOfItem);
+                  // this.removeItemFromisSpinner(indexOfItem);
                 });
               break;
 
@@ -270,14 +270,14 @@ export class ClusterDashboardComponent implements OnInit {
             <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
               this.podsData = data.items;
               // console.log(this.clusterData);
-              this.removeItemFromisSpinner(indexOfItem);
+              // this.removeItemFromisSpinner(indexOfItem);
             });
           } catch (error) {
-            this.removeItemFromisSpinner(indexOfItem);
+            // this.removeItemFromisSpinner(indexOfItem);
           }
         }
       } catch (e) {
-        this.removeItemFromisSpinner(indexOfItem);
+        // this.removeItemFromisSpinner(indexOfItem);
         console.log(e);
       }
     }
@@ -715,9 +715,9 @@ export class ClusterDashboardComponent implements OnInit {
   }
 
   async latestPull(event?: any) {
-    this.loading = true;
+    // this.loading = true;
     await this.getCluster(this.dashboardService.groupId, this.dashboardService.clusterId, this.dashboardService.clusterName);
-    this.loading = false;
+    // this.loading = false;
   }
   ngOnDestroy(): void {
     clearInterval(this.intervalId);
