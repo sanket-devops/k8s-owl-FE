@@ -446,7 +446,7 @@
         <p-tabPanel *ngIf="isAdmin" header="Nodes">
             <p-table #nt [value]="nodeMetricsMixData" responsiveLayout="scroll" styleClass="p-datatable-sm"
                 rowGroupMode="rowspan" groupRowsBy="metadata.name"
-                [globalFilterFields]="['metadata.name','status.conditions','metadata.creationTimestamp','app.status.capacity.cpu','app.status.cpu','app.status.capacity.memory','app.status.memory','status.nodeInfo.containerRuntimeVersion','status.nodeInfo.kubeletVersion','status.nodeInfo.osImage','status.addresses']"
+                [globalFilterFields]="['metadata.name','status.conditions','metadata.creationTimestamp','status.capacity.cpu','status.cpu','status.capacity.memory','status.memory','status.nodeInfo.containerRuntimeVersion','status.nodeInfo.kubeletVersion','status.nodeInfo.osImage','status.addresses']"
                 dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 [showCurrentPageReport]="true">
                 <ng-template pTemplate="caption">
