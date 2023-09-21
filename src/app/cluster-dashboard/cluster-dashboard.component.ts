@@ -152,6 +152,20 @@ export class ClusterDashboardComponent implements OnInit {
     }
     else return `0/${totalContainers}`;
   }
+  isPodReady(pod: any) {
+    let totalContainers: number = pod.spec.containers.length
+    if (pod.status.containerStatuses) {
+      let readyContainers: number = 0;
+      pod.status.containerStatuses.forEach((container: any) => {
+        if (container.ready) readyContainers = readyContainers + 1;
+      });
+      if (totalContainers === readyContainers) {
+        return true;
+      }
+      else return false;
+    }
+    else return false;
+  }
 
   calculateMetrics(metrics: any) {
     let matches = metrics.match(/^(\d+)([A-Za-z]+)$/);

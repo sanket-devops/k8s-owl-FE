@@ -192,8 +192,8 @@
                                 type="button" class="p-button-warning p-button-text p-button-rounded p-button-sm"></button>
                             </div>
                         </td>
-                        <td>
-                            <div class="flex justify-content-center align-items-center">{{app.metadata.name}}</div>
+                        <td [ngClass]="{'not-ready': !isPodReady(app)}">
+                            <div class="flex justify-content-center align-items-center changeColor">{{app.metadata.name}}</div>
                         </td>
                         <td class="nowrap text-center" *ngIf="isAdmin">
                             <div class="flex justify-content-center align-items-center">
@@ -201,17 +201,17 @@
                                     type="button" class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
                             </div>
                         </td>
-                        <td>
+                        <td [ngClass]="{'not-ready': !isPodReady(app)}">
                             <div class="flex justify-content-center align-items-center">{{calculateAge(app.status.startTime)}}</div>
                         </td>
-                        <td>
+                        <td [ngClass]="{'not-ready': !isPodReady(app)}">
                             <div class="flex justify-content-center align-items-center">{{app.spec.nodeName}}</div>
                         </td>
-                        <td>
+                        <td [ngClass]="{'not-ready': !isPodReady(app)}">
                             <div class="flex justify-content-center align-items-center">
-                                <td>
-                                    <span style="color:black;">{{calculateRunningPod(app)}}</span>
-                                </td>
+                                <!-- <td> -->
+                                    <span>{{calculateRunningPod(app)}}</span>
+                                <!-- </td> -->
                             </div>
                         </td>
                         <td>
@@ -228,7 +228,7 @@
                         </td>
                         <td>
                             <div *ngFor="let container of app.spec.containers; index as i" class="flex justify-content-center align-items-center">
-                                <td>{{container.name}}</td>
+                                <td [ngClass]="{'not-ready': !app.status.containerStatuses[i]?.ready}">{{container.name}}</td>
                             </div>
                         </td>
                         <td *ngIf="isAdmin">
