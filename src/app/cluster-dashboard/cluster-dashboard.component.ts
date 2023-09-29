@@ -689,6 +689,22 @@ async getNamespaces(groupId?: string, clusterId?: string, clusterName?: string, 
       toastr.success(`Rollout Restarting: ${deploymentName}`) && await this.latestPull();
     }
   }
+  async deleteDeployment(deploymentName: string) {
+    if (
+      window.confirm(
+        `Do you want to delete "Deployment" : ${deploymentName} ?`
+      )
+    ) {
+      if (
+        window.confirm(
+          `Are you sure you want to delete "Deployment" : ${deploymentName} ?`
+        )
+      ) {
+        let resp = await this.dashboardService.deleteDeployment('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + deploymentName).toPromise();
+        toastr.success(`Deployment "${deploymentName}" delete`) && await this.latestPull();
+      }
+    }
+  }
 
   async showManifestDialog(deploymentName: string) {
     this.manifestDialog = true;
@@ -697,7 +713,7 @@ async getNamespaces(groupId?: string, clusterId?: string, clusterName?: string, 
       this.dashboardService.getDeploymentManifest('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + deploymentName).subscribe((data: any) => {
         this.deploymentManifest = JSON.stringify(data, undefined, 4);
         this.updatedDeploymentManifest = JSON.stringify(data, undefined, 4);
-        console.log(this.deploymentManifest);
+        // console.log(this.deploymentManifest);
         toastr.success(`Get Deployment Manifest: ${deploymentName}`);
       });
     }, 100);
