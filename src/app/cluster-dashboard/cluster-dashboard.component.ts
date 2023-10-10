@@ -56,7 +56,7 @@ export class ClusterDashboardComponent implements OnInit {
   user:string = "user";
   login = { u: '', p: '', t: '' };
   isChecked = true;
-  intervalTime: number = 30;
+  intervalTime: number = 10;
   intervalId = <any>undefined;
   reloadInterval = <any>undefined;
   timer: number = this.intervalTime;

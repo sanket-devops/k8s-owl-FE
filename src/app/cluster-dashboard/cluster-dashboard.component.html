@@ -230,7 +230,7 @@
                         </td>
                         <td>
                             <div *ngFor="let container of app.spec.containers; index as i" class="flex justify-content-center align-items-center">
-                                <td [ngClass]="{'not-ready': !app.status.containerStatuses[i]?.ready}">{{container.name}}</td>
+                                <td [ngClass]="{'not-ready': !isPodReady(app)}">{{container.name}}</td>
                             </div>
                         </td>
                         <td *ngIf="isAdmin">
