@@ -74,6 +74,9 @@ export class ClusterDashboardComponent implements OnInit {
   deploymentManifest: any = undefined;
   updatedDeploymentManifest: any = undefined;
   nodeMetricsMixData: any = undefined;
+  selectedPods: any[] = [];
+  selectedServices: any[] = [];
+  selectedNodes: any[] = [];
 
   constructor(
     public constantService: ConstantService,
@@ -240,7 +243,6 @@ async getNamespaces(groupId?: string, clusterId?: string, clusterName?: string, 
             case 0:
               <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
                 this.podsData = data.items;
-                // console.log(this.podsData);
               },
                 (err: any) => {
                   // this.removeItemFromisSpinner(indexOfItem);

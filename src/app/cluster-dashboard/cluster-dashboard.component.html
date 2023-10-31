@@ -27,7 +27,7 @@
                 groupRowsBy="metadata.labels.app"
                 [globalFilterFields]="['metadata.labels.app','metadata.name','spec.nodeName','spec.containers','status.startTime','status.phase']"
                 dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                [showCurrentPageReport]="true">
+                [showCurrentPageReport]="true" selectionMode="multiple" [(selection)]="selectedPods" [metaKeySelection]="true">
                 <ng-template pTemplate="caption">
                     <div class="p-d-flex p-ai-center p-jc-between">
                         <!-- <h5 class="p-m-0">Manage Products</h5> -->
@@ -112,7 +112,7 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
-                    <tr>
+                    <tr [pSelectableRow]="app" [pSelectableRowIndex]="rowIndex">
                         <td *ngIf="rowgroup && app.metadata['labels']" [attr.rowspan]="rowspan">
                             <div class="flex justify-content-center align-items-center">
                                 <span style="font-weight:bold" class="p-text-bold p-ml-2">{{app.metadata.labels.app}}</span>
@@ -347,7 +347,7 @@
                 rowGroupMode="rowspan" groupRowsBy="metadata.name"
                 [globalFilterFields]="['metadata.name','spec.type','spec.clusterIP','spec.externalIPs','spec.ports','metadata.creationTimestamp','spec.selector']"
                 dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                [showCurrentPageReport]="true">
+                [showCurrentPageReport]="true" selectionMode="multiple" [(selection)]="selectedServices" [metaKeySelection]="true">
                 <ng-template pTemplate="caption">
                     <div class="p-d-flex p-ai-center p-jc-between">
                         <!-- <h2 style="font-weight:bold" class="p-m-0">Nodes</h2> -->
@@ -406,7 +406,7 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
-                    <tr>
+                    <tr [pSelectableRow]="app" [pSelectableRowIndex]="rowIndex">
                         <td style="font-weight:bold" *ngIf="rowgroup" [attr.rowspan]="rowspan">
                             <div class="flex justify-content-center align-items-center">{{app.metadata.name}}</div>
                         </td>
@@ -450,7 +450,7 @@
                 rowGroupMode="rowspan" groupRowsBy="metadata.name"
                 [globalFilterFields]="['metadata.name','status.conditions','metadata.creationTimestamp','status.capacity.cpu','status.cpu','status.capacity.memory','status.memory','status.nodeInfo.containerRuntimeVersion','status.nodeInfo.kubeletVersion','status.nodeInfo.osImage','status.addresses']"
                 dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                [showCurrentPageReport]="true">
+                [showCurrentPageReport]="true" selectionMode="multiple" [(selection)]="selectedNodes" [metaKeySelection]="true">
                 <ng-template pTemplate="caption">
                     <div class="p-d-flex p-ai-center p-jc-between">
                         <!-- <h2 style="font-weight:bold" class="p-m-0">Nodes</h2> -->
@@ -503,7 +503,7 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
-                    <tr>
+                    <tr [pSelectableRow]="app" [pSelectableRowIndex]="rowIndex">
                         <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{app.metadata.name}}</div>
                         </td>
                         <td>
