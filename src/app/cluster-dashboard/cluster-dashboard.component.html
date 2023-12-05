@@ -12,13 +12,18 @@
     <h1>{{clusterName}}</h1>
     <button type="button" class="btn btn-secondary me-2">
         <i class="fas fa-sync-alt fa-fw"></i> Auto Reload
-        <input type="text" style="width:40px; height: 18px; text-align: center;" class="p-inputtext-sm"
+        <input type="number" style="width:60px; height: 18px; text-align: center;" class="p-inputtext-sm"
             [(ngModel)]="intervalTime" pInputText pTooltip="Interval Time In Second" />/s&nbsp;
         <mat-slide-toggle [(ngModel)]="isChecked" name="check" (change)="autoReload($event)"></mat-slide-toggle>
     </button>
     <button type="button" class="btn btn-primary float-end me-2" (click)="back()"><i class="fas fa-project-diagram"></i>
         Dashboard</button>
 </nav>
+
+<div class="card">
+    <!-- <h5>Dynamic</h5> -->
+    <p-progressBar [value]="percentage"></p-progressBar>
+</div>
 
 <div class="card">
     <p-tabView (onChange)="latestPull()" [(activeIndex)]="clusterActiveIndex">

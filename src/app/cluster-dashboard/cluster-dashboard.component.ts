@@ -60,6 +60,7 @@ export class ClusterDashboardComponent implements OnInit {
   intervalId = <any>undefined;
   reloadInterval = <any>undefined;
   timer: number = this.intervalTime;
+  percentage: any;
   loading: boolean = false;
   selectedNamespace: any = {name: 'default', status: 'Active'};
   namespaces: any[] = [];
@@ -105,8 +106,13 @@ export class ClusterDashboardComponent implements OnInit {
     }, 50);
 
     this.intervalId = setInterval(() => {
+      if (Math.sign(this.timer) === -1 || Math.sign(this.timer) === 0) {
+        this.timer = 1;
+        this.percentage = Math.round((this.timer / this.intervalTime) * 100);
+      }
       if (this.isChecked) {
         this.timer--;
+        this.percentage = Math.round((this.timer / this.intervalTime) * 100);
         $('.timer').text(this.timer);
         if (this.timer === 0) {
           this.loading = true;
@@ -114,6 +120,7 @@ export class ClusterDashboardComponent implements OnInit {
           this.loading = false;
           toastr.success('Reload Data Successfully!');
           this.timer = this.intervalTime;
+          this.percentage = Math.round((this.timer / this.intervalTime) * 100);
         }
       } else {
         toastr.warning('Auto Reload Data Off!');
