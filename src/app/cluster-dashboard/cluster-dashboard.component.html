@@ -20,10 +20,10 @@
         Dashboard</button>
 </nav>
 
-<div class="card">
+<!-- <div class="card"> -->
     <!-- <h5>Dynamic</h5> -->
-    <p-progressBar [value]="percentage"></p-progressBar>
-</div>
+    <!-- <p-progressBar [value]="percentage"></p-progressBar> -->
+<!-- </div> -->
 
 <div class="card">
     <p-tabView (onChange)="latestPull()" [(activeIndex)]="clusterActiveIndex">
@@ -423,7 +423,14 @@
                         </td>
                         <td>
                             <div *ngIf="app.spec.externalIPs" class="flex justify-content-center align-items-center">
-                                <td *ngFor="let externalIP of app.spec.externalIPs; index as i">{{externalIP}}</td>
+                                <!-- <td *ngFor="let externalIP of app.spec.externalIPs; index as i">{{externalIP}}</td> -->
+                                <div *ngFor="let externalIP of app.spec.externalIPs; index as i">
+                                    <div *ngFor="let port of app.spec.ports; index as i" class="flex justify-content-center align-items-center">
+                                        <td style="font-weight:bold" *ngIf="port.nodePort">
+                                            <a target="_blank" href="http://{{externalIP}}:{{port.port}}">{{externalIP}}</a>
+                                        </td>
+                                    </div>
+                                </div>
                             </div>
                             <div *ngIf="app.status.loadBalancer.ingress"  class="flex justify-content-center align-items-center">
                                 <td *ngFor="let ip of app.status.loadBalancer.ingress; index as i">{{ip.ip}}</td>
