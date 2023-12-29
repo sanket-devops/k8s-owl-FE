@@ -41,8 +41,8 @@
           <td>{{clustersData.envName}}</td>
           <td>
             <!-- <button type="button" (click)="getCluster(data._id, clustersData._id , clustersData.clusterName)" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#clusterModal"><i class="fas fa-folder-open"></i> Cluster</button> -->
-            <button type="button" (click)="ClusterDashboard(data._id, clustersData._id , clustersData.clusterName)" class="btn btn-primary me-2"><i class="fas fa-folder-open"></i> Cluster</button>
-            <img src="assets/img/k8s.svg" id="icon" alt="Logo"/>
+            <!-- <button type="button" (click)="ClusterDashboard(data._id, clustersData._id , clustersData.clusterName)" class="btn btn-primary me-2"><i class="fas fa-folder-open"></i> Cluster</button> -->
+            <img style="width: 25px;" (click)="ClusterDashboard(data._id, clustersData._id , clustersData.clusterName)" src="assets/img/k8s.svg" id="icon" alt="Logo"/>
           </td>
         </tr>
     </tbody>
