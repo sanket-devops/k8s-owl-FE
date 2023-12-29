@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {environment} from '../../environments/environment';
+import { Observable } from 'rxjs';
 
 import {ConstantService} from './constant.service';
 // import {CookieService} from 'ngx-cookie-service';
@@ -14,7 +15,6 @@ export class DashboardService {
   clusterName: any = undefined;
   groupId: any = undefined;
   clusterId: any = undefined;
-  clusterData: any = undefined;
   podName: any = undefined;
 
   constructor(private http: HttpClient, public constantService: ConstantService) {
@@ -40,31 +40,55 @@ export class DashboardService {
     let resp = <any>await this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT)).toPromise();
     return JSON.parse(this.constantService.getDecryptedData(resp.data));
   }
-  getPods(groupId: string, clusterId: string, populate?: string) {
-    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/pods' + `${populate ? '?populate=' + populate : ''}`));
+  getNamespaces(groupId: string, clusterId: string, populate?: string) {
+    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/namespaces' + groupId + clusterId + `${populate ? '?populate=' + populate : ''}`));
+  }
+  getNodes(groupId: string, clusterId: string, populate?: string) {
+    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + '/nodesMetricsMix' + `${populate ? '?populate=' + populate : ''}`));
+  }
+  getPods(groupId: string, clusterId: string, nameSpace?: string, populate?: string) {
+    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + nameSpace + '/podsMetricsMix' + `${populate ? '?populate=' + populate : ''}`));
+  }
+  getServices(groupId: string, clusterId: string, nameSpace?: string, populate?: string) {
+    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + nameSpace + '/services' + `${populate ? '?populate=' + populate : ''}`));
   }
 
-  getPodsLogs(groupId: string, clusterId: string, podName: string, appName: string, h?: string, populate?: string) {
-    let urlLog;
+  getPodsLogs(groupId: string, clusterId: string, namespace: string, podName: string, appName: string, h?: any): Observable<any> {
     if (h) {
-      urlLog = this.constantService.API_ENDPOINT + groupId + clusterId + podName + appName + h;
+      return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + namespace + podName + appName + h));
     } else {
-      urlLog = this.constantService.API_ENDPOINT + groupId + clusterId + podName + appName;
+      return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + namespace + podName + appName));
     }
-    // console.log(url);
-    // return this.http.get(this.constantService.API_ENDPOINT + groupId + clusterId + podName + `${populate ? '?populate=' + populate : ''}`, {responseType: 'text'});
-    return urlLog;
   }
-  getAppLogs(groupId: string, clusterId: string, deploymentName: string, appName: string, lines?: string, populate?: string) {
-    let urlAppLog;
-    if (lines) {
-      urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + deploymentName + appName + lines + '/AppLogs';
+  getPodsPreviousLogs(groupId: string, clusterId: string, namespace: string, podName: string, appName: string): Observable<any> {
+    return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/previous' + groupId + clusterId + namespace + podName + appName));
+  }
+
+  viewFollowLog(groupId: string, clusterId: string, namespace: string, podName: string, appName: string, tailLines?: any): Observable<string>  {
+    if (tailLines) {
+      return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/follow' + groupId + clusterId + namespace + podName + appName + tailLines));
     } else {
-      urlAppLog = this.constantService.API_ENDPOINT + groupId + clusterId + deploymentName + appName + '/AppLogs';
+      return this.http.get<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/follow' + groupId + clusterId + namespace + podName + appName));
     }
-    return urlAppLog;
   }
-  deletePod(groupId: string, clusterId: string, podName: string, populate?: string) {
-    return this.http.delete(this.constantService.get_api_url(this.constantService.API_ENDPOINT + groupId + clusterId + podName + '/deletePod' + `${populate ? '?populate=' + populate : ''}`));
+
+  deletePod(groupId: string, clusterId: string, namespace: string, podName: string, populate?: string) {
+    return this.http.delete(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/DeletePod' + groupId + clusterId + namespace + podName + `${populate ? '?populate=' + populate : ''}`));
   }
+  deleteDeployment(groupId: string, clusterId: string, namespace: string, deploymentName: string, populate?: string) {
+    return this.http.delete(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/DeleteDeployment' + groupId + clusterId + namespace + deploymentName + `${populate ? '?populate=' + populate : ''}`));
+  }
+
+  rolloutRestart(groupId: string, clusterId: string, namespace: string, deploymentName: string, populate?: string) {
+    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/restart' + groupId + clusterId + namespace + deploymentName + `${populate ? '?populate=' + populate : ''}`));
+  }
+
+  getDeploymentManifest(groupId: string, clusterId: string, namespace: string, deploymentName: string, populate?: string): Observable<any> {
+    return this.http.get(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/manifest' + groupId + clusterId + namespace + deploymentName + `${populate ? '?populate=' + populate : ''}`));
+  }
+
+  updateDeploymentManifest(data: any): Observable<any> {
+    return this.http.post<any>(this.constantService.get_api_url(this.constantService.API_ENDPOINT + '/cluster/deployment/update-deployment'), data);
+  }
+
 }

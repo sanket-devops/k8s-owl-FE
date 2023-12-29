@@ -1,18 +1,22 @@
 <nav class="navbar navbar-light bg-light">
+  <!-- <p-progressSpinner *ngIf="this.dashboardService.isMainSpinner" [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner> -->
   <a class="navbar-brand" href="#">
     <img src="assets/img/k8s.svg" width="80" height="50" alt="">
   </a>
   <button type="button" *ngIf="isAdmin" class="btn btn-success float-start me-2" (click)="AddCluster()"><i class="fas fa-plus fa-fw"></i> Add</button>
   <button type="button" class="btn btn-secondary me-2" (click)="latestPull($event)"><i class="fas fa-sync-alt fa-fw"></i> Reload in <span class="timer">{{timer}}</span></button>
   <button type="button" class="btn btn-secondary me-2">
-    <mat-slide-toggle [(ngModel)]="isChecked" name="check" (change)="autoReload($event)"><i class="fas fa-sync-alt fa-fw"></i> Auto Reload 60/s: {{isChecked}}</mat-slide-toggle>
+    <i class="fas fa-sync-alt fa-fw"></i> Auto Reload
+    <input type="text" style="width:40px; height: 18px; text-align: center;" class="p-inputtext-sm"
+      [(ngModel)]="intervalTime" pInputText pTooltip="Interval Time In Second" />/s&nbsp;
+    <mat-slide-toggle [(ngModel)]="isChecked" name="check" (change)="autoReload($event)"></mat-slide-toggle>
   </button>
   <button type="button" class="btn btn-danger float-end me-2" (click)="logout()"><i class="fas fa-sign-out-alt fa-fw"></i> Logout</button>
 </nav>
 
 <div class="secound-div">
   <table class="table table-striped table-hover">
-    <thead>
+    <thead style="text-align: center">
       <tr>
         <th scope="col">#</th>
         <th scope="col">Group Name</th>
@@ -22,22 +26,22 @@
         <th scope="col">Action</th>
       </tr>
     </thead>
-    <tbody *ngFor="let data of clusterArr ;let i =index">
+    <tbody style="text-align: center" *ngFor="let data of clusterArr ;let i =index">
         <tr>
           <th [attr.rowspan]="clusterCount">{{i + 1}}</th>
           <th [attr.rowspan]="clusterCount">{{data.groupName}}</th>
-          <th [attr.rowspan]="clusterCount" *ngIf="isAdmin">
-            <button type="button" (click)="editData(data)" class="btn btn-secondary me-2"><i class="fas fa-edit fa-fw"></i> Edit</button>
-            <button type="button" (click)="deleteData(data)" class="btn btn-danger me-2"><i class="fas fa-trash-alt"></i> Delete</button>
+          <th NOWRAP [attr.rowspan]="clusterCount" *ngIf="isAdmin">
+            <button type="button" (click)="editData(data)" class="btn btn-secondary me-2"><i
+                class="fas fa-edit fa-fw"></i></button>
+            <button type="button" (click)="deleteData(data)" class="btn btn-danger me-2"><i class="fas fa-trash-alt"></i></button>
           </th>
         </tr>
         <tr *ngFor="let clustersData of data.clusters">
           <td>{{clustersData.clusterName}}</td>
           <td>{{clustersData.envName}}</td>
           <td>
-            <!-- <button type="button" (click)="getCluster(data._id, clustersData._id , clustersData.clusterName)" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#clusterModal"><i class="fas fa-folder-open"></i> Cluster</button> -->
-            <button type="button" (click)="ClusterDashboard(data._id, clustersData._id , clustersData.clusterName)" class="btn btn-primary me-2"><i class="fas fa-folder-open"></i> Cluster</button>
-            <img src="assets/img/k8s.svg" id="icon" alt="Logo"/>
+            <!-- <button type="button" (click)="ClusterDashboard(data._id, clustersData._id , clustersData.clusterName)" class="btn btn-primary me-2"><i class="fas fa-folder-open"></i> Cluster</button> -->
+            <img style="width: 25px;" (click)="ClusterDashboard(data._id, clustersData._id , clustersData.clusterName)" src="assets/img/k8s.svg" id="icon" alt="Logo"/>
           </td>
         </tr>
     </tbody>

@@ -1,111 +1,574 @@
 <nav class="navbar navbar-light bg-light">
+    <!-- <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '50px', height: '50px'}"
+        styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner> -->
+    <!-- <a *ngIf="!this.isSpinner.length" class="navbar-brand" href="#">
+        <img src="assets/img/k8s.svg" width="80" height="50" alt="">
+    </a> -->
     <a class="navbar-brand" href="#">
         <img src="assets/img/k8s.svg" width="80" height="50" alt="">
     </a>
-    <button type="button" class="btn btn-secondary me-2" (click)="latestPull($event)"><i class="fas fa-sync-alt fa-fw"></i> Reload in <span class="timer">{{timer}}</span></button>
+    <button type="button" class="btn btn-secondary me-2" (click)="latestPull($event)"><i
+            class="fas fa-sync-alt fa-fw"></i> Reload in <span class="timer">{{timer}}</span></button>
     <h1>{{clusterName}}</h1>
     <button type="button" class="btn btn-secondary me-2">
-      <mat-slide-toggle [(ngModel)]="isChecked" name="check" (change)="autoReload($event)"><i class="fas fa-sync-alt fa-fw"></i> Auto Reload 60/s: {{isChecked}}</mat-slide-toggle>
+        <i class="fas fa-sync-alt fa-fw"></i> Auto Reload
+        <input type="number" style="width:60px; height: 18px; text-align: center;" class="p-inputtext-sm"
+            [(ngModel)]="intervalTime" pInputText pTooltip="Interval Time In Second" />/s&nbsp;
+        <mat-slide-toggle [(ngModel)]="isChecked" name="check" (change)="autoReload($event)"></mat-slide-toggle>
     </button>
-    <button type="button" class="btn btn-primary float-end me-2" (click)="back()"><i class="fas fa-project-diagram"></i> Dashboard</button>
+    <button type="button" class="btn btn-primary float-end me-2" (click)="back()"><i class="fas fa-project-diagram"></i>
+        Dashboard</button>
 </nav>
-  
-<div class="third-div">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>
-                <th scope="col">#</th>
-                <th scope="col">DEPLOYMENT</th>
-                <th scope="col">APP</th>
-                <th scope="col">PNAME</th>
-                <th scope="col">RESTARTS</th>
-                <th scope="col">NODE</th>
-                <th scope="col">AGE</th>
-                <th scope="col">REDAY</th>
-                <th scope="col">Pod Logs Action</th>
-                <th scope="col">App Logs Action</th>
-                <th scope="col" *ngIf="isAdmin">Actions</th>
-            </tr>
-        </thead>
-        <tbody *ngFor="let data of this.clusterData;let i =index ;let l = count">
-            <tr>
-                <th [attr.rowspan]="l"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>
-                <th [attr.rowspan]="l">{{i + 1}}</th>
-                <th [attr.rowspan]="l">{{data.DEPLOYMENT}}</th>
-                <th [attr.rowspan]="l">{{data.APP}}</th>
-                <td>{{data.PNAME}}</td>
-                <td>{{data.RESTARTS}}</td>
-                <td>{{data.NODE}}</td>
-                <td>{{data.AGE}}</td>
-                <td *ngIf="data.READY; else Error">Running</td>
-                <ng-template #Error>
-                    <td>Error...</td>
+
+<!-- <div class="card"> -->
+    <!-- <h5>Dynamic</h5> -->
+    <!-- <p-progressBar [value]="percentage"></p-progressBar> -->
+<!-- </div> -->
+
+<div class="card">
+    <p-tabView (onChange)="latestPull()" [(activeIndex)]="clusterActiveIndex">
+        <p-tabPanel header="Pods">
+            <p-table #pt [value]="podsData" responsiveLayout="scroll" styleClass="p-datatable-sm" rowGroupMode="rowspan"
+                groupRowsBy="metadata.labels.app"
+                [globalFilterFields]="['metadata.labels.app','metadata.name','spec.nodeName','spec.containers','status.startTime','status.phase']"
+                dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true" selectionMode="multiple" [(selection)]="selectedPods" [metaKeySelection]="true">
+                <ng-template pTemplate="caption">
+                    <div class="p-d-flex p-ai-center p-jc-between">
+                        <!-- <h5 class="p-m-0">Manage Products</h5> -->
+                        <!-- <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button> -->
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="pt.filterGlobal($any($event.target).value, 'contains')"
+                                placeholder="Search..." />
+                        </span>&nbsp;
+        
+                        <p-dropdown *ngIf="isAdmin" [options]="namespaces" [(ngModel)]="selectedNamespace" optionLabel="name"
+                            [filter]="true" filterBy="name" [showClear]="true" placeholder="{{selectedNamespace?.name}}">
+                            <ng-template pTemplate="selectedItem">
+                                <div *ngIf="selectedNamespace">
+                                    <div>{{selectedNamespace.name}}</div>
+                                </div>
+                            </ng-template>
+                            <ng-template let-namespace pTemplate="item">
+                                <div>
+                                    <div>{{namespace.name}}</div>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>&nbsp;
+        
+                        <button pButton *ngIf="isAdmin" (click)="latestPull($event)" type="button" icon="pi pi-sync"
+                            class="p-button-success p-button-text p-button-rounded p-button-sm"></button>
+                        <button pButton *ngIf="isAdmin" (click)="deleteEvictedPod(podsData)" pTooltip="Delete All Evicted Pods" type="button" icon="pi pi-trash"
+                            class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
+        
+                        <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '30px', height: '30px'}"
+                            styleClass="custom-spinner" class="float-end" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+                    </div>
                 </ng-template>
-                <td>
-                    <div class="dropdown">
-                        <button class="btn btn-info dropdown-toggle me-2" type="button" id="dropdownMenuButton1"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, data.APP, '1h')">View 1H</a></li>
-                            <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, data.APP, '2h')">View 2H</a></li>
-                            <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, data.APP, '12h')">View 12H</a></li>
-                            <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, data.APP, '24h')">View 24H</a></li>
-                            <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, data.APP, '48h')">View 48H</a></li>
-                            <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, data.APP, '72h')">View 72H <i class="fas fa-exclamation-circle"></i></a></li>
-                            <li><a class="dropdown-item" (click)="viewPodLogs(data.PNAME, data.APP)" *ngIf="isAdmin">View Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
-                        </ul>
-                        <button class="btn btn-success dropdown-toggle me-2" type="button" id="dropdownMenuButton2"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-download"></i>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, data.APP, '1h')">Download 1H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, data.APP, '2h')">Download 2H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, data.APP, '12h')">Download 12H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, data.APP, '24h')">Download 24H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, data.APP, '48h')">Download 48H</a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, data.APP, '72h')">Download 72H <i class="fas fa-exclamation-circle"></i></a></li>
-                            <li><a class="dropdown-item" (click)="downloadPodLogs(data.PNAME, data.APP)" *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a></li>
-                        </ul>
+                <ng-template pTemplate="header" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
+                    <tr>
+                        <th pSortableColumn="metadata.labels.app">
+                            <div class="flex justify-content-center align-items-center">LABEL<p-sortIcon field="metadata.labels.app"></p-sortIcon></div>
+                        </th>
+                        <th>
+                            <div class="flex justify-content-center align-items-center">APP LOG</div>
+                        </th>
+                        <th class="nowrap text-center" *ngIf="isAdmin">
+                            <div class="flex justify-content-center align-items-center"><i class="fal fa-tools"></i></div>
+                        </th>
+                        <th pSortableColumn="metadata.name">
+                            <div class="flex justify-content-center align-items-center">POD<p-sortIcon field="metadata.name"></p-sortIcon></div>
+                        </th>
+                        <th class="nowrap text-center" *ngIf="isAdmin">
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-trash-alt"></i></div>
+                        </th>
+                        <th pSortableColumn="status.startTime">
+                            <div class="flex justify-content-center align-items-center">AGE<p-sortIcon field="status.startTime"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="spec.nodeName">
+                            <div class="flex justify-content-center align-items-center">NODE<p-sortIcon field="spec.nodeName"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="">
+                            <div class="flex justify-content-center align-items-center">READY<p-sortIcon field=""></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.phase">
+                            <div class="flex justify-content-center align-items-center">STATUS<p-sortIcon field="status.phase"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="spec.containers">
+                            <div class="flex justify-content-center align-items-center">CONTAINERS<p-sortIcon field="spec.containers"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="spec.containers" *ngIf="isAdmin">
+                            <div class="flex justify-content-center align-items-center">CPU<p-sortIcon field="spec.containers"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="spec.containers" *ngIf="isAdmin">
+                            <div class="flex justify-content-center align-items-center">MEMORY<p-sortIcon field="spec.containers"></p-sortIcon></div>
+                        </th>
+                        <th class="nowrap text-center">
+                            <div class="flex justify-content-center align-items-center">CONTAINERS LOG</div>
+                        </th>
+                        <th class="nowrap text-center" *ngIf="isAdmin">
+                            <div class="flex justify-content-center align-items-center">LIVE & PREVIOUS</div>
+                        </th>
+                        <th pSortableColumn="">
+                            <div class="flex justify-content-center align-items-center">RESTARTS<p-sortIcon field=""></p-sortIcon></div>
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
+                    <tr [pSelectableRow]="app" [pSelectableRowIndex]="rowIndex">
+                        <td *ngIf="rowgroup && app.metadata['labels']" [attr.rowspan]="rowspan">
+                            <div class="flex justify-content-center align-items-center">
+                                <span style="font-weight:bold" class="p-text-bold p-ml-2">{{app.metadata.labels.app}}</span>
+                            </div>
+                        </td>
+                        <td *ngIf="!app.metadata['labels']">
+                            <div class="flex justify-content-center align-items-center">
+                                <span style="font-weight:bold" class="p-text-bold p-ml-2">{{app.metadata.name}}</span>
+                            </div>
+                        </td>
+                        <td NOWRAP class="text-center" *ngIf="rowgroup" [attr.rowspan]="rowspan">
+                            <div *ngIf="app.metadata['labels']" class="flex justify-content-center align-items-center">
+                                <tr>
+                                    <td>
+                                        <button class="btn btn-info dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <ng-container *ngFor="let spinner of this.isSpinner">
+                                                <p-progressSpinner *ngIf="spinner === app.metadata.labels.app"
+                                                    [style]="{width: '20px', height: '15px'}" styleClass="custom-spinner" strokeWidth="8"
+                                                    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>&nbsp;
+                                            </ng-container>
+                                            <i class="fas fa-eye"></i>
+                                        </button>&nbsp;
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 1)">View 1H</a>
+                                            </li>
+                                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 2)">View 2H</a>
+                                            </li>
+                                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 12)">View 12H</a>
+                                            </li>
+                                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 24)">View 24H</a>
+                                            </li>
+                                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 48)">View 48H</a>
+                                            </li>
+                                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app, 72)">View 72H <i
+                                                        class="fas fa-exclamation-circle"></i></a></li>
+                                            <li><a class="dropdown-item" (click)="viewAppLogs(app.metadata.labels.app)" *ngIf="isAdmin">View Full
+                                                    Logs <i class="fas fa-exclamation-circle"></i></a></li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton2"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <ng-container *ngFor="let spinner of this.isSpinner">
+                                                <p-progressSpinner *ngIf="spinner === app.metadata.labels.app"
+                                                    [style]="{width: '20px', height: '15px'}" styleClass="custom-spinner" strokeWidth="8"
+                                                    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>&nbsp;
+                                            </ng-container>
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 1)">Download
+                                                    1H</a></li>
+                                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 2)">Download
+                                                    2H</a></li>
+                                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 12)">Download
+                                                    12H</a></li>
+                                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 24)">Download
+                                                    24H</a></li>
+                                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 48)">Download
+                                                    48H</a></li>
+                                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app, 72)">Download
+                                                    72H <i class="fas fa-exclamation-circle"></i></a></li>
+                                            <li><a class="dropdown-item" (click)="downloadAppLogs(app.metadata.labels.app)" *ngIf="isAdmin">Download
+                                                    Full Logs <i class="fas fa-exclamation-circle"></i></a>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </div>
+                        </td>
+                        <td class="text-center" *ngIf="rowgroup && isAdmin" [attr.rowspan]="rowspan">
+                            <div *ngIf="app.metadata['labels']" class="flex justify-content-center align-items-center">
+                                <button pButton pTooltip="Edit Manifest" (click)="showManifestDialog(app.metadata.labels.app)" *ngIf="isAdmin" icon="pi pi-user-edit"
+                                type="button" class="p-button-info p-button-text p-button-rounded p-button-sm"></button>
+                                <button pButton pTooltip="Rollout & Restart" (click)="rolloutRestart(app.metadata.labels.app)" *ngIf="isAdmin" icon="pi pi-refresh"
+                                type="button" class="p-button-warning p-button-text p-button-rounded p-button-sm"></button>
+                                <button pButton pTooltip="Delete Deployment" (click)="deleteDeployment(app.metadata.labels.app)" *ngIf="isAdmin" icon="pi pi-trash"
+                                type="button" class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
+                            </div>
+                        </td>
+                        <td [ngClass]="{'not-ready': !isPodReady(app)}">
+                            <div class="flex justify-content-center align-items-center changeColor">{{app.metadata.name}}</div>
+                        </td>
+                        <td class="nowrap text-center" *ngIf="isAdmin">
+                            <div class="flex justify-content-center align-items-center">
+                                <button pButton pTooltip="Delete Pod" (click)="deletePod(app.metadata.name)" *ngIf="isAdmin" icon="pi pi-trash"
+                                    type="button" class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
+                            </div>
+                        </td>
+                        <td [ngClass]="{'not-ready': !isPodReady(app)}">
+                            <div class="flex justify-content-center align-items-center">{{calculateAge(app.status.startTime)}}</div>
+                        </td>
+                        <td [ngClass]="{'not-ready': !isPodReady(app)}">
+                            <div class="flex justify-content-center align-items-center">{{app.spec.nodeName}}</div>
+                        </td>
+                        <td [ngClass]="{'not-ready': !isPodReady(app)}">
+                            <div class="flex justify-content-center align-items-center">
+                                <!-- <td> -->
+                                    <span>{{calculateRunningPod(app)}}</span>
+                                <!-- </td> -->
+                            </div>
+                        </td>
+                        <td>
+                            <div *ngFor="let status of app.status.containerStatuses" class="flex justify-content-center align-items-center">
+                                <td>
+                                    <span *ngIf="!app.metadata.deletionTimestamp && status.state['waiting']" style="color:brown;" pTooltip="{{status.state['waiting'].message}}" >{{status.state['waiting'].reason}}</span>
+                                    <span *ngIf="!app.metadata.deletionTimestamp && status.state['running']" style="color:green;">{{app.status.phase}}</span>
+                                    <span *ngIf="app.metadata.deletionTimestamp" style="color:red;" pTooltip="{{calculateAge(app.metadata.deletionTimestamp)}}" >Terminating</span>
+                                </td>
+                            </div>
+                            <div class="flex justify-content-center align-items-center">
+                                <span *ngIf="!app.metadata.deletionTimestamp && !app.status.containerStatuses && app.status.phase" style="color:darkgray;" pTooltip="{{app.status.message}}" >{{app.status.reason}}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div *ngFor="let container of app.spec.containers; index as i" class="flex justify-content-center align-items-center">
+                                <td [ngClass]="{'not-ready': !isPodReady(app)}">{{container.name}}</td>
+                            </div>
+                        </td>
+                        <td *ngIf="isAdmin">
+                            <div *ngFor="let container of app.spec.containers; index as i" class="flex justify-content-center align-items-center">
+                                <td *ngIf="container.usage" style="font-weight:bold">{{(calculateMetrics(container.usage.cpu)/1000000).toFixed(2)}}m</td>
+                            </div>
+                        </td>
+                        <td *ngIf="isAdmin">
+                            <div *ngFor="let container of app.spec.containers; index as i" class="flex justify-content-center align-items-center">
+                                <td *ngIf="container.usage" style="font-weight:bold">{{(calculateMetrics(container.usage.memory)/1024).toFixed(2)}}Mi</td>
+                            </div>
+                        </td>
+                        <td NOWRAP>
+                            <div *ngFor="let container of app.spec.containers; index as i" class="flex justify-content-center align-items-center">
+                                <td>
+                                    <button class="btn btn-info dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <ng-container *ngFor="let spinner of this.isSpinner">
+                                            <p-progressSpinner *ngIf="spinner === (app.metadata.name + '-' + container.name)"
+                                                [style]="{width: '20px', height: '15px'}" styleClass="custom-spinner" strokeWidth="8"
+                                                fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>&nbsp;
+                                        </ng-container>
+                                        <i class="fas fa-eye"></i>
+                                    </button>&nbsp;
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 1)">View 1H</a>
+                                        </li>
+                                        <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 2)">View 2H</a>
+                                        </li>
+                                        <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 12)">View 12H</a>
+                                        </li>
+                                        <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 24)">View 24H</a>
+                                        </li>
+                                        <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 48)">View 48H</a>
+                                        </li>
+                                        <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name, 72)">View 72H <i
+                                                    class="fas fa-exclamation-circle"></i></a></li>
+                                        <li><a class="dropdown-item" (click)="viewPodLogs(app.metadata.name, container.name)"
+                                                *ngIf="isAdmin">View Full Logs <i class="fas fa-exclamation-circle"></i></a>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <button class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton2"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <ng-container *ngFor="let spinner of this.isSpinner">
+                                            <p-progressSpinner *ngIf="spinner === (app.metadata.name + '-' + container.name)"
+                                                [style]="{width: '20px', height: '15px'}" styleClass="custom-spinner" strokeWidth="8"
+                                                fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>&nbsp;
+                                        </ng-container>
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                                        <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 1)">Download
+                                                1H</a>
+                                        </li>
+                                        <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 2)">Download
+                                                2H</a>
+                                        </li>
+                                        <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 12)">Download
+                                                12H</a></li>
+                                        <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 24)">Download
+                                                24H</a></li>
+                                        <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 48)">Download
+                                                48H</a></li>
+                                        <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name, 72)">Download
+                                                72H <i class="fas fa-exclamation-circle"></i></a></li>
+                                        <li><a class="dropdown-item" (click)="downloadPodLogs(app.metadata.name, container.name)"
+                                                *ngIf="isAdmin">Download Full Logs <i class="fas fa-exclamation-circle"></i></a>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </div>
+                        </td>
+                        <td NOWRAP *ngIf="isAdmin">
+                            <div *ngFor="let container of app.spec.containers; index as i" class="flex justify-content-center align-items-center">
+                                <td>
+                                    <button pButton pTooltip="View Live Logs"
+                                        (click)="this.selectedPod = app.metadata.name; this.selectedContainer = container.name; viewFollowLog(app.metadata.name, container.name, 100)"
+                                        *ngIf="isAdmin && app.status.phase === 'Running'" icon="pi pi-play" type="button"
+                                        class="p-button-danger p-button-text p-button-rounded p-button-sm"></button>
+                                </td>
+                                <td>
+                                    <button *ngIf="app.status.phase === 'Running' && app.status.containerStatuses[i].restartCount > 0" pButton pTooltip="Download Previous Logs"
+                                        (click)="this.selectedPod = app.metadata.name; this.selectedContainer = container.name; downloadPodPreviousLogs(app.metadata.name, container.name)"
+                                        icon="pi pi-replay" type="button"
+                                        class="p-button-secondary p-button-text p-button-rounded p-button-sm"></button>
+                                </td>
+                            </div>
+                        </td>
+                        <td NOWRAP>
+                            <div *ngFor="let status of app.status.containerStatuses ; index as i" class="flex justify-content-center align-items-center">
+                                <td>
+                                    <p *ngIf="status.restartCount === 0">
+                                        {{status.restartCount}}
+                                    </p>
+                                    <p *ngIf="status.restartCount > 0" style="color:red;">
+                                        {{status.restartCount}} ({{calculateAge(status.lastState.terminated?.finishedAt)}})
+                                    </p>
+                                </td>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="p-d-flex p-ai-center p-jc-between">
+                        In total there are {{this.podsData ? this.podsData.length : 0 }} pods.
                     </div>
-                </td>
-                <td>
-                    <div class="dropdown">
-                        <button class="btn btn-info dropdown-toggle me-2" type="button" id="dropdownMenuButton3"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-                            <li><a class="dropdown-item" (click)="viewAppLogs(data.DEPLOYMENT, data.APP, '100')">View 100 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(data.DEPLOYMENT, data.APP, '1000')">View 1000 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(data.DEPLOYMENT, data.APP, '10000')">View 10000 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(data.DEPLOYMENT, data.APP, '100000')">View 100000 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(data.DEPLOYMENT, data.APP, '1000000')">View 1000000 Lines<i class="fas fa-exclamation-circle"></i></a></li>
-                            <li><a class="dropdown-item" (click)="viewAppLogs(data.DEPLOYMENT, data.APP)" *ngIf="isAdmin">View Full App Logs <i class="fas fa-exclamation-circle"></i></a></li>
-                        </ul>
-                        <button class="btn btn-success dropdown-toggle me-2" type="button" id="dropdownMenuButton4"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-download"></i>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton4">
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(data.DEPLOYMENT, data.APP, '100')">Download 100 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(data.DEPLOYMENT, data.APP, '1000')">Download 1000 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(data.DEPLOYMENT, data.APP, '10000')">Download 10000 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(data.DEPLOYMENT, data.APP, '100000')">Download 100000 Lines</a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(data.DEPLOYMENT, data.APP, '1000000')">Download 1000000 Lines <i class="fas fa-exclamation-circle"></i></a></li>
-                            <li><a class="dropdown-item" (click)="downloadAppLogs(data.DEPLOYMENT, data.APP)" *ngIf="isAdmin">Download Full App Logs <i class="fas fa-exclamation-circle"></i></a></li>
-                        </ul>
+                </ng-template>
+            </p-table>
+         </p-tabPanel>
+        <p-tabPanel *ngIf="isAdmin" header="Services">
+            <p-table #st [value]="servicesData" responsiveLayout="scroll" styleClass="p-datatable-sm"
+                rowGroupMode="rowspan" groupRowsBy="metadata.name"
+                [globalFilterFields]="['metadata.name','spec.type','spec.clusterIP','spec.externalIPs','spec.ports','metadata.creationTimestamp','spec.selector']"
+                dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true" selectionMode="multiple" [(selection)]="selectedServices" [metaKeySelection]="true">
+                <ng-template pTemplate="caption">
+                    <div class="p-d-flex p-ai-center p-jc-between">
+                        <!-- <h2 style="font-weight:bold" class="p-m-0">Nodes</h2> -->
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="st.filterGlobal($any($event.target).value, 'contains')"
+                                placeholder="Search..." />
+                        </span>&nbsp;
+        
+                        <p-dropdown *ngIf="isAdmin" [options]="namespaces" [(ngModel)]="selectedNamespace" optionLabel="name"
+                            [filter]="true" filterBy="name" [showClear]="true" placeholder="{{selectedNamespace?.name}}">
+                            <ng-template pTemplate="selectedItem">
+                                <div *ngIf="selectedNamespace">
+                                    <div>{{selectedNamespace.name}}</div>
+                                </div>
+                            </ng-template>
+                            <ng-template let-namespace pTemplate="item">
+                                <div>
+                                    <div>{{namespace.name}}</div>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>&nbsp;
+        
+                        <button pButton *ngIf="isAdmin" (click)="latestPull($event)" type="button" icon="pi pi-sync"
+                            class="p-button-success p-button-text p-button-rounded p-button-sm"></button>
+        
+                        <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '30px', height: '30px'}"
+                            styleClass="custom-spinner" class="float-end" strokeWidth="8" fill="#EEEEEE"
+                            animationDuration=".5s"></p-progressSpinner>
                     </div>
-                </td>
-                <td>
-                    <button class="btn btn-danger me-2" type="button" (click)="deletePod(data.PNAME)" *ngIf="isAdmin">
-                        <i class="fas fa-trash-alt"></i>
-                </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="metadata.name">
+                            <div class="flex justify-content-center align-items-center">NAME<p-sortIcon field="metadata.name"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="spec.type">
+                            <div class="flex justify-content-center align-items-center">TYPE<p-sortIcon field="spec.type"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="spec.clusterIP">
+                            <div class="flex justify-content-center align-items-center">CLUSTER-IP<p-sortIcon field="spec.clusterIP"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="spec.externalIPs">
+                            <div class="flex justify-content-center align-items-center">EXTERNAL-IP<p-sortIcon field="spec.externalIPs"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="spec.ports">
+                            <div class="flex justify-content-center align-items-center">PORT(S)<p-sortIcon field="spec.ports"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="metadata.creationTimestamp">
+                            <div class="flex justify-content-center align-items-center">AGE<p-sortIcon field="metadata.creationTimestamp"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="spec.selector">
+                            <div class="flex justify-content-center align-items-center">SELECTOR<p-sortIcon field="spec.selector"></p-sortIcon></div>
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
+                    <tr [pSelectableRow]="app" [pSelectableRowIndex]="rowIndex">
+                        <td style="font-weight:bold" *ngIf="rowgroup" [attr.rowspan]="rowspan">
+                            <div class="flex justify-content-center align-items-center">{{app.metadata.name}}</div>
+                        </td>
+                        <td>
+                            <div class="flex justify-content-center align-items-center">{{app.spec.type}}</div>
+                        </td>
+                        <td>
+                            <div class="flex justify-content-center align-items-center">{{app.spec.clusterIP}}</div>
+                        </td>
+                        <td>
+                            <div *ngIf="app.spec.externalIPs" class="flex justify-content-center align-items-center">
+                                <!-- <td *ngFor="let externalIP of app.spec.externalIPs; index as i">{{externalIP}}</td> -->
+                                <div *ngFor="let externalIP of app.spec.externalIPs; index as i">
+                                    <div *ngFor="let port of app.spec.ports; index as i" class="flex justify-content-center align-items-center">
+                                        <td style="font-weight:bold" *ngIf="port.nodePort">
+                                            <a target="_blank" href="http://{{externalIP}}:{{port.port}}">{{externalIP}}</a>
+                                        </td>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="app.status.loadBalancer.ingress"  class="flex justify-content-center align-items-center">
+                                <td *ngFor="let ip of app.status.loadBalancer.ingress; index as i">{{ip.ip}}</td>
+                            </div>
+                        </td>
+                        <td>
+                            <div *ngFor="let port of app.spec.ports; index as i" class="flex justify-content-center align-items-center">
+                                <td style="font-weight:bold" *ngIf="port.nodePort">{{port.port}}:{{port.nodePort}}/{{port.protocol}}</td>
+                                <td style="font-weight:bold" *ngIf="!port.nodePort">{{port.port}}/{{port.protocol}}</td>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex justify-content-center align-items-center">{{calculateAge(app.metadata.creationTimestamp)}}</div>
+                        </td>
+                        <td>
+                            <div class="flex justify-content-center align-items-center" *ngFor="let selector of app.spec.selector | keyvalue">{{selector.key}}={{selector.value}}</div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="p-d-flex p-ai-center p-jc-between">
+                        In total there are {{this.servicesData ? this.servicesData.length : 0 }} services.
+                    </div>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+        <p-tabPanel *ngIf="isAdmin" header="Nodes">
+            <p-table #nt [value]="nodeMetricsMixData" responsiveLayout="scroll" styleClass="p-datatable-sm"
+                rowGroupMode="rowspan" groupRowsBy="metadata.name"
+                [globalFilterFields]="['metadata.name','status.conditions','metadata.creationTimestamp','status.capacity.cpu','status.cpu','status.capacity.memory','status.memory','status.nodeInfo.containerRuntimeVersion','status.nodeInfo.kubeletVersion','status.nodeInfo.osImage','status.addresses']"
+                dataKey="metadata.uid" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true" selectionMode="multiple" [(selection)]="selectedNodes" [metaKeySelection]="true">
+                <ng-template pTemplate="caption">
+                    <div class="p-d-flex p-ai-center p-jc-between">
+                        <!-- <h2 style="font-weight:bold" class="p-m-0">Nodes</h2> -->
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="nt.filterGlobal($any($event.target).value, 'contains')"
+                                placeholder="Search..." />
+                        </span>
+                        <p-progressSpinner *ngIf="this.isSpinner.length" [style]="{width: '30px', height: '30px'}"
+                            styleClass="custom-spinner" class="float-end" strokeWidth="8" fill="#EEEEEE"
+                            animationDuration=".5s"></p-progressSpinner>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="metadata.name">
+                            <div class="flex justify-content-center align-items-center">NAME<p-sortIcon field="metadata.name"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.conditions">
+                            <div class="flex justify-content-center align-items-center">STATUS<p-sortIcon field="status.conditions"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="metadata.creationTimestamp">
+                            <div class="flex justify-content-center align-items-center">AGE<p-sortIcon field="metadata.creationTimestamp"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.capacity.cpu">
+                            <div class="flex justify-content-center align-items-center">CPU<p-sortIcon field="status.capacity.cpu"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.usage.cpu">
+                            <div class="flex justify-content-center align-items-center">CPU USED<p-sortIcon field="status.usage.cpu"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.capacity.memory">
+                            <div class="flex justify-content-center align-items-center">MEMORY<p-sortIcon field="status.capacity.memory"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.usage.memory">
+                            <div class="flex justify-content-center align-items-center">MEMORY USED<p-sortIcon field="status.usage.memory"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.nodeInfo.containerRuntimeVersion">
+                            <div class="flex justify-content-center align-items-center">RUNTIME<p-sortIcon field="status.nodeInfo.containerRuntimeVersion"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.nodeInfo.kubeletVersion">
+                            <div class="flex justify-content-center align-items-center">K8S<p-sortIcon field="status.nodeInfo.kubeletVersion"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.nodeInfo.osImage">
+                            <div class="flex justify-content-center align-items-center">OS<p-sortIcon field="status.nodeInfo.osImage"></p-sortIcon></div>
+                        </th>
+                        <th pSortableColumn="status.addresses">
+                            <div class="flex justify-content-center align-items-center">ADDRESS<p-sortIcon field="status.addresses"></p-sortIcon></div>
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
+                    <tr [pSelectableRow]="app" [pSelectableRowIndex]="rowIndex">
+                        <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{app.metadata.name}}</div>
+                        </td>
+                        <td>
+                            <div *ngFor="let condition of app.status.conditions; index as i" class="flex justify-content-center align-items-center">
+                                <td style="font-weight:bold; color:red;" *ngIf="condition.type === 'NetworkUnavailable' && condition.status === 'True'" pTooltip="{{condition.message}}">{{condition.reason}}</td>
+                                <td style="font-weight:bold; color:red;" *ngIf="condition.type === 'MemoryPressure' && condition.status === 'True'" pTooltip="{{condition.message}}">{{condition.reason}}</td>
+                                <td style="font-weight:bold; color:red;" *ngIf="condition.type === 'DiskPressure' && condition.status === 'True'" pTooltip="{{condition.message}}">{{condition.reason}}</td>
+                                <td style="font-weight:bold; color:red;" *ngIf="condition.type === 'PIDPressure' && condition.status === 'True'" pTooltip="{{condition.message}}">{{condition.reason}}</td>
+                                <td style="font-weight:bold; color:green;" *ngIf="condition.type === 'Ready' && condition.status === 'True'" pTooltip="{{condition.message}}">{{condition.type}}</td>
+                                <td style="font-weight:bold; color:red;" *ngIf="condition.type === 'Ready' && condition.status === 'Unknown'" pTooltip="{{condition.message}}">NotReady</td>
+                            </div>
+                        </td>
+                        <td><div class="flex justify-content-center align-items-center">{{calculateAge(app.metadata.creationTimestamp)}}</div>
+                        </td>
+                        <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{app.status.capacity.cpu}} CORE</div>
+                        </td>
+                        <td style="font-weight:bold"><div *ngIf="app.status.usage" class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.usage?.cpu)/1000000).toFixed(2)}}m</div>
+                        </td>
+                        <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.capacity.memory)/1024/1024).toFixed(2)}}Gi</div>
+                        </td>
+                        <td style="font-weight:bold"><div *ngIf="app.status.usage" class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.usage.memory)/1024/1024).toFixed(2)}}Gi</div>
+                        </td>
+                        <td><div class="flex justify-content-center align-items-center">{{app.status.nodeInfo.containerRuntimeVersion}}</div>
+                        </td>
+                        <td><div class="flex justify-content-center align-items-center">{{app.status.nodeInfo.kubeletVersion}}</div>
+                        </td>
+                        <td><div class="flex justify-content-center align-items-center">{{app.status.nodeInfo.osImage}}</div>
+                        </td>
+                        <td>
+                            <div *ngFor="let address of app.status.addresses; index as i" class="flex justify-content-center align-items-center">
+                                <td>{{address.address}}</td>
+                            </div>
+                        </td>
+                        <!-- <td><div class="flex justify-content-center align-items-center">{{app.status.addresses}}</div>
+                        </td> -->
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="p-d-flex p-ai-center p-jc-between">
+                        In total there are {{this.nodeMetricsMixData ? this.nodeMetricsMixData.length : 0 }} nodes.
+                    </div>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+    </p-tabView>
 </div>
+
+<p-dialog header={{this.deploymentName}} [(visible)]="manifestDialog" [modal]="true" [style]="{width: '80vw'}" [maximizable]="true"
+    [draggable]="true" [resizable]="true">
+    <textarea autofocus [rows]="10" [cols]="250" [(ngModel)]="this.updatedDeploymentManifest" pInputTextarea [autoResize]="true"></textarea>
+        <ng-template pTemplate="footer">
+            <p-button pTooltip="Update Manifest" icon="pi pi-save" (click)="updateDeploymentManifest()" label="Update" styleClass="p-button-warning p-button-text"></p-button>
+            <p-button icon="pi pi-times" (click)="manifestDialog=false" label="Close" styleClass="p-button-secondary p-button-text"></p-button>
+        </ng-template>
+</p-dialog>
+

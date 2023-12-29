@@ -8,6 +8,7 @@ declare let CryptoJS: any;
 @Injectable()
 export class ConstantService {
   API_ENDPOINT: string = environment.API_BASE_URL + '/clusters';
+  WS_ENDPOINT: string = environment.WS_BASE_URL;
   DATE_FORMAT_MONGODB: string = 'YYYY-MM-DDTHH:mm:SS.000Z';
   DATE_FORMAT_USER: string = 'DD-MM-YYYY';
   DATETIME_FORMAT_USER: string = 'DD-MM-YYYY H:mm A';
@@ -22,6 +23,7 @@ export class ConstantService {
     {u: 'operrwork-v2', p: 'Krowrrepo$2022%2V', t: 'user'},
     {u: 'billing-v1', p: 'Gnillib$2022%1V', t: 'user'},
     {u: 'operrtel-v1', p: 'Letrrepo$2022%1V', t: 'user'},
+    {u: 'restaurant-v3', p: 'Tnaruatser$2022%3V', t: 'user'},
   ];
 
 

@@ -3,7 +3,8 @@
     <img src="assets/img/k8s.svg" width="80" height="50" alt="">
   </a>
   <h1>{{GroupName}}</h1>
-  <button type="button" class="btn btn-primary float-end me-2" (click)="back()"><i class="fas fa-project-diagram"></i> Dashboard</button>
+  <button type="button" class="btn btn-primary float-end me-2" (click)="back()"><i class="fas fa-project-diagram"></i>
+    Dashboard</button>
 </nav>
 
 <div class="container-fluid">
@@ -46,16 +47,17 @@
               </mat-form-field>
             </td>
             <td>
-              <mat-form-field appearance="legacy">
+              <mat-form-field style="width:90%; width: 1200px;" appearance="legacy">
                 <mat-label>Kubeconfig</mat-label>
-                <textarea matInput placeholder="Kubeconfig" type="text" [(ngModel)]="data.kubeConfig" name="port_{{index}}"></textarea>
-            </mat-form-field>
-          </td>
-          <td>
-            <button class="btn btn-success ml3 mt3" (click)="AddPortTableRow()">+</button>
-            <button class="btn btn-danger ml3 mt3" (click)="removePortTableRow(index)">--</button>
-          </td>
-        </tr>
+                <textarea rows="13" matInput placeholder="Kubeconfig" type="text" [(ngModel)]="data.kubeConfig"
+                  name="port_{{index}}"></textarea>
+              </mat-form-field>
+            </td>
+            <td>
+              <button class="btn btn-success ml3 mt3" (click)="AddPortTableRow()">+</button>
+              <button class="btn btn-danger ml3 mt3" (click)="removePortTableRow(index)">--</button>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

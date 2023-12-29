@@ -30,9 +30,9 @@ export class AddhostFormComponent implements OnInit {
       this.form.patchValue(fillObj);
       this.data.clusters = fillObj.clusters;
       this.GroupName = fillObj.groupName;
-      console.log(fillObj);
-      console.log(this.data)
-      console.log(this.data.clusters)
+      // console.log(fillObj);
+      // console.log(this.data)
+      // console.log(this.data.clusters)
     }
   }
 
