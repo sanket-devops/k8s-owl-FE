@@ -239,13 +239,23 @@
                             </div>
                         </td>
                         <td *ngIf="isAdmin">
-                            <div *ngFor="let container of app.spec.containers; index as i" class="flex justify-content-center align-items-center">
-                                <td *ngIf="container.usage" style="font-weight:bold">{{(calculateMetrics(container.usage.cpu)/1000000).toFixed(2)}}m</td>
+                            <div *ngFor="let container of app.spec.containers; index as i" >
+                                <div class="flex justify-content-center align-items-center">
+                                    <td *ngIf="container.usage" style="font-weight:bold">{{(calculateMetrics(container.usage.cpu)/1000000).toFixed(2)}}m</td>
+                                </div>
+                                <!-- <div class="flex justify-content-center align-items-center">
+                                    <progress id="metricsProgressBar" value="{{(calculateMetrics(container.usage?.cpu)/1000000).toFixed(2)}}" max=""></progress>
+                                </div> -->
                             </div>
                         </td>
                         <td *ngIf="isAdmin">
-                            <div *ngFor="let container of app.spec.containers; index as i" class="flex justify-content-center align-items-center">
-                                <td *ngIf="container.usage" style="font-weight:bold">{{(calculateMetrics(container.usage.memory)/1024).toFixed(2)}}Mi</td>
+                            <div *ngFor="let container of app.spec.containers; index as i">
+                                <div class="flex justify-content-center align-items-center">
+                                    <td *ngIf="container.usage" style="font-weight:bold">{{(calculateMetrics(container.usage.memory)/1024).toFixed(2)}}Mi</td>
+                                </div>
+                                <!-- <div class="flex justify-content-center align-items-center">
+                                    <progress id="metricsProgressBar" value="{{(calculateMetrics(container.usage.memory)/1024).toFixed(2)}}" max=""></progress>
+                                </div> -->
                             </div>
                         </td>
                         <td NOWRAP>
@@ -487,17 +497,17 @@
                         <th pSortableColumn="metadata.creationTimestamp">
                             <div class="flex justify-content-center align-items-center">AGE<p-sortIcon field="metadata.creationTimestamp"></p-sortIcon></div>
                         </th>
-                        <th pSortableColumn="status.capacity.cpu">
+                        <!-- <th pSortableColumn="status.capacity.cpu">
                             <div class="flex justify-content-center align-items-center">CPU<p-sortIcon field="status.capacity.cpu"></p-sortIcon></div>
-                        </th>
+                        </th> -->
                         <th pSortableColumn="status.usage.cpu">
-                            <div class="flex justify-content-center align-items-center">CPU USED<p-sortIcon field="status.usage.cpu"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center">CPU<p-sortIcon field="status.usage.cpu"></p-sortIcon></div>
                         </th>
-                        <th pSortableColumn="status.capacity.memory">
+                        <!-- <th pSortableColumn="status.capacity.memory">
                             <div class="flex justify-content-center align-items-center">MEMORY<p-sortIcon field="status.capacity.memory"></p-sortIcon></div>
-                        </th>
+                        </th> -->
                         <th pSortableColumn="status.usage.memory">
-                            <div class="flex justify-content-center align-items-center">MEMORY USED<p-sortIcon field="status.usage.memory"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center">MEMORY<p-sortIcon field="status.usage.memory"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="status.nodeInfo.containerRuntimeVersion">
                             <div class="flex justify-content-center align-items-center">RUNTIME<p-sortIcon field="status.nodeInfo.containerRuntimeVersion"></p-sortIcon></div>
@@ -530,13 +540,21 @@
                         </td>
                         <td><div class="flex justify-content-center align-items-center">{{calculateAge(app.metadata.creationTimestamp)}}</div>
                         </td>
-                        <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{app.status.capacity.cpu}} CORE</div>
+                        <!-- <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{app.status.capacity.cpu}} CORE</div>
+                        </td> -->
+                        <td>
+                            <div *ngIf="app.status.usage" class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.usage?.cpu)/1000000000).toFixed(2)}} / {{app.status.capacity.cpu}} CORE</div>
+                            <div class="flex justify-content-center align-items-center">
+                                <progress id="metricsProgressBar" value="{{(calculateMetrics(app.status.usage?.cpu)/1000000).toFixed(2)}}" max="{{(app.status.capacity.cpu * 1000)}}"></progress>
+                            </div>
                         </td>
-                        <td style="font-weight:bold"><div *ngIf="app.status.usage" class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.usage?.cpu)/1000000).toFixed(2)}}m</div>
-                        </td>
-                        <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.capacity.memory)/1024/1024).toFixed(2)}}Gi</div>
-                        </td>
-                        <td style="font-weight:bold"><div *ngIf="app.status.usage" class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.usage.memory)/1024/1024).toFixed(2)}}Gi</div>
+                        <!-- <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.capacity.memory)/1024/1024).toFixed(2)}}Gi</div>
+                        </td> -->
+                        <td style="font-weight:bold">
+                            <div *ngIf="app.status.usage" class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.usage.memory)/1024/1024).toFixed(2)}} / {{(calculateMetrics(app.status.capacity.memory)/1024/1024).toFixed(2)}} Gi</div>
+                            <div class="flex justify-content-center align-items-center">
+                                <progress id="metricsProgressBar" value="{{(calculateMetrics(app.status.usage.memory)/1024/1024).toFixed(2)}}" max="{{(calculateMetrics(app.status.capacity.memory)/1024/1024).toFixed(2)}}"></progress> 
+                            </div>
                         </td>
                         <td><div class="flex justify-content-center align-items-center">{{app.status.nodeInfo.containerRuntimeVersion}}</div>
                         </td>

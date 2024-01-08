@@ -61,6 +61,7 @@ export class ClusterDashboardComponent implements OnInit {
   reloadInterval = <any>undefined;
   timer: number = this.intervalTime;
   percentage: any;
+  ramProgress: any;
   loading: boolean = false;
   selectedNamespace: any = {name: 'default', status: 'Active'};
   namespaces: any[] = [];
@@ -250,6 +251,7 @@ async getNamespaces(groupId?: string, clusterId?: string, clusterName?: string, 
             case 0:
               <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
                 this.podsData = data.items;
+                console.log(data.items);
               },
                 (err: any) => {
                   // this.removeItemFromisSpinner(indexOfItem);
