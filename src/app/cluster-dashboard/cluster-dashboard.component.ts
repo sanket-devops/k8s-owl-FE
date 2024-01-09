@@ -61,7 +61,6 @@ export class ClusterDashboardComponent implements OnInit {
   reloadInterval = <any>undefined;
   timer: number = this.intervalTime;
   percentage: any;
-  ramProgress: any;
   loading: boolean = false;
   selectedNamespace: any = {name: 'default', status: 'Active'};
   namespaces: any[] = [];
