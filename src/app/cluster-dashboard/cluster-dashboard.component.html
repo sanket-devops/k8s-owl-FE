@@ -253,7 +253,7 @@
                                 <div *ngIf="container.usage.memory != 'No Data'" class="flex justify-content-center align-items-center">
                                     <td style="font-weight:bold">{{setToFixed(calculateMetrics(container.usage?.memory)/1024/1024)}} / {{setToFixed(calculateMetrics(container.resources?.limits?.memory)/1024/1024)}} Gi</td>
                                 </div>
-                                <div *ngIf="container.usage.memory != 'No Data'" class="flex justify-content-center align-items-center">
+                                <div *ngIf="container.usage.memory != 'No Data' && container.resources.limits" class="flex justify-content-center align-items-center">
                                     <progress value="{{calculateMetrics(container.usage?.memory) || 0}}" max="{{calculateMetrics(container.resources.limits?.memory) || 0}}"></progress>
                                 </div>
                             </div>
