@@ -177,9 +177,9 @@ export class ClusterDashboardComponent implements OnInit {
     else return false;
   }
 
-  calculateMetrics(metrics: any) {
+  calculateMetrics(metrics: String) {
     if (metrics) {
-      let matches = metrics.match(/^(\d+)([A-Za-z]+)$/);
+      let matches: any = metrics.match(/^(\d+)([A-Za-z]+)$/);
   
       if (matches) {
         let numberPart = matches[1];
@@ -202,9 +202,7 @@ export class ClusterDashboardComponent implements OnInit {
         // console.log("Invalid format");
         return 0;
       }
-    } else {
-      return NaN;
-    }
+    } 
   }
 
   setToFixed(value: any) {
@@ -213,6 +211,10 @@ export class ClusterDashboardComponent implements OnInit {
     } else {
       return NaN;
     }
+  }
+
+  isNotEmptyObj(obj: any){
+    return Object.keys(obj).length != 0;
   }
 
   showFollowLogDialog() {
