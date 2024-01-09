@@ -240,22 +240,22 @@
                         </td>
                         <td *ngIf="isAdmin">
                             <div *ngFor="let container of app.spec.containers; index as i" >
-                                <div class="flex justify-content-center align-items-center">
-                                    <td *ngIf="container.usage" style="font-weight:bold">{{(calculateMetrics(container.usage.cpu)/1000000).toFixed(2)}}m</td>
+                                <div *ngIf="container.usage.cpu != 'No Data'" class="flex justify-content-center align-items-center">
+                                    <td style="font-weight:bold">{{setToFixed(calculateMetrics(container.usage?.cpu))}} / {{container.allocatable?.cpu || 0}} CORE</td>
                                 </div>
-                                <!-- <div class="flex justify-content-center align-items-center">
-                                    <progress id="metricsProgressBar" value="{{(calculateMetrics(container.usage?.cpu)/1000000).toFixed(2)}}" max=""></progress>
-                                </div> -->
+                                <div *ngIf="container.usage.cpu != 'No Data'" class="flex justify-content-center align-items-center">
+                                    <progress value="{{calculateMetrics(container.usage?.cpu)}}" max="{{container.allocatable?.cpu}}"></progress>
+                                </div>
                             </div>
                         </td>
                         <td *ngIf="isAdmin">
                             <div *ngFor="let container of app.spec.containers; index as i">
-                                <div class="flex justify-content-center align-items-center">
-                                    <td *ngIf="container.usage" style="font-weight:bold">{{(calculateMetrics(container.usage.memory)/1024).toFixed(2)}}Mi</td>
+                                <div *ngIf="container.usage.memory != 'No Data'" class="flex justify-content-center align-items-center">
+                                    <td style="font-weight:bold">{{setToFixed(calculateMetrics(container.usage?.memory)/1024/1024)}} / {{setToFixed(calculateMetrics(container.resources?.limits?.memory)/1024/1024)}} Gi</td>
                                 </div>
-                                <!-- <div class="flex justify-content-center align-items-center">
-                                    <progress id="metricsProgressBar" value="{{(calculateMetrics(container.usage.memory)/1024).toFixed(2)}}" max=""></progress>
-                                </div> -->
+                                <div *ngIf="container.usage.memory != 'No Data'" class="flex justify-content-center align-items-center">
+                                    <progress value="{{calculateMetrics(container.usage?.memory) || 0}}" max="{{calculateMetrics(container.resources.limits?.memory) || 0}}"></progress>
+                                </div>
                             </div>
                         </td>
                         <td NOWRAP>
@@ -542,18 +542,18 @@
                         </td>
                         <!-- <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{app.status.capacity.cpu}} CORE</div>
                         </td> -->
-                        <td>
-                            <div *ngIf="app.status.usage" class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.usage?.cpu)/1000000000).toFixed(2)}} / {{app.status.capacity.cpu}} CORE</div>
-                            <div class="flex justify-content-center align-items-center">
-                                <progress id="metricsProgressBar" value="{{(calculateMetrics(app.status.usage?.cpu)/1000000).toFixed(2)}}" max="{{(app.status.capacity.cpu * 1000)}}"></progress>
+                        <td style="font-weight:bold">
+                            <div *ngIf="app.status.usage.cpu != 'No Data'" class="flex justify-content-center align-items-center">{{setToFixed(calculateMetrics(app.status.usage?.cpu))}} / {{app.status.capacity.cpu}} CORE</div>
+                            <div *ngIf="app.status.usage.cpu != 'No Data'" class="flex justify-content-center align-items-center">
+                                <progress id="metricsProgressBar" value="{{calculateMetrics(app.status.usage?.cpu)}}" max="{{app.status.capacity.cpu}}"></progress>
                             </div>
                         </td>
                         <!-- <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.capacity.memory)/1024/1024).toFixed(2)}}Gi</div>
                         </td> -->
                         <td style="font-weight:bold">
-                            <div *ngIf="app.status.usage" class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.usage.memory)/1024/1024).toFixed(2)}} / {{(calculateMetrics(app.status.capacity.memory)/1024/1024).toFixed(2)}} Gi</div>
-                            <div class="flex justify-content-center align-items-center">
-                                <progress id="metricsProgressBar" value="{{(calculateMetrics(app.status.usage.memory)/1024/1024).toFixed(2)}}" max="{{(calculateMetrics(app.status.capacity.memory)/1024/1024).toFixed(2)}}"></progress> 
+                            <div *ngIf="app.status.usage.memory != 'No Data'" class="flex justify-content-center align-items-center">{{setToFixed(calculateMetrics(app.status.usage.memory)/1024/1024)}} / {{setToFixed(calculateMetrics(app.status.capacity.memory)/1024/1024)}} Gi</div>
+                            <div *ngIf="app.status.usage.memory != 'No Data'" class="flex justify-content-center align-items-center">
+                                <progress id="metricsProgressBar" value="{{calculateMetrics(app.status.usage.memory) || 0}}" max="{{calculateMetrics(app.status.capacity.memory) || 0}}"></progress> 
                             </div>
                         </td>
                         <td><div class="flex justify-content-center align-items-center">{{app.status.nodeInfo.containerRuntimeVersion}}</div>
