@@ -178,17 +178,40 @@ export class ClusterDashboardComponent implements OnInit {
   }
 
   calculateMetrics(metrics: any) {
-    let matches = metrics.match(/^(\d+)([A-Za-z]+)$/);
-
-    if (matches) {
-      let numberPart = matches[1];
-      let stringPart = matches[2];
-      // console.log("Number:", numberPart); // Output: Number: 57320
-      // console.log("String:", stringPart); // Output: String: Ki
-      return numberPart;
+    if (metrics) {
+      let matches = metrics.match(/^(\d+)([A-Za-z]+)$/);
+  
+      if (matches) {
+        let numberPart = matches[1];
+        let stringPart = matches[2];
+        // console.log("Number:", numberPart); // Output: Number: 57320
+        // console.log("String:", stringPart); // Output: String: Ki
+        if (stringPart === "Mi") {
+          numberPart = numberPart * 1024;
+          return numberPart;
+        } else if (stringPart === "Gi") {
+          numberPart = numberPart * 1024 * 1024;
+          return numberPart;
+        } else if (stringPart === "n") {
+          numberPart = numberPart / 1000000000;
+          return numberPart;
+        } else {
+          return numberPart;
+        }
+      } else {
+        // console.log("Invalid format");
+        return 0;
+      }
     } else {
-      // console.log("Invalid format");
-      return metrics;
+      return NaN;
+    }
+  }
+
+  setToFixed(value: any) {
+    if (typeof(value) === "number") {
+      return value.toFixed(2);
+    } else {
+      return NaN;
     }
   }
 
@@ -250,6 +273,7 @@ async getNamespaces(groupId?: string, clusterId?: string, clusterName?: string, 
             case 0:
               <any>this.dashboardService.getPods('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name).subscribe((data: any) => {
                 this.podsData = data.items;
+                // console.log(data.items);
               },
                 (err: any) => {
                   // this.removeItemFromisSpinner(indexOfItem);
