@@ -241,20 +241,20 @@
                         <td *ngIf="isAdmin">
                             <div *ngFor="let container of app.spec.containers; index as i" >
                                 <div *ngIf="container.usage.cpu != 'No Data'" class="flex justify-content-center align-items-center">
-                                    <td style="font-weight:bold">{{setToFixed(calculateMetrics(container.usage?.cpu))}} / {{container.allocatable?.cpu || 0}} CORE</td>
+                                    <td style="font-weight:bold">{{setToFixed(calculateMetrics(container.usage?.cpu))}} / {{calculateMetrics(container.resources.limits?.cpu) || container.allocatable?.cpu}} CORE</td>
                                 </div>
                                 <div *ngIf="container.usage.cpu != 'No Data'" class="flex justify-content-center align-items-center">
-                                    <progress value="{{calculateMetrics(container.usage?.cpu)}}" max="{{container.allocatable?.cpu}}"></progress>
+                                    <progress value="{{calculateMetrics(container.usage?.cpu)}}" max="{{calculateMetrics(container.resources.limits?.cpu) || container.allocatable?.cpu}}"></progress>
                                 </div>
                             </div>
                         </td>
                         <td *ngIf="isAdmin">
                             <div *ngFor="let container of app.spec.containers; index as i">
                                 <div *ngIf="container.usage.memory != 'No Data'" class="flex justify-content-center align-items-center">
-                                    <td style="font-weight:bold">{{setToFixed(calculateMetrics(container.usage?.memory)/1024/1024)}} / {{setToFixed(calculateMetrics(container.resources?.limits?.memory)/1024/1024)}} Gi</td>
+                                    <td style="font-weight:bold">{{setToFixed(calculateMetrics(container.usage?.memory)/1024/1024)}} / {{(isNotEmptyObj(container.resources) && setToFixed(calculateMetrics(container.resources.limits?.memory)/1024/1024)) || setToFixed(calculateMetrics(container.allocatable?.memory)/1024/1024)}} Gi</td>
                                 </div>
                                 <div *ngIf="container.usage.memory != 'No Data'" class="flex justify-content-center align-items-center">
-                                    <progress value="{{calculateMetrics(container.usage?.memory) || 0}}" max="{{calculateMetrics(container.resources.limits?.memory) || 0}}"></progress>
+                                    <progress value="{{calculateMetrics(container.usage?.memory) || 0}}" max="{{calculateMetrics(container.resources.limits?.memory) || calculateMetrics(container.allocatable?.memory)}}"></progress>
                                 </div>
                             </div>
                         </td>
