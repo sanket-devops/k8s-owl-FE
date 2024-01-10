@@ -27,7 +27,7 @@
 
 <div class="card">
     <p-tabView (onChange)="latestPull()" [(activeIndex)]="clusterActiveIndex">
-        <p-tabPanel header="Pods">
+        <p-tabPanel leftIcon="pi pi-sitemap" leftRight="pi pi-box" header="Pods">
             <p-table #pt [value]="podsData" responsiveLayout="scroll" styleClass="p-datatable-sm" rowGroupMode="rowspan"
                 groupRowsBy="metadata.labels.app"
                 [globalFilterFields]="['metadata.labels.app','metadata.name','spec.nodeName','spec.containers','status.startTime','status.phase']"
@@ -69,49 +69,49 @@
                 <ng-template pTemplate="header" let-app let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
                     <tr>
                         <th pSortableColumn="metadata.labels.app">
-                            <div class="flex justify-content-center align-items-center">LABEL<p-sortIcon field="metadata.labels.app"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-tag"></i>&nbsp;LABEL<p-sortIcon field="metadata.labels.app"></p-sortIcon></div>
                         </th>
                         <th>
-                            <div class="flex justify-content-center align-items-center">APP LOG</div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-clipboard-list"></i>&nbsp;APP LOG</div>
                         </th>
                         <th class="nowrap text-center" *ngIf="isAdmin">
-                            <div class="flex justify-content-center align-items-center"><i class="fal fa-tools"></i></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-exclamation-triangle"></i>&nbsp;<i class="fas fa-exclamation-triangle"></i>&nbsp;<i class="fas fa-exclamation-triangle"></i></div>
                         </th>
                         <th pSortableColumn="metadata.name">
-                            <div class="flex justify-content-center align-items-center">POD<p-sortIcon field="metadata.name"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-th-large"></i>&nbsp;POD<p-sortIcon field="metadata.name"></p-sortIcon></div>
                         </th>
                         <th class="nowrap text-center" *ngIf="isAdmin">
-                            <div class="flex justify-content-center align-items-center"><i class="fas fa-trash-alt"></i></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-trash"></i></div>
                         </th>
                         <th pSortableColumn="status.startTime">
-                            <div class="flex justify-content-center align-items-center">AGE<p-sortIcon field="status.startTime"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-stopwatch"></i>&nbsp;AGE<p-sortIcon field="status.startTime"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="spec.nodeName">
-                            <div class="flex justify-content-center align-items-center">NODE<p-sortIcon field="spec.nodeName"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-server"></i>&nbsp;NODE<p-sortIcon field="spec.nodeName"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="">
-                            <div class="flex justify-content-center align-items-center">READY<p-sortIcon field=""></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-thumbs-down"></i>&nbsp;/&nbsp;<i class="fas fa-thumbs-up"></i>&nbsp;<p-sortIcon field=""></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="status.phase">
-                            <div class="flex justify-content-center align-items-center">STATUS<p-sortIcon field="status.phase"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-info-circle"></i>&nbsp;<p-sortIcon field="status.phase"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="spec.containers">
-                            <div class="flex justify-content-center align-items-center">CONTAINERS<p-sortIcon field="spec.containers"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-boxes"></i>&nbsp;CONTAINERS<p-sortIcon field="spec.containers"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="spec.containers" *ngIf="isAdmin">
-                            <div class="flex justify-content-center align-items-center">CPU<p-sortIcon field="spec.containers"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-microchip"></i>&nbsp;CPU<p-sortIcon field="spec.containers"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="spec.containers" *ngIf="isAdmin">
-                            <div class="flex justify-content-center align-items-center">MEMORY<p-sortIcon field="spec.containers"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-memory"></i>&nbsp;MEMORY<p-sortIcon field="spec.containers"></p-sortIcon></div>
                         </th>
                         <th class="nowrap text-center">
-                            <div class="flex justify-content-center align-items-center">CONTAINERS LOG</div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-boxes"></i>&nbsp;CONTAINERS LOG</div>
                         </th>
                         <th class="nowrap text-center" *ngIf="isAdmin">
-                            <div class="flex justify-content-center align-items-center">LIVE & PREVIOUS</div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-exclamation-triangle"></i>&nbsp;<i class="fas fa-exclamation-triangle"></i>&nbsp;<i class="fas fa-exclamation-triangle"></i></div>
                         </th>
                         <th pSortableColumn="">
-                            <div class="flex justify-content-center align-items-center">RESTARTS<p-sortIcon field=""></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-power-off"></i>&nbsp;RESTARTS<p-sortIcon field=""></p-sortIcon></div>
                         </th>
                         <th></th>
                     </tr>
@@ -240,21 +240,21 @@
                         </td>
                         <td *ngIf="isAdmin">
                             <div *ngFor="let container of app.spec.containers; index as i" >
-                                <div *ngIf="container.usage.cpu != 'No Data'" class="flex justify-content-center align-items-center">
-                                    <td style="font-weight:bold">{{setToFixed(calculateMetrics(container.usage?.cpu))}} / {{calculateMetrics(container.resources.limits?.cpu) || container.allocatable?.cpu}} CORE</td>
+                                <div *ngIf="container.usage?.cpu != 'No Data'" class="flex justify-content-center align-items-center">
+                                    <td style="font-weight:bold">{{setToFixed(calculateMetrics(container.usage?.cpu)) || 0}} / {{calculateMetrics(container.resources.limits?.cpu) || container.allocatable?.cpu || 0}} CORE</td>
                                 </div>
-                                <div *ngIf="container.usage.cpu != 'No Data'" class="flex justify-content-center align-items-center">
-                                    <progress value="{{calculateMetrics(container.usage?.cpu)}}" max="{{calculateMetrics(container.resources.limits?.cpu) || container.allocatable?.cpu}}"></progress>
+                                <div *ngIf="container.usage?.cpu != 'No Data'" class="flex justify-content-center align-items-center">
+                                    <progress value="{{calculateMetrics(container.usage?.cpu) || 0}}" max="{{calculateMetrics(container.resources.limits?.cpu) || container.allocatable?.cpu || 0}}"></progress>
                                 </div>
                             </div>
                         </td>
                         <td *ngIf="isAdmin">
                             <div *ngFor="let container of app.spec.containers; index as i">
-                                <div *ngIf="container.usage.memory != 'No Data'" class="flex justify-content-center align-items-center">
-                                    <td style="font-weight:bold">{{setToFixed(calculateMetrics(container.usage?.memory)/1024/1024)}} / {{(isNotEmptyObj(container.resources) && setToFixed(calculateMetrics(container.resources.limits?.memory)/1024/1024)) || setToFixed(calculateMetrics(container.allocatable?.memory)/1024/1024)}} Gi</td>
+                                <div *ngIf="container.usage?.memory != 'No Data'" class="flex justify-content-center align-items-center">
+                                    <td style="font-weight:bold">{{setToFixed(calculateMetrics(container.usage?.memory)/1024/1024) || 0}} / {{(isNotEmptyObj(container.resources) && setToFixed(calculateMetrics(container.resources.limits?.memory)/1024/1024)) || setToFixed(calculateMetrics(container.allocatable?.memory)/1024/1024) || 0}} Gi</td>
                                 </div>
-                                <div *ngIf="container.usage.memory != 'No Data'" class="flex justify-content-center align-items-center">
-                                    <progress value="{{calculateMetrics(container.usage?.memory) || 0}}" max="{{calculateMetrics(container.resources.limits?.memory) || calculateMetrics(container.allocatable?.memory)}}"></progress>
+                                <div *ngIf="container.usage?.memory != 'No Data'" class="flex justify-content-center align-items-center">
+                                    <progress value="{{calculateMetrics(container.usage?.memory) || 0}}" max="{{calculateMetrics(container.resources.limits?.memory) || calculateMetrics(container.allocatable?.memory) || 0}}"></progress>
                                 </div>
                             </div>
                         </td>
@@ -357,7 +357,7 @@
                 </ng-template>
             </p-table>
          </p-tabPanel>
-        <p-tabPanel *ngIf="isAdmin" header="Services">
+        <p-tabPanel leftIcon="pi pi-share-alt" *ngIf="isAdmin" header="Services">
             <p-table #st [value]="servicesData" responsiveLayout="scroll" styleClass="p-datatable-sm"
                 rowGroupMode="rowspan" groupRowsBy="metadata.name"
                 [globalFilterFields]="['metadata.name','spec.type','spec.clusterIP','spec.externalIPs','spec.ports','metadata.creationTimestamp','spec.selector']"
@@ -397,25 +397,25 @@
                 <ng-template pTemplate="header">
                     <tr>
                         <th pSortableColumn="metadata.name">
-                            <div class="flex justify-content-center align-items-center">NAME<p-sortIcon field="metadata.name"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-id-badge"></i>&nbsp;NAME<p-sortIcon field="metadata.name"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="spec.type">
-                            <div class="flex justify-content-center align-items-center">TYPE<p-sortIcon field="spec.type"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-cogs"></i>&nbsp;TYPE<p-sortIcon field="spec.type"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="spec.clusterIP">
-                            <div class="flex justify-content-center align-items-center">CLUSTER-IP<p-sortIcon field="spec.clusterIP"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-download"></i>&nbsp;CLUSTER-IP<p-sortIcon field="spec.clusterIP"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="spec.externalIPs">
-                            <div class="flex justify-content-center align-items-center">EXTERNAL-IP<p-sortIcon field="spec.externalIPs"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-upload"></i>&nbsp;EXTERNAL-IP<p-sortIcon field="spec.externalIPs"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="spec.ports">
-                            <div class="flex justify-content-center align-items-center">PORT(S)<p-sortIcon field="spec.ports"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-passport"></i>&nbsp;PORT(S)<p-sortIcon field="spec.ports"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="metadata.creationTimestamp">
-                            <div class="flex justify-content-center align-items-center">AGE<p-sortIcon field="metadata.creationTimestamp"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-stopwatch"></i>&nbsp;AGE<p-sortIcon field="metadata.creationTimestamp"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="spec.selector">
-                            <div class="flex justify-content-center align-items-center">SELECTOR<p-sortIcon field="spec.selector"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-object-group"></i>&nbsp;SELECTOR<p-sortIcon field="spec.selector"></p-sortIcon></div>
                         </th>
                         <th></th>
                     </tr>
@@ -467,7 +467,7 @@
                 </ng-template>
             </p-table>
         </p-tabPanel>
-        <p-tabPanel *ngIf="isAdmin" header="Nodes">
+        <p-tabPanel leftIcon="pi pi-server" *ngIf="isAdmin" header="Nodes">
             <p-table #nt [value]="nodeMetricsMixData" responsiveLayout="scroll" styleClass="p-datatable-sm"
                 rowGroupMode="rowspan" groupRowsBy="metadata.name"
                 [globalFilterFields]="['metadata.name','status.conditions','metadata.creationTimestamp','status.capacity.cpu','status.cpu','status.capacity.memory','status.memory','status.nodeInfo.containerRuntimeVersion','status.nodeInfo.kubeletVersion','status.nodeInfo.osImage','status.addresses']"
@@ -489,37 +489,37 @@
                 <ng-template pTemplate="header">
                     <tr>
                         <th pSortableColumn="metadata.name">
-                            <div class="flex justify-content-center align-items-center">NAME<p-sortIcon field="metadata.name"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-id-badge"></i>&nbsp;NAME<p-sortIcon field="metadata.name"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="status.conditions">
-                            <div class="flex justify-content-center align-items-center">STATUS<p-sortIcon field="status.conditions"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-info-circle"></i>&nbsp;<p-sortIcon field="status.conditions"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="metadata.creationTimestamp">
-                            <div class="flex justify-content-center align-items-center">AGE<p-sortIcon field="metadata.creationTimestamp"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-stopwatch"></i>&nbsp;AGE<p-sortIcon field="metadata.creationTimestamp"></p-sortIcon></div>
                         </th>
                         <!-- <th pSortableColumn="status.capacity.cpu">
                             <div class="flex justify-content-center align-items-center">CPU<p-sortIcon field="status.capacity.cpu"></p-sortIcon></div>
                         </th> -->
                         <th pSortableColumn="status.usage.cpu">
-                            <div class="flex justify-content-center align-items-center">CPU<p-sortIcon field="status.usage.cpu"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-microchip"></i>&nbsp;CPU<p-sortIcon field="status.usage.cpu"></p-sortIcon></div>
                         </th>
                         <!-- <th pSortableColumn="status.capacity.memory">
                             <div class="flex justify-content-center align-items-center">MEMORY<p-sortIcon field="status.capacity.memory"></p-sortIcon></div>
                         </th> -->
                         <th pSortableColumn="status.usage.memory">
-                            <div class="flex justify-content-center align-items-center">MEMORY<p-sortIcon field="status.usage.memory"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-memory"></i>&nbsp;MEMORY<p-sortIcon field="status.usage.memory"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="status.nodeInfo.containerRuntimeVersion">
-                            <div class="flex justify-content-center align-items-center">RUNTIME<p-sortIcon field="status.nodeInfo.containerRuntimeVersion"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-running"></i>&nbsp;RUNTIME<p-sortIcon field="status.nodeInfo.containerRuntimeVersion"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="status.nodeInfo.kubeletVersion">
-                            <div class="flex justify-content-center align-items-center">K8S<p-sortIcon field="status.nodeInfo.kubeletVersion"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-dharmachakra"></i>&nbsp;K8S<p-sortIcon field="status.nodeInfo.kubeletVersion"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="status.nodeInfo.osImage">
-                            <div class="flex justify-content-center align-items-center">OS<p-sortIcon field="status.nodeInfo.osImage"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fab fa-ubuntu"></i>&nbsp;OS<p-sortIcon field="status.nodeInfo.osImage"></p-sortIcon></div>
                         </th>
                         <th pSortableColumn="status.addresses">
-                            <div class="flex justify-content-center align-items-center">ADDRESS<p-sortIcon field="status.addresses"></p-sortIcon></div>
+                            <div class="flex justify-content-center align-items-center"><i class="fas fa-address-book"></i>&nbsp;ADDRESS<p-sortIcon field="status.addresses"></p-sortIcon></div>
                         </th>
                         <th></th>
                     </tr>
@@ -543,17 +543,17 @@
                         <!-- <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{app.status.capacity.cpu}} CORE</div>
                         </td> -->
                         <td style="font-weight:bold">
-                            <div *ngIf="app.status.usage.cpu != 'No Data'" class="flex justify-content-center align-items-center">{{setToFixed(calculateMetrics(app.status.usage?.cpu))}} / {{app.status.capacity.cpu}} CORE</div>
-                            <div *ngIf="app.status.usage.cpu != 'No Data'" class="flex justify-content-center align-items-center">
-                                <progress id="metricsProgressBar" value="{{calculateMetrics(app.status.usage?.cpu)}}" max="{{app.status.capacity.cpu}}"></progress>
+                            <div *ngIf="app.status.usage?.cpu != 'No Data'" class="flex justify-content-center align-items-center">{{setToFixed(calculateMetrics(app.status.usage?.cpu))}} / {{app.status.capacity?.cpu}} CORE</div>
+                            <div *ngIf="app.status.usage?.cpu != 'No Data'" class="flex justify-content-center align-items-center">
+                                <progress id="metricsProgressBar" value="{{calculateMetrics(app.status.usage?.cpu)}}" max="{{app.status.capacity?.cpu}}"></progress>
                             </div>
                         </td>
                         <!-- <td style="font-weight:bold"><div class="flex justify-content-center align-items-center">{{(calculateMetrics(app.status.capacity.memory)/1024/1024).toFixed(2)}}Gi</div>
                         </td> -->
                         <td style="font-weight:bold">
-                            <div *ngIf="app.status.usage.memory != 'No Data'" class="flex justify-content-center align-items-center">{{setToFixed(calculateMetrics(app.status.usage.memory)/1024/1024)}} / {{setToFixed(calculateMetrics(app.status.capacity.memory)/1024/1024)}} Gi</div>
-                            <div *ngIf="app.status.usage.memory != 'No Data'" class="flex justify-content-center align-items-center">
-                                <progress id="metricsProgressBar" value="{{calculateMetrics(app.status.usage.memory) || 0}}" max="{{calculateMetrics(app.status.capacity.memory) || 0}}"></progress> 
+                            <div *ngIf="app.status.usage?.memory != 'No Data'" class="flex justify-content-center align-items-center">{{setToFixed(calculateMetrics(app.status.usage?.memory)/1024/1024)}} / {{setToFixed(calculateMetrics(app.status.capacity?.memory)/1024/1024)}} Gi</div>
+                            <div *ngIf="app.status.usage?.memory != 'No Data'" class="flex justify-content-center align-items-center">
+                                <progress id="metricsProgressBar" value="{{calculateMetrics(app.status.usage?.memory) || 0}}" max="{{calculateMetrics(app.status.capacity?.memory) || 0}}"></progress> 
                             </div>
                         </td>
                         <td><div class="flex justify-content-center align-items-center">{{app.status.nodeInfo.containerRuntimeVersion}}</div>

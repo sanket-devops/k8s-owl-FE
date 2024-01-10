@@ -18,12 +18,12 @@
   <table class="table table-striped table-hover">
     <thead style="text-align: center">
       <tr>
-        <th scope="col">#</th>
-        <th scope="col">Group Name</th>
-        <th scope="col" *ngIf="isAdmin">Group Action</th>
-        <th scope="col">Cluster Name</th>
-        <th scope="col">Env Name</th>
-        <th scope="col">Action</th>
+        <th scope="col"><i class="fas fa-sort-numeric-down"></i>&nbsp;</th>
+        <th scope="col"><i class="fas fa-users"></i>&nbsp;Group Name</th>
+        <th scope="col" *ngIf="isAdmin"><i class="fas fa-users-cog"></i>&nbsp;Group Action</th>
+        <th scope="col"><i class="fas fa-layer-group"></i>&nbsp;Cluster Name</th>
+        <th scope="col"><i class="fas fa-infinity"></i>&nbsp;Env Name</th>
+        <th scope="col"><i class="fas fa-dharmachakra"></i>&nbsp;Action</th>
       </tr>
     </thead>
     <tbody style="text-align: center" *ngFor="let data of clusterArr ;let i =index">
