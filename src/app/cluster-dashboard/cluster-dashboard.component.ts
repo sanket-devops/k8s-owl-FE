@@ -53,7 +53,7 @@ export class ClusterDashboardComponent implements OnInit {
   servicesData: any = undefined;
   clusterActiveIndex: number = 0;
   downloadData: any;
-  user:string = "user";
+  user: string = "user";
   login = { u: '', p: '', t: '' };
   isChecked = true;
   intervalTime: number = 10;
@@ -62,7 +62,7 @@ export class ClusterDashboardComponent implements OnInit {
   timer: number = this.intervalTime;
   percentage: any;
   loading: boolean = false;
-  selectedNamespace: any = {name: 'default', status: 'Active'};
+  selectedNamespace: any = { name: 'default', status: 'Active' };
   namespaces: any[] = [];
   isSpinner: any = [];
   followLogs: string = '';
@@ -128,8 +128,8 @@ export class ClusterDashboardComponent implements OnInit {
     }, 1000);
 
   }
-  
-  removeItemFromisSpinner (index: number) {
+
+  removeItemFromisSpinner(index: number) {
     let indexToRemove = index - 1;
     this.isSpinner.splice(indexToRemove, 1);
   }
@@ -145,10 +145,10 @@ export class ClusterDashboardComponent implements OnInit {
       hour12: true,
       // timeZoneName: 'short'
     };
-  
+
     const localDate = new Date(createdDate);
     const localTimeString = localDate.toLocaleString(undefined, options);
-  
+
     return localTimeString;
   }
   calculateRunningPod(pod: any) {
@@ -180,7 +180,7 @@ export class ClusterDashboardComponent implements OnInit {
   calculateMetrics(metrics: String) {
     if (metrics) {
       let matches: any = metrics.match(/^(\d+)([A-Za-z]+)$/);
-  
+
       if (matches) {
         let numberPart = matches[1];
         let stringPart = matches[2];
@@ -202,18 +202,18 @@ export class ClusterDashboardComponent implements OnInit {
         // console.log("Invalid format");
         return 0;
       }
-    } 
+    }
   }
 
   setToFixed(value: any) {
-    if (typeof(value) === "number") {
+    if (typeof (value) === "number") {
       return value.toFixed(2);
     } else {
       return NaN;
     }
   }
 
-  isNotEmptyObj(obj: any){
+  isNotEmptyObj(obj: any) {
     return Object.keys(obj).length != 0;
   }
 
@@ -240,23 +240,23 @@ export class ClusterDashboardComponent implements OnInit {
 
   clear(table: any) {
     table.clear();
-}
-async getNamespaces(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
-  if (groupId === undefined && clusterId === undefined) {
-    this.back();
-  } else {
-    this.clusterName = clusterName;
-    this.podName = podName;
-    this.groupId = groupId;
-    this.clusterId = clusterId;
-    <any>this.dashboardService.getNamespaces('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
-      this.namespaces = [];
-      data.items.forEach((namespace: any) => {
-        this.namespaces.push({ name: namespace.metadata.name, status: namespace.status.phase })
-      });
-    });
   }
-}
+  async getNamespaces(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
+    if (groupId === undefined && clusterId === undefined) {
+      this.back();
+    } else {
+      this.clusterName = clusterName;
+      this.podName = podName;
+      this.groupId = groupId;
+      this.clusterId = clusterId;
+      <any>this.dashboardService.getNamespaces('/' + this.groupId, '/' + this.clusterId).subscribe((data: any) => {
+        this.namespaces = [];
+        data.items.forEach((namespace: any) => {
+          this.namespaces.push({ name: namespace.metadata.name, status: namespace.status.phase })
+        });
+      });
+    }
+  }
 
   async getCluster(groupId?: string, clusterId?: string, clusterName?: string, podName?: string) {
     // let indexOfItem = this.isSpinner.push("GetCluster");
@@ -345,10 +345,10 @@ async getNamespaces(groupId?: string, clusterId?: string, clusterName?: string, 
           newWindow?.document.write(`<p>${windowData}</p>`)
           this.removeItemFromisSpinner(indexOfItem);
         },
-        (error) => {
-          this.removeItemFromisSpinner(indexOfItem);
-          console.log(error);
-        })
+          (error) => {
+            this.removeItemFromisSpinner(indexOfItem);
+            console.log(error);
+          })
       } else {
         this.dashboardService.getPodsLogs('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.podName, '/' + this.appName).subscribe((data: any) => {
           let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
@@ -356,10 +356,10 @@ async getNamespaces(groupId?: string, clusterId?: string, clusterName?: string, 
           newWindow?.document.write(`<p>${windowData}</p>`)
           this.removeItemFromisSpinner(indexOfItem);
         },
-        (error) => {
-          this.removeItemFromisSpinner(indexOfItem);
-          console.log(error);
-        })
+          (error) => {
+            this.removeItemFromisSpinner(indexOfItem);
+            console.log(error);
+          })
       }
     } catch (e) {
       this.removeItemFromisSpinner(indexOfItem);
@@ -382,10 +382,10 @@ async getNamespaces(groupId?: string, clusterId?: string, clusterName?: string, 
           toastr.success(`Download Started: ${_clusterName}-${_podName}-${_appName}-(${h}H).log`);
           this.removeItemFromisSpinner(indexOfItem);
         },
-        (error) => {
-          this.removeItemFromisSpinner(indexOfItem);
-          console.log(error);
-        });
+          (error) => {
+            this.removeItemFromisSpinner(indexOfItem);
+            console.log(error);
+          });
       } else {
         let _clusterName = this.clusterName;
         let _podName = this.podName;
@@ -396,10 +396,10 @@ async getNamespaces(groupId?: string, clusterId?: string, clusterName?: string, 
           toastr.success(`Download Started: ${this.clusterName}-${this.podName}-${_appName}.log`);
           this.removeItemFromisSpinner(indexOfItem);
         },
-        (error) => {
-          this.removeItemFromisSpinner(indexOfItem);
-          console.log(error);
-        });
+          (error) => {
+            this.removeItemFromisSpinner(indexOfItem);
+            console.log(error);
+          });
       }
     } catch (e) {
       this.removeItemFromisSpinner(indexOfItem);
@@ -428,71 +428,62 @@ async getNamespaces(groupId?: string, clusterId?: string, clusterName?: string, 
 
     let newWindow = window.open(winUrl, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=1000,left=1000,width=1000,height=1000");
 
-    setInterval(() => {
+    function waitForClose(win: any, cb: any) {
+      function poll() {
+        if (win.closed) cb();
+        else requestAnimationFrame(poll);
+      }
+      poll();
+    }
+
+    function adjustScroll() {
       if (newWindow?.document.body.offsetHeight) {
         let threshold = 5000;
         let verticalScroll = newWindow?.scrollY || newWindow?.pageYOffset;
         let horizontalScroll = newWindow?.scrollX || newWindow?.pageXOffset;
         let height = newWindow.document.body.scrollHeight;
-        if ((height - verticalScroll) < threshold ) {
+        if ((height - verticalScroll) < threshold) {
           newWindow?.scrollTo(0, newWindow.document.body.scrollHeight);
         }
       }
-    }, 100);
+    }
 
     try {
-      if (typeof(tailLines) === 'number') {
-        this.followLogs = '';
-        this.dashboardService.viewFollowLog('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + this.podName, '/' + this.appName, '/' + tailLines).subscribe((data: any) => {
+      let localPodName = this.podName;
+      let localAppName = this.appName
+      let localSelectedNamespace = this.selectedNamespace.name;
+      let localClusterId = this.clusterId;
+      let localGroupId = this.groupId;
+      if (typeof (tailLines) === 'number') {
+        // this.followLogs = '';
+        this.dashboardService.viewFollowLog('/' + localGroupId, '/' + localClusterId, '/' + localSelectedNamespace, '/' + localPodName, '/' + localAppName, '/' + tailLines).subscribe((data: any) => {
           let ws = new window.WebSocket(`${this.constantService.WS_ENDPOINT}/${data.id}`);
-          ws.onopen = () => {
-            console.log("Socket Connected...");
-          };
+          ws.onopen = () => console.log(`Socket Connected...\nPod: ${localPodName}\nApp: ${localAppName}`);
           ws.onmessage = (msg: any) => {
             setTimeout(() => {
               newWindow?.document.write(`<p style="font-family: Arial, Helvetica, sans-serif">${msg.data}</p>`)
-            }, 10);
-            this.followLogs += msg.data;
+              adjustScroll();
+            }, 100);
+            // this.followLogs += msg.data;
           };
-          ws.onerror = (e: any) => {
-            console.error(e);
-          };
-  
-          ws.onclose = (e: any) => {
-            console.log("Socket Disconnected...");
-          };
+          ws.onerror = (e: any) => console.error(e);
 
-          setTimeout(() => {
-            if (newWindow) {
-              newWindow.onunload = () => {
-                ws = new window.WebSocket(`${this.constantService.WS_ENDPOINT}/${podName}-${appName}/stop`);
-                ws.onclose = (e: any) => {
-                  console.log("Socket Disconnected...");
-                };
-                this.removeItemFromisSpinner(indexOfItem);
-              }
-            }
-          }, 1000);
-  
+          ws.onclose = (e: any) => console.log(`Socket Disconnected...\nPod: ${localPodName}\nApp: ${localAppName}`);
+
+          waitForClose(newWindow, (e: any) => ws.close());
+
           this.removeItemFromisSpinner(indexOfItem);
         },
           (error) => {
             this.removeItemFromisSpinner(indexOfItem);
             console.log(error);
           });
-      } else if (typeof(tailLines) === 'string') {
+      } else if (typeof (tailLines) === 'string') {
         this.ws = new window.WebSocket(`${this.constantService.WS_ENDPOINT}/${podName}-${appName}/stop`);
-        this.ws.onopen = () => {
-          console.log("Socket Dissconected...");
-        };
-        this.ws.onmessage = (msg: any) => {
-        };
-        this.ws.onerror = (e: any) => {
-          console.error(e);
-        };
-        this.ws.onclose = (e: any) => {
-          console.log("Socket Disconnected...");
-        };
+        this.ws.onopen = () => console.log("Socket Dissconected...");
+        this.ws.onmessage = (msg: any) => { };
+        this.ws.onerror = (e: any) => console.error(e);
+        this.ws.onclose = (e: any) => console.log("Socket Disconnected...");
         this.removeItemFromisSpinner(indexOfItem);
       }
     } catch (e) {
@@ -515,10 +506,10 @@ async getNamespaces(groupId?: string, clusterId?: string, clusterName?: string, 
         toastr.success(`Download Started: ${this.clusterName}-${this.podName}-${_appName}-(previous).log`);
         this.removeItemFromisSpinner(indexOfItem);
       },
-      (error) => {
-        this.removeItemFromisSpinner(indexOfItem);
-        console.log(error);
-      })
+        (error) => {
+          this.removeItemFromisSpinner(indexOfItem);
+          console.log(error);
+        })
     } catch (e) {
       this.removeItemFromisSpinner(indexOfItem);
       console.log(e);
@@ -696,11 +687,11 @@ async getNamespaces(groupId?: string, clusterId?: string, clusterName?: string, 
     ) {
       this.loading = true;
       let podCount = 0;
-      pods.forEach( async (pod: any) => {
+      pods.forEach(async (pod: any) => {
         if (pod.status.reason) {
           let resp = await this.dashboardService.deletePod('/' + this.groupId, '/' + this.clusterId, '/' + this.selectedNamespace.name, '/' + pod.metadata.name).toPromise();
-            // console.log(JSON.parse(JSON.stringify(resp)).metadata.name);
-            toastr.success(`Pod is Deleted: ${JSON.parse(JSON.stringify(resp)).metadata.name}`);
+          // console.log(JSON.parse(JSON.stringify(resp)).metadata.name);
+          toastr.success(`Pod is Deleted: ${JSON.parse(JSON.stringify(resp)).metadata.name}`);
         }
         else {
           podCount = podCount + 1;
